@@ -10,3 +10,6 @@
 $postParams = @{AccountName=$accountName;ProjectName=$projectName;WebSite=$webSite;Stage=$stage;Token=$token;Package=$artifactPath}
 $Response = Invoke-WebRequest -Uri $web_depoy_host -Method POST -Body $postParams
 Write-Host $Response.Content
+if($Response.StatusCode -ne 200) {
+    throw "Web Deploy wasn't successful!"
+}
