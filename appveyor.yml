@@ -10,41 +10,37 @@ for:
       only:
         - master
     build_script:
-      - cmd: dotnet build
+      - cmd: msbuild src/ClearSkyMaps.sln
   - branches:
       only:
         - production
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      RELEASE_STAGE: production
+      DEPLOY_STAGE: Production
     build_script:
-      - cmd: dotnet publish -c Release -o ../release
+      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile
     artifacts:
-      - path: ./release
+      - path: ./src/release
         name: ProductionRelease
         type: Zip
     deploy_script:
-      - cmd: dotnet run --project deploy/WebDeployClient.csproj ProductionRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath ProductionRelease.zip
   - branches:
       only:
         - staging
     environment:
-      ASPNETCORE_ENVIRONMENT: Staging
-      RELEASE_STAGE: staging
+      DEPLOY_STAGE: Staging
     build_script:
-      - cmd: dotnet publish -c Release -o ../release
+      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile
     artifacts:
-      - path: ./release
+      - path: ./src/release
         name: StagingRelease
         type: Zip
     deploy_script:
-      - cmd: dotnet run --project deploy/WebDeployClient.csproj StagingRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath StagingRelease.zip
 
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
-install:
-  - cmd: dotnet restore
 clone_depth: 1
 test_script:
   - cmd: dotnet test ./UnitTests
