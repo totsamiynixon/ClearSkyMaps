@@ -17,7 +17,7 @@ for:
     environment:
       DEPLOY_STAGE: Production
     build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile
+      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile /p:Configuration=Release
     artifacts:
       - path: ./src/release
         name: ProductionRelease
@@ -30,7 +30,7 @@ for:
     environment:
       DEPLOY_STAGE: Staging
     build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile
+      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile /p:Configuration=Release
     artifacts:
       - path: ./src/release
         name: StagingRelease
@@ -45,6 +45,6 @@ before_build:
   - nuget restore src/ClearSkyMaps.sln
 clone_depth: 1
 test_script:
-  - mstest DAL.Tests
-  - mstest BLL.Tests
-  - mstest Web.Tests
+  - cmd: mstest ./src/DAL.Tets/bin/debug/DAL.Tests.dll
+  - cmd: mstest ./src/BLL.Tets/bin/debug/BLL.Tests.dll
+  - cmd: mstest ./src/Web.Tets/bin/debug/Web.Tests.dll
