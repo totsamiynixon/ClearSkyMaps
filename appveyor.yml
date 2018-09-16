@@ -41,6 +41,8 @@ for:
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
+install:
+  - cmd: msbuild /t:restore src/ClearSkyMaps.sln
 clone_depth: 1
 test_script:
   - cmd: dotnet test ./UnitTests
