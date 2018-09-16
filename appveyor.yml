@@ -23,7 +23,7 @@ for:
         name: ProductionRelease
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath ProductionRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath src/ProductionRelease.zip
   - branches:
       only:
         - staging
@@ -36,7 +36,7 @@ for:
         name: StagingRelease
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath StagingRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath src/StagingRelease.zip
 
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
