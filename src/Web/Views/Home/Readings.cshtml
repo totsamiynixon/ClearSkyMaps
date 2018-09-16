@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Readings";
+}
+<div id="app">
+    <div class="side-bar-holder">
+        @Html.Partial("_Partials/Sidebar")
+    </div>
+    <div class="inner-content">
+        <div class="map-holder">
+            <div id="map"></div>
+        </div>
+    </div>
+    @Html.Partial("_Partials/DetailsModal")
+</div>
+@section Scripts {
+    <script src="~/Scripts/Chart.bundle.min.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/vue.js"></script>
+    <!--Ссылка на библиотеку SignalR -->
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <!--Ссылка на автоматически сгенерированный скрипт хаба SignalR -->
+    <script src="~/signalr/hubs"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfj-ARjZc7VEGb0_grdk5VFu5wXphQyjo&callback"></script>
+    <script src="~/Scripts/richmarker.js"></script>
+    <script src="~/Scripts/front/vue-filters.js"></script>
+    <script src="~/Scripts/front/readings.js"></script>
+}

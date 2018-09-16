@@ -1,0 +1,105 @@
+﻿
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+#current-sensor-readings.table thead th {
+    font-size: 11px;
+}
+
+#app .side-bar-holder {
+    width: 25%;
+    position: fixed;
+    z-index: 1;
+    height: 100%;
+    background-color: #fff;
+    top: 0;
+    left: 0;
+}
+
+#app .inner-content {
+    margin-left: 25%;
+    width: 75%;
+}
+
+#app .map-holder {
+    position: relative;
+    height: 50vw
+}
+
+#map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.richmarker-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #000;
+    box-shadow: none;
+    color: #fff;
+    position: relative;
+}
+
+    .richmarker-wrapper p {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        line-height: 50px;
+        text-align: center
+    }
+
+#side-menu .card-header.active {
+    background-color: #c2c2c2;
+}
+
+#sensor-details .modal-dialog {
+    max-width: 700px;
+}
+
+.sidebar-padding {
+    padding: 50px;
+}
+
+
+.analytics .inner-content {
+    background: linear-gradient(127deg, rgba(161,161,161,1) 0%, rgba(0,0,0,1) 100%);
+    min-height: 100vh;
+}
+
+    .analytics .inner-content * {
+        color: #fff !important;
+    }
+
+.fixed-footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    background-color: #c2c2c2;
+    margin: auto -15px;
+    padding: 0 30px;
+}
+
+.charts .tab-content {
+    margin-bottom: 100px;
+}
