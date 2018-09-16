@@ -9,15 +9,15 @@ for:
   - branches:
       only:
         - master
-    build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln
+    build:
+      project: src/ClearSkyMaps.sln
   - branches:
       only:
         - production
     environment:
       DEPLOY_STAGE: Production
     build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile
+      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile /p:Configuration=Release
     artifacts:
       - path: ./src/release
         name: ProductionRelease
@@ -30,7 +30,7 @@ for:
     environment:
       DEPLOY_STAGE: Staging
     build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile
+      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile /p:Configuration=Release
     artifacts:
       - path: ./src/release
         name: StagingRelease
@@ -41,6 +41,9 @@ for:
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
+before_build:
+  - nuget restore src/ClearSkyMaps.sln
 clone_depth: 1
-test_script:
-  - cmd: dotnet test ./UnitTests
+test:
+  assemblies:
+    - '**\*.Tests.dll'
