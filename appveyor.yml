@@ -44,7 +44,6 @@ init:
 before_build:
   - nuget restore src/ClearSkyMaps.sln
 clone_depth: 1
-test_script:
-  - cmd: mstest ./src/DAL.Tets/bin/debug/DAL.Tests.dll
-  - cmd: mstest ./src/BLL.Tets/bin/debug/BLL.Tests.dll
-  - cmd: mstest ./src/Web.Tets/bin/debug/Web.Tests.dll
+test:
+  assemblies:
+    - '**\*.Tests.dll'
