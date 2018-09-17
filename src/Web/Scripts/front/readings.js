@@ -311,7 +311,7 @@
             responsive: true,
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: 'Динамика изменения'
             },
             tooltips: {
                 mode: 'index',

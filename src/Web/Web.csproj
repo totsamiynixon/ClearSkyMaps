@@ -212,8 +212,10 @@
     <Compile Include="Controllers\Api\AnalyticsController.cs" />
     <Compile Include="Controllers\Api\ReadingsController.cs" />
     <Compile Include="Controllers\Api\SensorsController.cs" />
+    <Compile Include="Controllers\Emulation\EmulationSensorsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Emulator\Emulator.cs" />
+    <Compile Include="Emulator\Filters\EmulationModeFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
