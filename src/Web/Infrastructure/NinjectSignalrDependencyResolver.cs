@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json;
 using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Web.Resolvers;
 
 namespace Web.Infrastructure
 {
@@ -19,7 +21,7 @@ namespace Web.Infrastructure
             }
 
             _kernel = kernel;
-
+            AddBindings(kernel);
         }
 
         public override object GetService(Type serviceType)
@@ -32,6 +34,14 @@ namespace Web.Infrastructure
         {
             var services = _kernel.GetAll(serviceType).Concat(base.GetServices(serviceType));
             return services;
+        }
+
+        private void AddBindings(IKernel kernel)
+        {
+            var settings = new JsonSerializerSettings();
+            settings.ContractResolver = new SignalRContractResolver();
+            var serializer = JsonSerializer.Create(settings);
+            kernel.Bind<JsonSerializer>().ToConstant(serializer);
         }
     }
 }

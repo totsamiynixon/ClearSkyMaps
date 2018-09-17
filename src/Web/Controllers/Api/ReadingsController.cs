@@ -19,7 +19,7 @@ using Web.Models.Hub;
 
 namespace ArduinoServer.Controllers.Api
 {
-    [RoutePrefix("api/readings")]
+    [RoutePrefix("api/sensors")]
     public class ReadingsController : ApiController
     {
         private readonly IHubContext<IReadingsClient> _hubContext;
