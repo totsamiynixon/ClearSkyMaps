@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DAL.Implementations.Contexts;
+using DAL.Intarfaces;
 using Domain;
 using Services.DTO.Reading;
 using Services.Interfaces;
@@ -16,8 +17,8 @@ namespace Services.Implementations
     {
         private readonly DbSet<Reading> _readingRepository;
         private readonly DbSet<Sensor> _sensorRepository;
-        private readonly DataContext _db;
-        public ReadingService(DataContext context)
+        private readonly IDataContext _db;
+        public ReadingService(IDataContext context)
         {
             _db = context;
             _readingRepository = _db.GetRepository<Reading>();

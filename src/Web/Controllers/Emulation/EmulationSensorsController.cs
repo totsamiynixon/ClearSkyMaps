@@ -15,12 +15,6 @@ namespace ArduinoServer.Controllers.Api
     [RoutePrefix("api/emulation")]
     public class EmulationSensorsController : ApiController
     {
-        [HttpGet]
-        [Route("")]
-        public async Task<IHttpActionResult> Get()
-        {
-            return Ok(Emulator.GetSensorsData());
-        }
 
         [HttpGet]
         [Route("start")]

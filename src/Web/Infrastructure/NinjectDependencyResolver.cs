@@ -11,7 +11,7 @@ using IDependencyResolverWebAPI = System.Web.Http.Dependencies.IDependencyResolv
 
 namespace Web.Infrastructure
 {
-    public class NinjectDependencyResolver: IDependencyResolverMVC, IDependencyResolverWebAPI
+    public class NinjectDependencyResolver : IDependencyResolverMVC, IDependencyResolverWebAPI
     {
         private readonly IKernel _kernel;
 

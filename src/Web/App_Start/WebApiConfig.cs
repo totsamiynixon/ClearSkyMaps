@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
-using Web.Emulator.Filters;
 
 namespace Web
 {
@@ -33,8 +32,6 @@ namespace Web
             settings.Converters.Add(new IsoDateTimeConverter());
             jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             jsonFormatter.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
-            config.Filters.Add(new EmulationModeFilter());
         }
     }
 }

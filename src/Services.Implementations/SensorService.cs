@@ -1,5 +1,6 @@
 ﻿using DAL.Implementations;
 using DAL.Implementations.Contexts;
+using DAL.Intarfaces;
 using Domain;
 using Services.DTO.Reading;
 using Services.DTO.Sensor;
@@ -15,9 +16,9 @@ namespace Services.Implementations
 {
     public class SensorService : ISensorService
     {
-        private readonly DataContext _db;
+        private readonly IDataContext _db;
         private readonly DbSet<Sensor> _sensorRepository;
-        public SensorService(DataContext dbcontext)
+        public SensorService(IDataContext dbcontext)
         {
             _db = dbcontext;
             _sensorRepository = _db.GetRepository<Sensor>();

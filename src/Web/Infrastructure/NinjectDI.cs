@@ -10,7 +10,6 @@ namespace Web.Infrastructure
     {
         public override void Load()
         {
-            
         }
     }
 }
