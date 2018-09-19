@@ -1,32 +1,51 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using ArduinoServer.Controllers.Api;
+using DAL.Intarfaces;
+using Domain;
+using Ninject.Planning.Bindings;
 using Services.DTO.Reading;
 using Services.DTO.Sensor;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using Web.Hub;
-using Web.Models.Hub;
+using Web.Emulator.Database;
+using Web.Emulator.DI;
+using Web.Infrastructure;
 
 namespace Web.Emulator
 {
     public static class Emulator
     {
-        private static List<SensorInfoDTO> _fakeSensors;
+        private static List<string> _trackingKeys;
         public static bool IsEmulationEnabled = false;
         private static Random _emulatorRandom = new Random();
+        private static IEnumerable<IBinding> _bindings;
+        private static EmulatorDependencyResolver _resolver;
+
+        static Emulator()
+        {
+            Effort.Provider.EffortProviderConfiguration.RegisterProvider();
+        }
+
+
 
         public static void RunEmulation()
         {
             if (!IsEmulationEnabled)
             {
                 IsEmulationEnabled = true;
+                SetBinding();
                 SeedSensors();
                 StartTask();
             }
+        }
+
+        public static void SetResolver(EmulatorDependencyResolver resolver)
+        {
+            _resolver = resolver;
         }
 
         public static void StopEmulation()
@@ -35,12 +54,8 @@ namespace Web.Emulator
             {
                 IsEmulationEnabled = false;
                 ClearSensors();
+                ReleaseBindings();
             }
-        }
-
-        public static List<SensorInfoDTO> GetSensorsData()
-        {
-            return _fakeSensors;
         }
 
         private static void StartTask()
@@ -49,53 +64,53 @@ namespace Web.Emulator
             {
                 while (IsEmulationEnabled)
                 {
-                    await Task.Delay(10000);
                     DispatchFakeData();
+                    await Task.Delay(10000);
+                    try
+                    {
+                        CheckMemory();
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        StopEmulation();
+                    }
                 }
             });
         }
 
-        private static void SeedSensors()
+        private async static void SeedSensors()
         {
-            _fakeSensors = new List<SensorInfoDTO>();
+            var service = _resolver.GetService<ISensorService>();
+            _trackingKeys = new List<string>();
             var iterations = _emulatorRandom.Next(0, 20);
             for (int i = 0; i < iterations; i++)
             {
-                _fakeSensors.Add(GetFakeSensor());
+                _trackingKeys.Add(await service.RegisterAndGetTrackingKeyAsync(GetFakeSensor()));
             }
         }
 
-
-        private static void ClearSensors()
+        private async static void ClearSensors()
         {
-            _fakeSensors = new List<SensorInfoDTO>();
+            var context = _resolver.GetService<IDataContext>();
+            var repo = context.GetRepository<Sensor>();
+            repo.RemoveRange(repo.ToList());
+            await context.SaveChangesAsync();
+            _trackingKeys = null;
         }
 
         private static void DispatchFakeData()
         {
-            var hub = GlobalHost.ConnectionManager.GetHubContext<ReadingsHub, IReadingsClient>();
-            foreach (var fakeSensor in _fakeSensors)
+            Parallel.ForEach(_trackingKeys, async (key) =>
             {
-                hub.Clients.All.DispatchReading(new SensorReadingDispatchModel
-                {
-                    SensorId = fakeSensor.Id,
-                    Reading = GetFakeReading()
-                });
-            }
+                var controller = new ReadingsController(DependencyResolver.Current.GetService<IReadingService>(), DependencyResolver.Current.GetService<ISensorService>());
+                var fakeReading = GetFakeReading();
+                await controller.PostReading(key, fakeReading);
+            });
         }
 
-        private static void SeedFakeSensorWithReadings(SensorInfoDTO fakeSensor)
+        private static SaveReadingDTO GetFakeReading()
         {
-            fakeSensor.Readings = new List<SensorReadingDTO>();
-            for (int i = 0; i < 10; i++)
-            {
-                fakeSensor.Readings.Add(GetFakeReading());
-            }
-        }
-
-        private static SensorReadingDTO GetFakeReading()
-        {
-            return new SensorReadingDTO
+            return new SaveReadingDTO
             {
                 CO2 = (float)Math.Round((float)_emulatorRandom.NextDouble() * 350, 3),
                 LPG = (float)Math.Round((float)_emulatorRandom.NextDouble() * 350, 3),
@@ -110,16 +125,14 @@ namespace Web.Emulator
         }
 
 
-        private static SensorInfoDTO GetFakeSensor()
+        private static RegisterSensorDTO GetFakeSensor()
         {
             var fakeLatLong = GetLocation(27.560597, 53.904588, 8000);
-            var sensor = new SensorInfoDTO
+            var sensor = new RegisterSensorDTO
             {
-                Id = _fakeSensors.Count + 1,
                 Latitude = fakeLatLong.randomLatitude,
-                Longitude = fakeLatLong.randomLongitude
+                Longitude = fakeLatLong.randomLongitude,
             };
-            SeedFakeSensorWithReadings(sensor);
             return sensor;
         }
 
@@ -143,6 +156,62 @@ namespace Web.Emulator
             double foundLongitude = new_x + longitude;
             double foundLatitude = y + latittude;
             return (foundLongitude, foundLatitude);
+        }
+
+        private static void SetBinding()
+        {
+            if (_resolver == null)
+            {
+                throw new InvalidOperationException("There is no resolver to work with!");
+            }
+            var instanceID = $"emulation_{Guid.NewGuid().ToString()}";
+            _resolver.RebuildDependencies((kernel) =>
+            {
+                _bindings = kernel.GetBindings(typeof(IDataContext));
+                foreach (var binding in _bindings)
+                {
+                    kernel.RemoveBinding(binding);
+                }
+                kernel.Bind<IDataContext>().ToMethod((context) =>
+                {
+                    return new EmulatorContext(Effort.DbConnectionFactory.CreatePersistent(instanceID));
+                });
+            });
+        }
+
+        private static void ReleaseBindings()
+        {
+            if (_resolver == null)
+            {
+                throw new InvalidOperationException("There is no resolver to work with!");
+            }
+            if (_bindings == null)
+            {
+                throw new InvalidOperationException("There are no any bindings!");
+            }
+            _resolver.RebuildDependencies((kernel) =>
+            {
+                var bindingsToRemove = kernel.GetBindings(typeof(IDataContext));
+                foreach (var binding in bindingsToRemove)
+                {
+                    kernel.RemoveBinding(binding);
+                }
+                foreach (var binding in _bindings)
+                {
+                    kernel.AddBinding(binding);
+                }
+                _bindings = null;
+            });
+        }
+
+        private static void CheckMemory()
+        {
+            Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+            long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
+            if (totalBytesOfMemoryUsed > 3e+8)
+            {
+                throw new OutOfMemoryException("Too much memory used!");
+            }
         }
     }
 }

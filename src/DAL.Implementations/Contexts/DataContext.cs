@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using DAL.Intarfaces;
 using Domain.Admin;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Implementations.Contexts
 {
-    public class DataContext : DbContext
+    public class DataContext : DbContext, IDataContext
     {
         private static readonly object Lock = new object();
         private static bool _databaseInitialized;

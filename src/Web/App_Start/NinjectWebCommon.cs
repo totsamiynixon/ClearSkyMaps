@@ -16,6 +16,7 @@ namespace Web.App_Start
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
     using Web;
+    using Web.Emulator.DI;
     using Web.Infrastructure;
     using NinjectDIBLL = Services.Infrastructure.NinjectDI;
     using NinjectDIDAL = DAL.Infrastructure.NinjectDI;
@@ -72,6 +73,8 @@ namespace Web.App_Start
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
             GlobalHost.DependencyResolver = new NinjecSignalRDependencyResolver(kernel);
+            //TODO: Bad hack, need to think about how to fix this
+            Web.Emulator.Emulator.SetResolver(new EmulatorDependencyResolver(kernel));
         }
     }
 }

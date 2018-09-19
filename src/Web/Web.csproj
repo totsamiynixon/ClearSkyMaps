@@ -51,6 +51,9 @@
     <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Effort, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6a46696d54971e6d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Effort.EF6.1.3.9\lib\net45\Effort.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -94,11 +97,15 @@
     <Reference Include="Ninject.Web.WebApi, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.Web.WebApi.3.3.0\lib\net45\Ninject.Web.WebApi.dll</HintPath>
     </Reference>
+    <Reference Include="NMemory, Version=2.0.0.0, Culture=neutral, PublicKeyToken=afc61983f100d280, processorArchitecture=MSIL">
+      <HintPath>..\packages\NMemory.2.0.3\lib\net45\NMemory.dll</HintPath>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Linq.Dynamic.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=0f07ec44de6ac832, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Dynamic.Core.1.0.8.6\lib\net46\System.Linq.Dynamic.Core.dll</HintPath>
@@ -214,8 +221,9 @@
     <Compile Include="Controllers\Api\SensorsController.cs" />
     <Compile Include="Controllers\Emulation\EmulationSensorsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Emulator\Database\EmulatorContext.cs" />
+    <Compile Include="Emulator\DI\EmulatorDependencyResolver.cs" />
     <Compile Include="Emulator\Emulator.cs" />
-    <Compile Include="Emulator\Filters\EmulationModeFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -374,9 +382,25 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Contracts\Contracts.csproj">
+      <Project>{0DEEBD2D-97B7-4119-9F2B-2F39A6316ECD}</Project>
+      <Name>Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL.Implementations\DAL.Implementations.csproj">
+      <Project>{B5E75C43-E8AA-4B1A-A760-848C47BE22A8}</Project>
+      <Name>DAL.Implementations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DAL.Infrastructure\DAL.Infrastructure.csproj">
       <Project>{8138136e-0c02-4852-a1c4-c6f7551b6aa8}</Project>
       <Name>DAL.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL.Intarfaces\DAL.Intarfaces.csproj">
+      <Project>{578DDA9A-54B1-4821-A1BD-2E1E6850E51B}</Project>
+      <Name>DAL.Intarfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{BBF93305-7973-4CE4-A0F7-8BD2C072115D}</Project>
+      <Name>Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\Services.DTO\Services.DTO.csproj">
       <Project>{03AF0BAB-A8D8-4525-AFAC-DD1E79C8ECBC}</Project>

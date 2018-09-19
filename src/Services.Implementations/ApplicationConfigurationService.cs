@@ -1,4 +1,5 @@
 ﻿using DAL.Implementations.Contexts;
+using DAL.Intarfaces;
 using Domain.Admin;
 using Services.Interfaces;
 using System;
@@ -15,10 +16,10 @@ namespace Services.Implementations
         private static bool Value { get; set; }
         private static DateTime LastUpdate { get; set; }
 
-        private readonly DataContext _db;
+        private readonly IDataContext _db;
         private readonly DbSet<ApllicationConfiguration> _apllicationConfigurationRepository;
 
-        public ApplicationConfigurationService(DataContext context)
+        public ApplicationConfigurationService(IDataContext context)
         {
             _db = context;
             _apllicationConfigurationRepository = _db.GetRepository<ApllicationConfiguration>();
