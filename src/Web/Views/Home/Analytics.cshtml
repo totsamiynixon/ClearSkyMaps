@@ -13,7 +13,7 @@
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" id="nav-result-tab" data-toggle="tab" href="#nav-result" role="tab" aria-controls="nav-home" aria-selected="true">Показания</a>
-                <a class="nav-item nav-link" id="nav-data-tab" data-toggle="tab" href="#nav-data" role="tab" aria-controls="nav-profile" aria-selected="false">Данные</a>
+                <a class="nav-item nav-link" id="nav-data-tab" data-toggle="tab" href="#nav-data" role="tab" aria-controls="nav-profile" aria-selected="false" :class="{'disabled':!dataCanBeLoaded}">Данные</a>
             </div>
         </nav>
         <div class="tab-content">
