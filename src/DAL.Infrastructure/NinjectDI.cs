@@ -1,4 +1,5 @@
 ﻿using DAL.Implementations.Contexts;
+using DAL.Intarfaces;
 using Ninject.Modules;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace DAL.Infrastructure
     {
         public override void Load()
         {
-            Bind<DataContext>().To<DataContext>();
+            Bind<IDataContext>().To<DataContext>();
         }
     }
 }

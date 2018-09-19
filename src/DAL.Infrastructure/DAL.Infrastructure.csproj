@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -54,6 +55,10 @@
     <ProjectReference Include="..\DAL.Implementations\DAL.Implementations.csproj">
       <Project>{B5E75C43-E8AA-4B1A-A760-848C47BE22A8}</Project>
       <Name>DAL.Implementations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL.Intarfaces\DAL.Intarfaces.csproj">
+      <Project>{578DDA9A-54B1-4821-A1BD-2E1E6850E51B}</Project>
+      <Name>DAL.Intarfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
