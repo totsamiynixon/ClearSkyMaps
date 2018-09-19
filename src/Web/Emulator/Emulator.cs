@@ -24,6 +24,7 @@ namespace Web.Emulator
         private static Random _emulatorRandom = new Random();
         private static IEnumerable<IBinding> _bindings;
         private static EmulatorDependencyResolver _resolver;
+        private static double memoryLimit = 5e+8;
 
         static Emulator()
         {
@@ -48,6 +49,10 @@ namespace Web.Emulator
             _resolver = resolver;
         }
 
+        public static void SetMemoryLimit(double limit)
+        {
+            memoryLimit = limit;
+        }
         public static void StopEmulation()
         {
             if (IsEmulationEnabled)
@@ -82,7 +87,7 @@ namespace Web.Emulator
         {
             var service = _resolver.GetService<ISensorService>();
             _trackingKeys = new List<string>();
-            var iterations = _emulatorRandom.Next(0, 20);
+            var iterations = _emulatorRandom.Next(1, 20);
             for (int i = 0; i < iterations; i++)
             {
                 _trackingKeys.Add(await service.RegisterAndGetTrackingKeyAsync(GetFakeSensor()));
@@ -208,7 +213,7 @@ namespace Web.Emulator
         {
             Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
             long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
-            if (totalBytesOfMemoryUsed > 3e+8)
+            if (totalBytesOfMemoryUsed > memoryLimit)
             {
                 throw new OutOfMemoryException("Too much memory used!");
             }
