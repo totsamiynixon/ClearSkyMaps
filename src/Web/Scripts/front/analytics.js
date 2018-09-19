@@ -27,7 +27,8 @@ jQuery(function ($) {
             getIZA: getIZA
         },
         computed: {
-            valid: valid
+            dataCanBeLoaded: dataCanBeLoaded,
+            resultCanBeLoaded: resultCanBeLoaded
         },
         created: function () {
             this.getParameters();
@@ -59,9 +60,9 @@ jQuery(function ($) {
     })
 
     function proceedWatch() {
-            this.getResult();
-            this.readings.data = [];
-            this.getData();
+        this.getResult();
+        this.readings.data = [];
+        this.getData();
     }
     function exportData() {
         var url = "home/ExportValuesByPeriod?startPeriod=" + this.startPeriod + "&endPeriod=" + this.endPeriod + "&sensorId=" + window.settings.sensorId + "&everyNth=" + this.everyNth;
@@ -85,13 +86,16 @@ jQuery(function ($) {
     }
 
 
-    function valid() {
-        return this.currentParameter != null &&
-            this.startPeriod != null &&
-            this.endPeriod != null && this.currentProperty != null;
+    function dataCanBeLoaded() {
+        return this.startPeriod != null &&
+            this.endPeriod != null
+    }
+
+    function resultCanBeLoaded() {
+        return this.dataCanBeLoaded && this.currentParameter != null && this.currentProperty != null;
     }
     function getData() {
-        if (!this.valid) {
+        if (!this.dataCanBeLoaded) {
             return;
         }
         $.ajax({
@@ -123,7 +127,7 @@ jQuery(function ($) {
         });
     }
     function getResult() {
-        if (!this.valid) {
+        if (!this.resultCanBeLoaded) {
             return;
         }
         $.ajax({

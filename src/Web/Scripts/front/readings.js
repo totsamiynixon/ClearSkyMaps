@@ -76,7 +76,9 @@
                 return;
             }
             sensor.readings.unshift(readingModel.reading);
-            sensor.readings.pop();
+            if (sensor.readings.length > 10) {
+                sensor.readings.pop();
+            }
             that.updateMarkers();
         };
         $.connection.hub.start().done(function () {
@@ -248,7 +250,7 @@
         var that = this;
         that.sensors.forEach(function (sensor, index, arrya) {
             var reading = sensor.readings[0];
-            if (typeof(reading) === "undefined") {
+            if (typeof (reading) === "undefined") {
                 return;
             }
             var marker = new RichMarker({
