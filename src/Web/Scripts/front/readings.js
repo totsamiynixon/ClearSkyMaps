@@ -8,7 +8,7 @@
             collapsed: true
         },
         currentParameter: "cO2",
-        markers: []
+        mapItems: []
     }
     var map = null;
     var app = new Vue({
@@ -17,8 +17,8 @@
         methods: {
             initHub: initHub,
             initMap: initMap,
-            initMarkers: initMarkers,
-            updateMarkers: updateMarkers,
+            initMapItems: initMapItems,
+            updateMapItems: updateMapItems,
             initChart: initChart,
             initDataset: initDataset,
             updateDataset: updateDataset,
@@ -31,7 +31,7 @@
             displayParameter: function (param) {
                 if (this.currentParameter != param) {
                     this.currentParameter = param;
-                    this.updateMarkers();
+                    this.updateMapItems();
                     this.initDataset();
                 }
             }
@@ -55,7 +55,7 @@
             app.sensors = app.sensors.concat(responce);
             app.initHub();
             app.initMap();
-            app.initMarkers();
+            app.initMapItems();
             app.initChart();
             app.initDataset();
         }
@@ -79,7 +79,7 @@
             if (sensor.readings.length > 10) {
                 sensor.readings.pop();
             }
-            that.updateMarkers();
+            that.updateMapItems();
         };
         $.connection.hub.start().done(function () {
 
@@ -246,56 +246,53 @@
         );
     }
 
-    function initMarkers() {
+    function initMapItems() {
         var that = this;
         that.sensors.forEach(function (sensor, index, arrya) {
             var reading = sensor.readings[0];
             if (typeof (reading) === "undefined") {
                 return;
-            }
-            var marker = new RichMarker({
-                position: new google.maps.LatLng(sensor.latitude, sensor.longitude),
+            };
+            var mapItem = {};
+            var position = new google.maps.LatLng(sensor.latitude, sensor.longitude);
+            mapItem.marker = new RichMarker({
+                position: position,
                 map: map,
                 content: generateMarker(reading[that.currentParameter]),
                 shadow: 'none',
             });
-            marker.setOptions({
+            mapItem.marker.setOptions({
                 'opacity': 0.8
             });
-            marker.addListener('click', function () {
+            mapItem.marker.addListener('click', function () {
                 that.currentSensor = sensor;
                 $('#sensor-details').modal('show')
             });
-            that.markers.push(marker);
+            mapItem.area = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                center: position,
+                radius: 200
+            });
+            that.mapItems.push(mapItem);
         })
     }
-    function updateMarkers() {
+    function updateMapItems() {
         var that = this;
-        that.markers.forEach(function (marker, index, array) {
-            marker.setMap(null);
+        this.mapItems.forEach(function (mapItem, index, array) {
+            mapItem.marker.setContent(null);
         });
-        that.markers = [];
-        that.sensors.forEach(function (sensor, index, arrya) {
+        this.sensors.forEach(function (sensor, index, arrya) {
             var reading = sensor.readings[0];
             if (typeof (reading) === "undefined") {
                 return;
-            }
-            var marker = new RichMarker({
-                position: new google.maps.LatLng(sensor.latitude, sensor.longitude),
-                map: map,
-                content: generateMarker(reading[that.currentParameter]),
-                shadow: 'none',
-            });
-            marker.setOptions({
-                'opacity': 0.8
-            });
-            marker.addListener('click', function () {
-                that.currentSensor = sensor;
-                that.initDataset();
-                $('#sensor-details').modal('show')
-            });
-            that.markers.push(marker);
-        })
+            };
+            that.mapItems[index].marker.setContent(generateMarker(reading[that.currentParameter]));
+        });
     }
 
     function generateMarker(content) {
