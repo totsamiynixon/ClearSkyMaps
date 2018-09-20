@@ -22,6 +22,7 @@
             initChart: initChart,
             initDataset: initDataset,
             updateDataset: updateDataset,
+            buildRoute: buildRoute,
             expandTable: function () {
                 this.table.collapsed = false;
             },
@@ -377,5 +378,46 @@
         dataset.data.push(reading[this.currentParameter]);
         dataset.data.shift();
         chart.update();
+    }
+
+
+    function buildRoute() {
+        var that = this;
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        directionsDisplay.setMap(map);
+        directionsService.route({
+            origin: new google.maps.LatLng(this.sensors[0].latitude + 400/100000, this.sensors[0].longitude),
+            destination: new google.maps.LatLng(this.sensors[1].latitude, this.sensors[1].longitude - 600/100000),
+            travelMode: 'DRIVING'
+        }, function (response, status) {
+            if (status === 'OK') {
+                response.routes.forEach(function (route, index, routes) {
+                    checkIfRouteIsNormal(route, index, routes, that.sensors, that.mapItems)
+                })
+                directionsDisplay.setDirections(response);
+            } else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+
+
+    function checkIfRouteIsNormal(route, index, routes, sensors, mapItems) {
+        var Polyline = new google.maps.Polyline({
+            path: route.overview_path,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map:map
+        });
+        mapItems.forEach(function (mapItem) {
+            var bounds = mapItem.area.getBounds();
+            if (google.maps.geometry.poly.isLocationOnEdge(mapItem.area.getCenter(), Polyline, mapItem.area.getRadius() * (Math.pow(10,-5)))) {
+                alert("Вы в опасной зоне!");
+            }
+        })
     }
 });
