@@ -1,7 +1,10 @@
-﻿using DAL.Implementations;
+﻿using AutoMapper;
+using DAL.Implementations;
 using DAL.Implementations.Contexts;
 using DAL.Intarfaces;
 using Domain;
+using Services.DTO.Enums;
+using Services.DTO.PollutionCalculator;
 using Services.DTO.Reading;
 using Services.DTO.Sensor;
 using Services.Interfaces;
@@ -11,17 +14,25 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Z.EntityFramework.Plus;
 
 namespace Services.Implementations
 {
     public class SensorService : ISensorService
     {
         private readonly IDataContext _db;
-        private readonly DbSet<Sensor> _sensorRepository;
-        public SensorService(IDataContext dbcontext)
+        private readonly IDbSet<Sensor> _sensorRepository;
+        private readonly IPollutionLevelCalculationService _pollutionLevelCalculationService;
+        private readonly IMapper _mapper;
+        public SensorService(
+            IDataContext dbcontext,
+            IPollutionLevelCalculationService pollutionLevelCalculationService,
+            IMapper mapper)
         {
             _db = dbcontext;
             _sensorRepository = _db.GetRepository<Sensor>();
+            _mapper = mapper;
+            _pollutionLevelCalculationService = pollutionLevelCalculationService;
         }
         /// <summary>
         /// Checks does sensor with provided tracking key exist.
@@ -38,14 +49,20 @@ namespace Services.Implementations
             return _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => f.Id).FirstOrDefaultAsync();
         }
 
+
+        public async Task<(int sensorId, PollutionLevel level)> GetSensorPollutionLevelInfoAsync(string trackingKey)
+        {
+            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).IncludeFilter(f => f.Readings.Take(10)).FirstOrDefaultAsync();
+            return (sensor.Id, _pollutionLevelCalculationService.Calculate(_mapper.Map<IEnumerable<Reading>, ReadingForPollutionCalculation[]>(sensor.Readings)));
+        }
+
         /// <summary>
         /// Returns list of records with provided length.
         /// </summary>
-        /// <param name="count">Count of records</param>
         /// <returns> List of sensors with readings </returns>
-        public Task<List<SensorInfoDTO>> GetSensorListAsync(int count)
+        public async Task<List<SensorInfoDTO>> GetSensorListAsync()
         {
-            return _sensorRepository.Select(f => new SensorInfoDTO
+            var sensors = await _sensorRepository.Select(f => new SensorInfoDTO
             {
                 Id = f.Id,
                 Latitude = f.Latitude,
@@ -61,8 +78,13 @@ namespace Services.Implementations
                     Preassure = z.Preassure,
                     Temp = z.Temp,
                     Created = z.Created,
-                }).Take(count).ToList()
+                }).Take(10).ToList()
             }).ToListAsync();
+            Parallel.ForEach(sensors, (sensor) =>
+            {
+                sensor.LatestPollutionLevel = _pollutionLevelCalculationService.Calculate(_mapper.Map<List<SensorReadingDTO>, ReadingForPollutionCalculation[]>(sensor.Readings));
+            });
+            return sensors;
         }
         /// <summary>
         /// Every sensor should be registered in system to be able to send data. Use this method to do it.

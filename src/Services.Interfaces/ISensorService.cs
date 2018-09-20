@@ -1,4 +1,5 @@
-﻿using Services.DTO.Sensor;
+﻿using Services.DTO.Enums;
+using Services.DTO.Sensor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,10 @@ namespace Services.Interfaces
 
         Task<string> RegisterAndGetTrackingKeyAsync(RegisterSensorDTO sensor);
 
-        Task<List<SensorInfoDTO>> GetSensorListAsync(int count);
+        Task<List<SensorInfoDTO>> GetSensorListAsync();
 
         Task<int> GetSensorIdByTrackingKeyAsync(string trackingKey);
+
+        Task<(int sensorId, PollutionLevel level)> GetSensorPollutionLevelInfoAsync(string trackingKey);
     }
 }

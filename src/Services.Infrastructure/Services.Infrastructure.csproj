@@ -51,8 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mappings\DomainToDTOConfiguration.cs" />
-    <Compile Include="Mappings\DTOToDomainConfiguration.cs" />
     <Compile Include="NinjectDI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

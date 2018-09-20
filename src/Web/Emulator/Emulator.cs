@@ -98,7 +98,7 @@ namespace Web.Emulator
         {
             var context = _resolver.GetService<IDataContext>();
             var repo = context.GetRepository<Sensor>();
-            repo.RemoveRange(repo.ToList());
+            repo.ToList().ForEach(s => repo.Remove(s));
             await context.SaveChangesAsync();
             _trackingKeys = null;
         }

@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Services.DTO.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Attributes
+namespace Services.DTO.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class PDK : Attribute
     {
         public double PDKValue { get; set; }
-        public int LevelOfDanger { get; set; }
-        public PDK(double pdk, int levelOfDanger)
+        public LevelOfDanger LevelOfDanger { get; set; }
+        public PDK(double pdk, LevelOfDanger levelOfDanger)
         {
             PDKValue = pdk;
-            LevelOfDanger = levelOfDanger;
+            LevelOfDanger = LevelOfDanger;
         }
     }
 }

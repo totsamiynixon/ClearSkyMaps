@@ -25,7 +25,6 @@ namespace ArduinoServer.Controllers.Api
         private readonly IHubContext<IReadingsClient> _hubContext;
         private readonly IReadingService _readingService;
         private readonly ISensorService _sensorService;
-
         public ReadingsController(IReadingService readingService, ISensorService sensorService)
         {
             _hubContext = GlobalHost.ConnectionManager.GetHubContext<ReadingsHub, IReadingsClient>();
@@ -41,10 +40,11 @@ namespace ArduinoServer.Controllers.Api
                 return BadRequest(ModelState);
             }
             await _readingService.SaveReadingAsync(trackingKey, model);
-            var sensorId = await _sensorService.GetSensorIdByTrackingKeyAsync(trackingKey);
+            var sensorPollutionModel = await _sensorService.GetSensorPollutionLevelInfoAsync(trackingKey);
             var hubReadings = new SensorReadingDispatchModel
             {
-                SensorId = sensorId,
+                SensorId = sensorPollutionModel.sensorId,
+                LatestPollutionLevel = sensorPollutionModel.level,
                 Reading = new SensorReadingDTO
                 {
                     CH4 = model.CH4,

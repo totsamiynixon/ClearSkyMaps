@@ -1,7 +1,8 @@
 ﻿using DAL;
 using DAL.Intarfaces;
 using Domain;
-using Domain.Attributes;
+using Services.DTO.Attributes;
+using Services.DTO.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -12,7 +13,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Z.EntityFramework.Plus;
 
 namespace Web.Controllers.Api
 {
@@ -21,13 +21,13 @@ namespace Web.Controllers.Api
     {
 
         private readonly IDataContext _db;
-        private readonly DbSet<Reading> _readingsRepository;
-        private static Dictionary<int, double> _ai = new Dictionary<int, double>
+        private readonly IDbSet<Reading> _readingsRepository;
+        private static Dictionary<LevelOfDanger, double> _ai = new Dictionary<LevelOfDanger, double>
         {
-            {1, 1.5},
-            {2, 1.3},
-            {3, 1.0},
-            {4, 0.85}
+            {LevelOfDanger.Low, 1.5},
+            {LevelOfDanger.Medium, 1.3},
+            {LevelOfDanger.High, 1.0},
+            {LevelOfDanger.UltraHigh, 0.85}
         };
         public AnalyticsController(IDataContext context)
         {

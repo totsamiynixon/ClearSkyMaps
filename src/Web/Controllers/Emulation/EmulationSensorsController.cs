@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Web.Emulator;
 using Web.Models;
-using Z.EntityFramework.Plus;
 
 namespace ArduinoServer.Controllers.Api
 {

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Web.Models;
-using Z.EntityFramework.Plus;
 
 namespace ArduinoServer.Controllers.Api
 {
@@ -24,7 +23,7 @@ namespace ArduinoServer.Controllers.Api
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            return Ok(await _sensorService.GetSensorListAsync(10));
+            return Ok(await _sensorService.GetSensorListAsync());
         }
 
 

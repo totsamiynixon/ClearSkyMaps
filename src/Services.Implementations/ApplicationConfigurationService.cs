@@ -17,7 +17,7 @@ namespace Services.Implementations
         private static DateTime LastUpdate { get; set; }
 
         private readonly IDataContext _db;
-        private readonly DbSet<ApllicationConfiguration> _apllicationConfigurationRepository;
+        private readonly IDbSet<ApllicationConfiguration> _apllicationConfigurationRepository;
 
         public ApplicationConfigurationService(IDataContext context)
         {

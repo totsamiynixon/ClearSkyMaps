@@ -59,6 +59,7 @@ textarea {
     box-shadow: none;
     color: #fff;
     position: relative;
+    transform: translate(0,50%);
 }
 
     .richmarker-wrapper p {
@@ -102,4 +103,10 @@ textarea {
 
 .charts .tab-content {
     margin-bottom: 100px;
+}
+
+#map-context-menu {
+    position: fixed;
+    z-index: 1;
+    background-color: #fff;
 }
