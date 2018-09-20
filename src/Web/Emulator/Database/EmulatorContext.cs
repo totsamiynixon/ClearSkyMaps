@@ -18,7 +18,7 @@ namespace Web.Emulator.Database
         {
         }
 
-        public DbSet<TEntity> GetRepository<TEntity>() where TEntity : class, IEntity
+        public IDbSet<TEntity> GetRepository<TEntity>() where TEntity : class, IEntity
         {
             return this.Set<TEntity>();
         }

@@ -21,7 +21,7 @@ namespace Web.Controllers.Api
     {
 
         private readonly IDataContext _db;
-        private readonly DbSet<Reading> _readingsRepository;
+        private readonly IDbSet<Reading> _readingsRepository;
         private static Dictionary<int, double> _ai = new Dictionary<int, double>
         {
             {1, 1.5},

@@ -15,8 +15,8 @@ namespace Services.Implementations
 {
     public class ReadingService : IReadingService
     {
-        private readonly DbSet<Reading> _readingRepository;
-        private readonly DbSet<Sensor> _sensorRepository;
+        private readonly IDbSet<Reading> _readingRepository;
+        private readonly IDbSet<Sensor> _sensorRepository;
         private readonly IDataContext _db;
         public ReadingService(IDataContext context)
         {

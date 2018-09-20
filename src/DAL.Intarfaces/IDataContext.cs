@@ -10,7 +10,7 @@ namespace DAL.Intarfaces
 {
     public interface IDataContext : IDisposable
     {
-        DbSet<TEntity> GetRepository<TEntity>() where TEntity : class, IEntity;
+        IDbSet<TEntity> GetRepository<TEntity>() where TEntity : class, IEntity;
         Task<int> SaveChangesAsync();
     }
 }

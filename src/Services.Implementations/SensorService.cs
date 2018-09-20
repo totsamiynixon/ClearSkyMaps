@@ -17,7 +17,7 @@ namespace Services.Implementations
     public class SensorService : ISensorService
     {
         private readonly IDataContext _db;
-        private readonly DbSet<Sensor> _sensorRepository;
+        private readonly IDbSet<Sensor> _sensorRepository;
         public SensorService(IDataContext dbcontext)
         {
             _db = dbcontext;
