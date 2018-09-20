@@ -59,6 +59,7 @@ textarea {
     box-shadow: none;
     color: #fff;
     position: relative;
+    transform: translate(0,50%);
 }
 
     .richmarker-wrapper p {
