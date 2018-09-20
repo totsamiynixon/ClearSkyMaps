@@ -41,14 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\PDK.cs" />
+    <Compile Include="Enums\LevelOfDanger.cs" />
+    <Compile Include="Enums\PollutionLevel.cs" />
+    <Compile Include="Models\PollutionCalculator\ReadingForPollutionCalculation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reading\SaveReadingDTO.cs" />
-    <Compile Include="Reading\SensorReadingDTO.cs" />
-    <Compile Include="Sensor\RegisterSensorDTO.cs" />
-    <Compile Include="Sensor\SensorInfoDTO.cs" />
+    <Compile Include="Models\Reading\SaveReadingDTO.cs" />
+    <Compile Include="Models\Reading\SensorReadingDTO.cs" />
+    <Compile Include="Models\Sensor\RegisterSensorDTO.cs" />
+    <Compile Include="Models\Sensor\SensorInfoDTO.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApplicationConfiguration\" />
+    <Folder Include="Models\ApplicationConfiguration\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

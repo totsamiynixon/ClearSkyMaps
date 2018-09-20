@@ -18,8 +18,10 @@ namespace Services.Implementations
         private readonly IDbSet<Reading> _readingRepository;
         private readonly IDbSet<Sensor> _sensorRepository;
         private readonly IDataContext _db;
-        public ReadingService(IDataContext context)
+        private readonly IMapper _mapper;
+        public ReadingService(IDataContext context, IMapper mapper)
         {
+            _mapper = mapper;
             _db = context;
             _readingRepository = _db.GetRepository<Reading>();
             _sensorRepository = _db.GetRepository<Sensor>();
@@ -28,7 +30,7 @@ namespace Services.Implementations
         public async Task<List<SensorReadingDTO>> GetReadingsForExportAsync(DateTime startPeriod, DateTime endPeriod, int sensorId, int? everyNth = null)
         {
             var items = await _readingRepository.Where(f => f.Created >= startPeriod && f.Created < endPeriod && f.SensorId == sensorId && !everyNth.HasValue || f.Id % everyNth.Value == 0).ToListAsync();
-            return Mapper.Map<List<Reading>, List<SensorReadingDTO>>(items);
+            return _mapper.Map<List<Reading>, List<SensorReadingDTO>>(items);
         }
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace Services.Implementations
             {
                 throw new KeyNotFoundException("Tracking key doesn't exist! Register sensor first, please!");
             }
-            var entity = Mapper.Map<SaveReadingDTO, Reading>(readingModel);
+            var entity = _mapper.Map<SaveReadingDTO, Reading>(readingModel);
             entity.SensorId = sensor.Id;
             _readingRepository.Add(entity);
             await _db.SaveChangesAsync();

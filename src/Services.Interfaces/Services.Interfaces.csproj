@@ -46,11 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IApplicationConfigurationService.cs" />
+    <Compile Include="IPollutionLevelCalculationService.cs" />
     <Compile Include="IReadingsService.cs" />
     <Compile Include="ISensorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{BBF93305-7973-4CE4-A0F7-8BD2C072115D}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Services.DTO\Services.DTO.csproj">
       <Project>{03AF0BAB-A8D8-4525-AFAC-DD1E79C8ECBC}</Project>
       <Name>Services.DTO</Name>

@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-header" id="LPG"  @@click="displayParameter('lpg')" :class="{'active': currentParameter == 'lpg'}">
+        <div class="card-header" id="LPG" @@click="displayParameter('lpg')" :class="{'active': currentParameter == 'lpg'}">
             <h5 class="mb-0">
                 <span>LPG</span>
                 <button class="btn btn-link" data-toggle="collapse" data-target="#LPG-description" aria-expanded="true" aria-controls="#LPG-description">
@@ -64,7 +64,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-header" id="Dust"  @@click="displayParameter('dust')" :class="{'active': currentParameter == 'dust'}">
+        <div class="card-header" id="Dust" @@click="displayParameter('dust')" :class="{'active': currentParameter == 'dust'}">
             <h5 class="mb-0">
                 <span>Dust</span>
                 <button class="btn btn-link" data-toggle="collapse" data-target="#Dust-description" aria-expanded="true" aria-controls="#Dust-description">
@@ -79,7 +79,11 @@
             </div>
         </div>
 
-
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-success active" @@click="currentPossiblePollutionLevel = 0">Низкий</button>
+            <button type="button" class="btn" :class="{'btn-outline-warning':currentPossiblePollutionLevel < 1,'btn-warning active':currentPossiblePollutionLevel >= 1 }" @@click="currentPossiblePollutionLevel = 1">Средний</button>
+            <button type="button" class="btn" :class="{'btn-outline-danger':currentPossiblePollutionLevel < 2,'btn-danger active':currentPossiblePollutionLevel >= 2 }" @@click="currentPossiblePollutionLevel = 2">Высокий</button>
+        </div>
         <a class="btn btn-success" @@click="buildRoute">Build Route</a>
     </div>
 </div>

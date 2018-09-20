@@ -1,4 +1,5 @@
-﻿using Services.DTO.Reading;
+﻿using Services.DTO.Enums;
+using Services.DTO.Reading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace Services.DTO.Sensor
         public double Longitude { get; set; }
 
         public int Id { get; set; }
+
+        public PollutionLevel LatestPollutionLevel { get; set; }
 
         public List<SensorReadingDTO> Readings { get; set; }
     }
