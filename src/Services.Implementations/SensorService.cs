@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using DAL.Implementations;
-using DAL.Implementations.Contexts;
 using DAL.Intarfaces;
 using Domain;
+using Microsoft.EntityFrameworkCore;
 using Services.DTO.Enums;
 using Services.DTO.PollutionCalculator;
 using Services.DTO.Reading;
@@ -10,18 +9,16 @@ using Services.DTO.Sensor;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Z.EntityFramework.Plus;
 
 namespace Services.Implementations
 {
     public class SensorService : ISensorService
     {
         private readonly IDataContext _db;
-        private readonly IDbSet<Sensor> _sensorRepository;
+        private readonly DbSet<Sensor> _sensorRepository;
         private readonly IPollutionLevelCalculationService _pollutionLevelCalculationService;
         private readonly IMapper _mapper;
         public SensorService(
@@ -52,7 +49,7 @@ namespace Services.Implementations
 
         public async Task<(int sensorId, PollutionLevel level)> GetSensorPollutionLevelInfoAsync(string trackingKey)
         {
-            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).IncludeFilter(f => f.Readings.Take(10)).FirstOrDefaultAsync();
+            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => new { Id = f.Id, Readings = f.Readings.Take(10) }).FirstOrDefaultAsync();
             return (sensor.Id, _pollutionLevelCalculationService.Calculate(_mapper.Map<IEnumerable<Reading>, ReadingForPollutionCalculation[]>(sensor.Readings)));
         }
 

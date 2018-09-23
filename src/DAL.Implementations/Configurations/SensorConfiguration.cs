@@ -1,23 +1,25 @@
 ﻿using Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DAL.Implementations.Configurations
 {
-    public class SensorConfiguration : EntityTypeConfiguration<Sensor>
+    public class SensorConfiguration : IEntityTypeConfiguration<Sensor>
     {
-        public SensorConfiguration()
+        public void Configure(EntityTypeBuilder<Sensor> builder)
         {
-            Property(c => c.TrackingKey)
+            builder.Property(c => c.TrackingKey)
              .HasMaxLength(450)
-             .IsRequired()
-             .HasColumnAnnotation("Index", new IndexAnnotation(new IndexAttribute("IX_Sensor_Key")));
+             .IsRequired();
+            builder.HasIndex(i => i.Id);
+            builder.HasIndex(i => i.TrackingKey);
+            builder.HasKey(i => i.Id);
         }
     }
 }

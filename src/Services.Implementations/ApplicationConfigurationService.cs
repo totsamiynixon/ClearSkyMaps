@@ -1,10 +1,9 @@
-﻿using DAL.Implementations.Contexts;
-using DAL.Intarfaces;
+﻿using DAL.Intarfaces;
 using Domain.Admin;
+using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace Services.Implementations
         private static DateTime LastUpdate { get; set; }
 
         private readonly IDataContext _db;
-        private readonly IDbSet<ApllicationConfiguration> _apllicationConfigurationRepository;
+        private readonly DbSet<ApllicationConfiguration> _apllicationConfigurationRepository;
 
         public ApplicationConfigurationService(IDataContext context)
         {

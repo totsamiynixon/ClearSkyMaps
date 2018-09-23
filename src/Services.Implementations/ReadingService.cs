@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using DAL.Implementations.Contexts;
 using DAL.Intarfaces;
 using Domain;
+using Microsoft.EntityFrameworkCore;
 using Services.DTO.Reading;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +14,8 @@ namespace Services.Implementations
 {
     public class ReadingService : IReadingService
     {
-        private readonly IDbSet<Reading> _readingRepository;
-        private readonly IDbSet<Sensor> _sensorRepository;
+        private readonly DbSet<Reading> _readingRepository;
+        private readonly DbSet<Sensor> _sensorRepository;
         private readonly IDataContext _db;
         private readonly IMapper _mapper;
         public ReadingService(IDataContext context, IMapper mapper)

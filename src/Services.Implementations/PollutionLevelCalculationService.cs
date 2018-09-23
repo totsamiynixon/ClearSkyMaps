@@ -14,7 +14,7 @@ namespace Services.Implementations
         private static Random _random = new Random();
         public  PollutionLevel Calculate(IEnumerable<ReadingForPollutionCalculation> readings)
         {
-            return (PollutionLevel)_random.Next(0, 2);
+            return (PollutionLevel)_random.Next(0, 3);
         }
     }
 }
