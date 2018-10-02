@@ -42,7 +42,7 @@ init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 install:
-  - cmd: dotnet restore
+  - cmd: dotnet restore ./server/ClearSkyMaps.sln
 clone_depth: 1
 test:
   assemblies:
