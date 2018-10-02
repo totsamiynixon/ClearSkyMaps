@@ -1,0 +1,29 @@
+﻿<div id="side-menu">
+    <h3>Параметры</h3>
+    <div class="btn-group" role="group">
+        <button type="button" v-for="parameter in parameters" :key="parameter" class="btn btn-secondary" @@click="setCurrentParameter(parameter)" :class="{'btn-success': currentParameter == parameter}">{{parameter}}</button>
+    </div>
+    <h3>Показатель</h3>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" @@click="setCurrentProperty('SI')" class="btn btn-secondary" :class="{'btn-success': currentProperty == 'SI'}">СИ</button>
+        <button type="button" @@click="setCurrentProperty('NP')" class="btn btn-secondary" :class="{'btn-success': currentProperty == 'NP'}">НП</button>
+        <button type="button" @@click="setCurrentProperty('PZsr')" class="btn btn-secondary" :class="{'btn-success': currentProperty == 'PZsr'}">ПЗср</button>
+    </div>
+    <button class="btn btn-outline-dark" @@click.prevent="getIZA">ИЗА</button>
+    <div class="form-group bmd-form-group">
+        <label for="startPeriod">Начало отсчета</label>
+        <input type="text" @@change="setStartPeriod" class="form-control material-datepicker" id="startPeriod">
+        <span class="bmd-help">Введите дату начала отсчета</span>
+    </div>
+    <div class="form-group bmd-form-group">
+        <label for="endPeriod">Конец отсчета</label>
+        <input type="text" @@change="setEndPeriod($event.target.value)" class="form-control material-datepicker" id="endPeriod">
+        <span class="bmd-help">Введите дату конца отсчета</span>
+    </div>
+    <div class="form-group bmd-form-group">
+        <label for="everyNth">Каждое N-ое значение</label>
+        <input type="text" v-model="everyNth" class="form-control" id="everyNth">
+        <span class="bmd-help">Каждое N-ое значение</span>
+    </div>
+    <button class="btn btn-outline-dark" @@click.prevent="exportData">Экспорт</button>
+</div>

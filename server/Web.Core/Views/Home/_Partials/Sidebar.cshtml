@@ -1,0 +1,89 @@
+﻿<div id="side-menu">
+    <div class="card">
+        <div class="card-header" id="CO2" @@click="displayParameter('cO2')" :class="{'active': currentParameter == 'cO2'}">
+            <h5 class="mb-0">
+                <span>CO2</span>
+                <button class="btn btn-link" data-toggle="collapse" data-target="#CO2-description" aria-expanded="true" aria-controls="#CO2-description">
+                    Диоксид углерода
+                </button>
+            </h5>
+        </div>
+
+        <div id="CO2-description" class="collapse show" aria-labelledby="CO2" data-parent="#side-menu">
+            <div class="card-body">
+                Углекислый газ, газ без запаха и цвета, тяжелее воздуха, при сильном охлаждении кристаллизуется в виде белой снегообразной массы — «сухого льда». При атмосферном давлении он не плавится, а испаряется, температура сублимации −78 °С. Углекислый газ образуется при гниении и горении органических веществ. Содержится в воздухе и минеральных источниках, выделяется при дыхании животных и растений. Растворим в воде (0,738 объёмов углекислого газа в одном объёме воды при 15 °С).
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="LPG" @@click="displayParameter('lpg')" :class="{'active': currentParameter == 'lpg'}">
+            <h5 class="mb-0">
+                <span>LPG</span>
+                <button class="btn btn-link" data-toggle="collapse" data-target="#LPG-description" aria-expanded="true" aria-controls="#LPG-description">
+                    Сжи́женные углеводоро́дные га́зы
+                </button>
+            </h5>
+        </div>
+
+        <div id="LPG-description" class="collapse" aria-labelledby="LPG" data-parent="#side-menu">
+            <div class="card-body">
+                Смесь сжиженных под давлением лёгких углеводородов с температурой кипения от −50 до 0 °C. Предназначены для применения в качестве топлива, а также используются в качестве сырья для органического синтеза. Состав может существенно различаться, основные компоненты: пропан, изобутан и н-бутан.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="CO" @@click="displayParameter('co')" :class="{'active': currentParameter == 'co'}">
+            <h5 class="mb-0">
+                <span>CO</span>
+                <button class="btn btn-link" data-toggle="collapse" data-target="#CO-description" aria-expanded="true" aria-controls="#CO-description">
+                    Oксид углерода
+                </button>
+            </h5>
+        </div>
+
+        <div id="CO-description" class="collapse" aria-labelledby="CO" data-parent="#side-menu">
+            <div class="card-body">
+                Бесцветный чрезвычайно токсичный газ без вкуса и запаха, легче воздуха (при нормальных условиях)
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="CH4" @@click="displayParameter('cH4')" :class="{'active': currentParameter == 'cH4'}">
+            <h5 class="mb-0">
+                <span>CH4</span>
+                <button class="btn btn-link" data-toggle="collapse" data-target="#CH4-description" aria-expanded="true" aria-controls="#CH4-description">
+                    Метан
+                </button>
+            </h5>
+        </div>
+
+        <div id="CH4-description" class="collapse" aria-labelledby="CH4" data-parent="#side-menu">
+            <div class="card-body">
+                Простейший углеводород, бесцветный газ (в нормальных условиях) без запаха, химическая формула — CH4. Малорастворим в воде, легче воздуха. При использовании в быту, промышленности в метан обычно добавляют одоранты (обычно тиолы) со специфическим «запахом газа». Метан нетоксичен и неопасен для здоровья человека. Однако имеются данные, что метан относится к токсическим веществам, действующим на центральную нервную систему.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="Dust" @@click="displayParameter('dust')" :class="{'active': currentParameter == 'dust'}">
+            <h5 class="mb-0">
+                <span>Dust</span>
+                <button class="btn btn-link" data-toggle="collapse" data-target="#Dust-description" aria-expanded="true" aria-controls="#Dust-description">
+                    Пыль
+                </button>
+            </h5>
+        </div>
+
+        <div id="Dust-description" class="collapse" aria-labelledby="Dust" data-parent="#side-menu">
+            <div class="card-body">
+                мелкие твёрдые частицы органического или минерального происхождения. К пыли относят частицы меньшего диаметра от долей микрона и до максимального — 0,1 мм. Более крупные частицы переводят материал в разряд песка, который имеет размеры от 0,1 до 5 мм.
+            </div>
+        </div>
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-success active" @@click="currentPossiblePollutionLevel = 0">Низкий</button>
+            <button type="button" class="btn" :class="{'btn-outline-warning':currentPossiblePollutionLevel < 1,'btn-warning active':currentPossiblePollutionLevel >= 1 }" @@click="currentPossiblePollutionLevel = 1">Средний</button>
+            <button type="button" class="btn" :class="{'btn-outline-danger':currentPossiblePollutionLevel < 2,'btn-danger active':currentPossiblePollutionLevel >= 2 }" @@click="currentPossiblePollutionLevel = 2">Высокий</button>
+        </div>
+        <a class="btn btn-success" @@click="buildRoute">Build Route</a>
+    </div>
+</div>
