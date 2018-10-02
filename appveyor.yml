@@ -10,39 +10,39 @@ for:
       only:
         - master
     build:
-      project: src/ClearSkyMaps.sln
+      project: server/ClearSkyMaps.sln
   - branches:
       only:
         - production
     environment:
-      DEPLOY_STAGE: Production
+      ASPNETCORE_ENVIRONMENT: Production
     build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile /p:Configuration=Release
+      - cmd: dotnet publish -c Release -o ../release
     artifacts:
-      - path: ./src/release
+      - path: ./server/release
         name: ProductionRelease
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath src/ProductionRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath server/ProductionRelease.zip
   - branches:
       only:
         - staging
     environment:
-      DEPLOY_STAGE: Staging
+      ASPNETCORE_ENVIRONMENT: Staging
     build_script:
-      - cmd: msbuild src/ClearSkyMaps.sln /p:DeployOnBuild=true /p:PublishProfile=PublishToFolderProfile /p:Configuration=Release
+      - cmd: dotnet publish -c Release -o ../release
     artifacts:
       - path: ./src/release
         name: StagingRelease
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath src/StagingRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath server/StagingRelease.zip
 
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
-before_build:
-  - nuget restore src/ClearSkyMaps.sln
+install:
+  - cmd: dotnet restore
 clone_depth: 1
 test:
   assemblies:
