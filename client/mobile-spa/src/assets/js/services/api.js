@@ -3,6 +3,10 @@ import config from "app-config";
 
 axios.defaults.baseURL = config.baseURL;
 
-export const getAllSensors = () => {
+getAllSensors = () => {
   return axios.get("/api/sensors");
+};
+
+export default {
+  getAllSensors
 };

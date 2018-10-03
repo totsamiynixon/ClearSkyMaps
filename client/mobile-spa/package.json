@@ -44,6 +44,7 @@
   "dependencies": {
     "@aspnet/signalr": "^1.0.4",
     "app-api-agent": "file: ./src/assets/js/services/api.js",
+    "app-map-agent": "file: ./src/assets/js/services/map.js",
     "app-config": "file: ./src/assets/js/config.js",
     "app-hub-agent": "file: ./src/assets/js/services/hub.js",
     "axios": "^0.18.0",
@@ -53,6 +54,8 @@
     "framework7": "^3.4.0",
     "framework7-icons": "^0.9.1",
     "framework7-vue": "^3.4.0",
+    "google-maps": "^3.3.0",
+    "googlemaps-js-rich-marker": "^1.0.2",
     "loglevel": "^1.4.1",
     "material-design-icons": "^3.0.1",
     "moment": "^2.22.2",
