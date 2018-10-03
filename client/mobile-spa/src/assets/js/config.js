@@ -1,6 +1,6 @@
 const config = {
   baseUrl: null,
-  hubName: "readingsHub"
+  hubName: "readings"
 };
 
 if (process.env.NODE_ENV == "production") {
