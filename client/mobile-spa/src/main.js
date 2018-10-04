@@ -1,47 +1,34 @@
 // Import Vue
 import Vue from "vue";
 
-// Import Framework7
+// Import F7
 import Framework7 from "framework7/framework7.esm.bundle.js";
 
-// Import Framework7 Vue
+// Import F7 Vue Plugin
 import Framework7Vue from "framework7-vue/framework7-vue.esm.bundle.js";
 
-// Import F7 Style
-import Framework7CSS from "framework7/css/framework7.css";
+// Import F7 Styles
+import Framework7Styles from "framework7/css/framework7.css";
 
-// Import F7 iOS Icons
-import Framework7Icons from "framework7-icons/css/framework7-icons.css";
+// Import Icons and App Custom Styles
+import IconsStyles from "./css/icons.css";
+import AppStyles from "./css/app.css";
 
-// Import Material Icons
 import MaterialIcons from "material-design-icons/iconfont/material-icons.css";
-
-// Import Fontawesome Theme Styles
 import FontAwesome from "font-awesome/css/font-awesome.css";
-
-// Import App Custom Styles
-// import AppStyles from './assets/sass/main.scss'
-
 // Import App Component
-import app from "./main.vue";
+import App from "./app";
 
-// Import Vuex Storage
-import store from "./assets/vuex/storage.js";
-
-import toTimeFilter from "./assets/vue/filters/toTime.filter";
-
-// Different F7-Vue plugin initialization with f7 v3.0
+// Init F7 Vue Plugin
 Framework7.use(Framework7Vue);
 
-//Filters
-Vue.filter("toTime", toTimeFilter);
-// Init Vue App
-export default new Vue({
-  // Root Element
+// Init App
+new Vue({
   el: "#app",
-  store,
-  render: c => c("app"),
+  template: "<app/>",
+
+  // Register App Component
   components: {
-    app
+    app: App
   }
 });
