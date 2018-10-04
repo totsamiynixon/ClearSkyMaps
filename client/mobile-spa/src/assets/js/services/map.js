@@ -1,6 +1,6 @@
-import config from "app-config";
+import config from "../config";
 import GoogleMapsLoader from "google-maps";
-import RichMarker from "googlemaps-js-rich-marker";
+import rich_marker_js from "googlemaps-js-rich-marker";
 
 var google, map, areas;
 function initMap(el, onLoad) {
@@ -20,7 +20,7 @@ function initMap(el, onLoad) {
 }
 
 function createNewArea(pollutionLevel, lat, long, markerText, onMarkerClick) {
-  let guid = guid();
+  let guid = createGuid();
   areas[guid] = {};
   let position = new google.maps.LatLng(lat, long);
   areas[guid].circle = new google.maps.Circle({
@@ -33,7 +33,7 @@ function createNewArea(pollutionLevel, lat, long, markerText, onMarkerClick) {
     center: position,
     radius: 1000
   });
-  areas[guid].marker = new RichMarker({
+  areas[guid].marker = new rich_marker_js.RichMarker({
     position: position,
     map: map,
     content: generateMarker(markerText),
@@ -49,7 +49,7 @@ function updateArea(id, pollutionLevel, markerText) {
     strokeColor: getStrokeColorByPollutionLevel(pollutionLevel),
     fillColor: getFillColorByPollutionLevel(pollutionLevel)
   });
-  areas[id].marker.setContent(generateMarker(pollutionLevel));
+  areas[id].marker.setContent(generateMarker(markerText));
 }
 
 function getStrokeColorByPollutionLevel(pollutionLevel) {
@@ -78,7 +78,7 @@ function generateMarker(content) {
   return '<div class="richmarker-wrapper"><p>' + content + "</p></div>";
 }
 
-function guid() {
+function createGuid() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (
       c ^

@@ -1,10 +1,10 @@
 import axios from "axios";
-import config from "app-config";
+import config from "../config";
 
-axios.defaults.baseURL = config.baseURL;
+axios.defaults.baseURL = config.baseUrl;
 
-getAllSensors = () => {
-  return axios.get("/api/sensors");
+const getAllSensors = () => {
+  return axios.get("api/sensors");
 };
 
 export default {

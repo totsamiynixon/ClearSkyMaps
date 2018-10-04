@@ -1,9 +1,8 @@
-import signalR from "@aspnet/signalr";
-import config from "app-config";
-const hub = signalR
-  .HubConnectionBuilder()
+import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
+import config from "../config";
+const hub = new HubConnectionBuilder()
   .withUrl(config.baseUrl + config.hubName)
-  .configureLogging(signalR.LogLevel.Information)
+  .configureLogging(LogLevel.Information)
   .build();
 
 export default hub;

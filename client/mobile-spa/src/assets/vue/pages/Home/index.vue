@@ -1,9 +1,11 @@
 <template>
   <f7-page>
-    <home-sidebar></home-sidebar>
+    <home-sidebar @parameterSelected="setCurrentParameter"
+                  :currentParameter="currentParameter"></home-sidebar>
     <home-navbar></home-navbar>
     <div id="map"></div>
-    <home-details-popup></home-details-popup>
+    <home-details-popup :sensor="currentSensor"
+                        :currentParameter="currentParameter"></home-details-popup>
   </f7-page>
 </template>
 
@@ -12,9 +14,10 @@ import HomeSidebar from "./sidebar";
 import HomeNavbar from "./navbar";
 import HomeDetailsPopup from "./details.modal";
 
-import hub from "app-hub-agent";
-import map from "app-map-agent";
-import api from "app-api-agent";
+import chart from "../../../js/services/chart.js";
+import hub from "../../../js/services/hub.js";
+import map from "../../../js/services/map.js";
+import api from "../../../js/services/api.js";
 
 export default {
   data() {
@@ -27,9 +30,22 @@ export default {
     };
   },
   methods: {
-    openPopup() {
-      console.log("clicked");
+    openDetailsModal(sensorId) {
+      this.currentSensor = this.mapItems.find(
+        f => f.sensor.id == sensorId
+      ).sensor;
       this.$f7.popup.open(document.getElementById("home-details-popup"));
+      chart.updateDataset(this.currentSensor, this.currentParameter);
+    },
+    setCurrentParameter(currentParameter) {
+      this.currentParameter = currentParameter;
+      this.mapItems.forEach(mapItem => {
+        map.updateArea(
+          mapItem.areaId,
+          mapItem.sensor.latestPollutionLevel,
+          mapItem.sensor.readings[0][this.currentParameter]
+        );
+      });
     }
   },
   components: {
@@ -37,7 +53,8 @@ export default {
     HomeNavbar,
     HomeDetailsPopup
   },
-  onMounted() {
+  mounted() {
+    chart.initChart(document.getElementById("chart"));
     map.initMap(document.getElementById("map"), () => {
       hub.on("DispatchReadingAsync", readingModel => {
         let mapItem = this.mapItems.find(function(e, i, a) {
@@ -60,15 +77,15 @@ export default {
         );
       });
       hub.start().then(() => {
-        getAllSensors().then(response => {
-          this.data.mapItems = response.data.map(sensor => {
+        api.getAllSensors().then(response => {
+          this.mapItems = response.data.map(sensor => {
             return {
               sensor,
               areaId: map.createNewArea(
                 sensor.latestPollutionLevel,
                 sensor.latitude,
                 sensor.longitude,
-                sensor.readings[0][this.data.currentParameter],
+                sensor.readings[0][this.currentParameter],
                 () => {
                   this.openDetailsModal(sensor.id);
                 }
@@ -81,3 +98,8 @@ export default {
   }
 };
 </script>
+<style>
+#map {
+  position: static !important;
+}
+</style>

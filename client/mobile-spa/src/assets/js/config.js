@@ -6,7 +6,7 @@ const config = {
 if (process.env.NODE_ENV == "production") {
   config.baseUrl = "production_url";
 } else {
-  config.baseUrl = "http://localhost:51545/";
+  config.baseUrl = "http://localhost:56875/";
 }
 config.map = {};
 config.map.options = {

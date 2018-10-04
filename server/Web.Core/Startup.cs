@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Web.Core.Hubs;
@@ -29,7 +31,19 @@ namespace Web.Core
                 return Configuration;
             });
             BuildLibDependencies(services);
+            services.AddCors(o => o.AddPolicy("ClearSkyMapsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials()
+                       ;
+            }));
             services.AddMvc();
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("ClearSkyMapsPolicy"));
+            });
             services.AddSignalR();
             services.AddSingleton<Emulator.Emulator, Emulator.Emulator>();
         }
@@ -60,6 +74,7 @@ namespace Web.Core
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseCors("ClearSkyMapsPolicy");
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ReadingsHub>("/readings");

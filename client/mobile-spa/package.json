@@ -43,11 +43,8 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.0.4",
-    "app-api-agent": "file: ./src/assets/js/services/api.js",
-    "app-map-agent": "file: ./src/assets/js/services/map.js",
-    "app-config": "file: ./src/assets/js/config.js",
-    "app-hub-agent": "file: ./src/assets/js/services/hub.js",
     "axios": "^0.18.0",
+    "chart.js": "^2.7.2",
     "cordova-browser": "^5.0.4",
     "cordova-plugin-whitelist": "^1.3.3",
     "font-awesome": "^4.7.0",
