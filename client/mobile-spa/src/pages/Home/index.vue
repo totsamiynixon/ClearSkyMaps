@@ -39,6 +39,7 @@ export default {
       ).sensor;
       this.$f7.popup.open(document.getElementById("home-details-popup"));
       chart.updateDataset(this.currentSensor, this.currentParameter);
+      this.$f7.sheet.close(".router-sheet");
     },
     setCurrentParameter(currentParameter) {
       this.currentParameter = currentParameter;

@@ -4,7 +4,8 @@
       <f7-navbar>
         <f7-nav-left>
           <f7-link popup-close
-                   @click="table.collapsed = true"
+                   @click="()=>{table.collapsed = true; $f7.sheet.open('.router-sheet')}"
+
                    icon="icon-back"></f7-link>
         </f7-nav-left>
         <f7-nav-title>
@@ -19,12 +20,19 @@
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-toolbar tabbar>
+      <f7-toolbar tabbar
+                  labels>
         <f7-link tab-link="#tab-1"
                  @click="currentTab = 1"
-                 tab-link-active>График</f7-link>
+                 tab-link-active
+                 icon-md="fa:line-chart"
+                 icon-ios="fa:line-chart"
+                 text="График"></f7-link>
         <f7-link tab-link="#tab-2"
-                 @click="currentTab = 2">Таблица</f7-link>
+                 icon-md="fa:table"
+                 icon-ios="fa:table"
+                 text="Таблица"
+                 @click="currentTab = 2"></f7-link>
       </f7-toolbar>
       <f7-tabs>
         <f7-tab id="tab-1"
