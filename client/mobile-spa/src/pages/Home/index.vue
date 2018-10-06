@@ -1,13 +1,19 @@
 <template>
-  <f7-page>
+  <div>
     <home-sidebar @parameterSelected="setCurrentParameter"
                   :currentParameter="currentParameter"></home-sidebar>
-    <home-navbar></home-navbar>
-    <div id="map"></div>
-    <home-details-popup :sensor="currentSensor"
-                        :currentParameter="currentParameter"></home-details-popup>
-    <home-footer-sheet></home-footer-sheet>
-  </f7-page>
+    <f7-page>
+      <f7-page-content class="map-page">
+        <home-navbar :routerSheetOpened="routerSheet.opened"
+                     @routerSheetOpened="handleRouterSheetOpened"></home-navbar>
+        <div id="map"></div>
+        <home-details-popup :sensor="currentSensor"
+                            :currentParameter="currentParameter"></home-details-popup>
+        <home-footer-sheet :opened="routerSheet.opened"
+                           @closed="handleRouterSheetClosed"></home-footer-sheet>
+      </f7-page-content>
+    </f7-page>
+  </div>
 </template>
 
 <script>
@@ -25,6 +31,9 @@ import toTimeFilter from "../../filters/toTime.filter.js";
 export default {
   data() {
     return {
+      routerSheet: {
+        opened: true
+      },
       currentSensor: {
         readings: []
       },
@@ -50,6 +59,12 @@ export default {
           mapItem.sensor.readings[0][this.currentParameter]
         );
       });
+    },
+    handleRouterSheetClosed() {
+      this.routerSheet.opened = false;
+    },
+    handleRouterSheetOpened() {
+      this.routerSheet.opened = true;
     }
   },
   components: {
@@ -106,8 +121,11 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 #map {
   position: static !important;
+}
+.map-page {
+  overflow: hidden;
 }
 </style>

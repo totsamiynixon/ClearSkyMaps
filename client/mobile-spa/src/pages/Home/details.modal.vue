@@ -4,8 +4,7 @@
       <f7-navbar>
         <f7-nav-left>
           <f7-link popup-close
-                   @click="()=>{table.collapsed = true; $f7.sheet.open('.router-sheet')}"
-
+                   @click="()=>{table.collapsed = true;}"
                    icon="icon-back"></f7-link>
         </f7-nav-left>
         <f7-nav-title>
