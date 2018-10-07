@@ -6,7 +6,7 @@ const config = {
 if (process.env.NODE_ENV == "production") {
   config.baseUrl = "production_url";
 } else {
-  config.baseUrl = "https://localhost:44352/";
+  config.baseUrl = "http://localhost:56875/";
 }
 config.map = {};
 config.map.options = {
@@ -14,7 +14,7 @@ config.map.options = {
     lat: 53.904502,
     lng: 27.561261
   },
-  zoom: 12,
+  zoom: 11,
   scrollwheel: false,
   mapTypeControl: false,
   styles: [

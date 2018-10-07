@@ -18,6 +18,7 @@
         <f7-input type="text"
                   @input="handleQueryChanged"
                   :value="this.query"
+                  ref="query"
                   v-debounce="500" />
       </f7-list-item>
       <f7-list-item v-show="!expanded">
@@ -57,7 +58,9 @@ export default {
   methods: {
     handleFocus(prop) {
       this.expanded = true;
+      this.query = this.waypoints[prop].address;
       this.currentProp = prop;
+      this.$refs.query.$el.children[0].focus();
     },
     handlePlaceSelected(selectedPlace) {
       this.expanded = false;

@@ -2,7 +2,15 @@ import config from "../config";
 import GoogleMapsLoader from "google-maps";
 import rich_marker_js from "googlemaps-js-rich-marker";
 
-var google, map, areas, current, autocompleteService, placeService;
+var google,
+  map,
+  areas,
+  current,
+  autocompleteService,
+  placeService,
+  directionsService,
+  directionsDisplay,
+  geocoder;
 function initMap(el, onLoad) {
   GoogleMapsLoader.release();
   google, (map = null);
@@ -14,6 +22,9 @@ function initMap(el, onLoad) {
     map = new google.maps.Map(el, config.map.options);
     autocompleteService = new google.maps.places.AutocompleteService();
     placeService = new google.maps.places.PlacesService(map);
+    directionsService = new google.maps.DirectionsService();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    geocoder = new google.maps.Geocoder();
   });
   GoogleMapsLoader.onLoad(googleLib => {
     google = googleLib;
@@ -93,24 +104,18 @@ function getPropositionsByQuery(query) {
   return new Promise((resolve, reject) => {
     var request = {
       query: query,
-      fields: [
-        "photos",
-        "formatted_address",
-        "name",
-        "rating",
-        "opening_hours",
-        "geometry",
-        "id"
-      ],
-      locationBias: { radius: 10000, center: config.map.options.center }
+      fields: ["formatted_address", "geometry", "id"],
+      radius: 10000,
+      location: config.map.options.center
     };
-    placeService.findPlaceFromQuery(request, (result, status) => {
+    placeService.textSearch(request, (result, status) => {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         resolve(
           result.map(f => {
             return {
               id: f.id,
-              address: f.formatted_address
+              address: f.formatted_address,
+              geometry: f.geometry
             };
           })
         );
@@ -120,10 +125,26 @@ function getPropositionsByQuery(query) {
     });
   });
 }
+function buildRoute(from, to) {
+  directionsDisplay.setMap(map);
+  var request = {
+    origin: from,
+    destination: to,
+    travelMode: "WALKING"
+  };
+  directionsService.route(request, (response, status) => {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setOptions({ preserveViewport: true });
+      directionsDisplay.setDirections(response);
+      //map.setZoom(config.map.options.zoom);
+    }
+  });
+}
 
 export default {
   initMap,
   createNewArea,
   updateArea,
-  getPropositionsByQuery
+  getPropositionsByQuery,
+  buildRoute
 };

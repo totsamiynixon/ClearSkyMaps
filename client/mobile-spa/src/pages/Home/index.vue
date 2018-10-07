@@ -93,6 +93,15 @@ export default {
     handleRouterSheetPlaceSelected(payload) {
       this.routerSheet.waypoints[payload.propName] = payload.selectedPlace;
       this.routerSheet.propositions = [];
+      if (
+        this.routerSheet.waypoints.from.id &&
+        this.routerSheet.waypoints.to.id
+      ) {
+        map.buildRoute(
+          this.routerSheet.waypoints.from.geometry.location,
+          this.routerSheet.waypoints.to.geometry.location
+        );
+      }
     }
   },
   components: {
