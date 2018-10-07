@@ -13,33 +13,45 @@
       </div>
     </f7-navbar>
     <f7-list class="router-inputs">
-      <f7-list-item v-show="!expanded || currentProp == 'from'">
+      <f7-list-item v-show="expanded">
+        <f7-label floating>{{currentProp == "from" ? "Откуда" : "Куда"}}</f7-label>
+        <f7-input type="text"
+                  @input="handleQueryChanged"
+                  :value="this.query"
+                  v-debounce="500" />
+      </f7-list-item>
+      <f7-list-item v-show="!expanded">
         <f7-label floating>Откуда</f7-label>
         <f7-input type="text"
-                  @focus="handleFocus('from')" />
+                  @focus="handleFocus('from')"
+                  :value="this.waypoints.from.address" />
       </f7-list-item>
-      <f7-list-item v-show="!expanded || currentProp == 'to'">
+      <f7-list-item v-show="!expanded">
         <f7-label floating>Куда</f7-label>
         <f7-input type="text"
-                  @focus="handleFocus('to')" />
+                  @focus="handleFocus('to')"
+                  :value="this.waypoints.to.address" />
       </f7-list-item>
     </f7-list>
     <f7-list class="router-list"
              v-show="expanded">
-      <f7-list-item @click="handleBlur">
-        <span>1232312</span>
+      <f7-list-item v-for="proposition in propositions"
+                    :key="proposition.id"
+                    @click="handlePlaceSelected(proposition)">
+        {{proposition.address}}
       </f7-list-item>
     </f7-list>
   </f7-page>
 </template>
 
 <script>
+import debounce from "v-debounce";
 export default {
   data() {
     return {
       expanded: false,
       currentProp: "from",
-      propositions: []
+      query: ""
     };
   },
   methods: {
@@ -47,14 +59,26 @@ export default {
       this.expanded = true;
       this.currentProp = prop;
     },
-    handleBlur() {
+    handlePlaceSelected(selectedPlace) {
       this.expanded = false;
+      this.query = "";
+      this.$emit("placeSelected", {
+        selectedPlace,
+        propName: this.currentProp
+      });
     },
     closeRouterSheet() {
       this.$emit("closed");
+    },
+    handleQueryChanged(event) {
+      this.query = event.target.value;
+      this.$emit("queryChanged", this.query);
     }
   },
-  props: ["opened"]
+  props: ["opened", "propositions", "waypoints"],
+  directives: {
+    debounce
+  }
 };
 </script>
 

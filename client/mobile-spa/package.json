@@ -42,6 +42,7 @@
     "googlemaps-js-rich-marker": "^1.0.2",
     "material-design-icons": "^3.0.1",
     "moment": "^2.22.2",
+    "v-debounce": "^0.1.2",
     "vue": "^2.5.16"
   },
   "devDependencies": {

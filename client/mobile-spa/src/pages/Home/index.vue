@@ -10,6 +10,10 @@
         <home-details-popup :sensor="currentSensor"
                             :currentParameter="currentParameter"></home-details-popup>
         <home-footer-sheet :opened="routerSheet.opened"
+                           :propositions="routerSheet.propositions"
+                           :waypoints="routerSheet.waypoints"
+                           @queryChanged="handleRouterSheetQueryChanged"
+                           @placeSelected="handleRouterSheetPlaceSelected"
                            @closed="handleRouterSheetClosed"></home-footer-sheet>
       </f7-page-content>
     </f7-page>
@@ -32,7 +36,12 @@ export default {
   data() {
     return {
       routerSheet: {
-        opened: true
+        opened: true,
+        propositions: [],
+        waypoints: {
+          from: {},
+          to: {}
+        }
       },
       currentSensor: {
         readings: []
@@ -65,6 +74,25 @@ export default {
     },
     handleRouterSheetOpened() {
       this.routerSheet.opened = true;
+    },
+    handleRouterSheetQueryChanged(query) {
+      map.getPropositionsByQuery(query).then(
+        result => {
+          this.routerSheet.propositions = result;
+        },
+        error => {
+          var notificationWithButton = this.$f7.notification.create({
+            icon: '<i class="fa fa-exclamation">7</i>',
+            title: "Ошибка!",
+            subtitle: "Пожалуйста, проверьте свое интернет соединение!",
+            closeOnClick: true
+          });
+        }
+      );
+    },
+    handleRouterSheetPlaceSelected(payload) {
+      this.routerSheet.waypoints[payload.propName] = payload.selectedPlace;
+      this.routerSheet.propositions = [];
     }
   },
   components: {

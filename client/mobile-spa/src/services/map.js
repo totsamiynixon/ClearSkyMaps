@@ -2,7 +2,7 @@ import config from "../config";
 import GoogleMapsLoader from "google-maps";
 import rich_marker_js from "googlemaps-js-rich-marker";
 
-var google, map, areas;
+var google, map, areas, current, autocompleteService, placeService;
 function initMap(el, onLoad) {
   GoogleMapsLoader.release();
   google, (map = null);
@@ -12,6 +12,8 @@ function initMap(el, onLoad) {
   GoogleMapsLoader.LANGUAGE = "ru";
   GoogleMapsLoader.load(function(google) {
     map = new google.maps.Map(el, config.map.options);
+    autocompleteService = new google.maps.places.AutocompleteService();
+    placeService = new google.maps.places.PlacesService(map);
   });
   GoogleMapsLoader.onLoad(googleLib => {
     google = googleLib;
@@ -87,8 +89,41 @@ function createGuid() {
   );
 }
 
+function getPropositionsByQuery(query) {
+  return new Promise((resolve, reject) => {
+    var request = {
+      query: query,
+      fields: [
+        "photos",
+        "formatted_address",
+        "name",
+        "rating",
+        "opening_hours",
+        "geometry",
+        "id"
+      ],
+      locationBias: { radius: 10000, center: config.map.options.center }
+    };
+    placeService.findPlaceFromQuery(request, (result, status) => {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        resolve(
+          result.map(f => {
+            return {
+              id: f.id,
+              address: f.formatted_address
+            };
+          })
+        );
+        return;
+      }
+      reject();
+    });
+  });
+}
+
 export default {
   initMap,
   createNewArea,
-  updateArea
+  updateArea,
+  getPropositionsByQuery
 };
