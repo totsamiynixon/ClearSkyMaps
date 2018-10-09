@@ -24,10 +24,10 @@ for:
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
-        name: WebAppProd
+        name: WebAppProd_{build}
         type: Zip
     deploy_script:
-      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppProd_$(build).zip -domain %PRODUCTION_DOMAIN%
+      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppProd_{build}.zip -domain %PRODUCTION_DOMAIN%
   - branches:
       only:
         - staging
@@ -40,10 +40,10 @@ for:
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
-        name: WebAppStaging_$(build)
+        name: WebAppStaging_${build}
         type: Zip
     deploy_script:
-      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppStaging_$(build).zip -domain %STAGING_DOMAIN%
+      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppStaging_{build}.zip -domain %STAGING_DOMAIN%
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
