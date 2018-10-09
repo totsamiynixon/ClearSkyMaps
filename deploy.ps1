@@ -8,7 +8,8 @@
 [string]$projectName = $env:APPVEYOR_PROJECT_NAME;
 [string]$webSite = $env:WEB_SITE;
 [string]$stage = $env:APPVEYOR_REPO_BRANCH;
-$postParams = @{AccountName=$accountName;ProjectName=$projectName;Domain=$domain;Stage=$stage;Token=$token;Package=$artifacts[$artifactName].url}
+[string]$package = $artifacts[$artifactName].url;
+$postParams = @{AccountName=$accountName;ProjectName=$projectName;Domain=$domain;Stage=$stage;Token=$token;Package=$package}
 $Response = Invoke-WebRequest -Uri $web_depoy_host -Method POST -Body $postParams
 Write-Host $Response.Content
 if($Response.StatusCode -ne 200) {
