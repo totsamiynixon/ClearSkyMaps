@@ -9,40 +9,53 @@ for:
   - branches:
       only:
         - master
-    build:
-      project: server/ClearSkyMaps.sln
+    build_script:
+      - cmd: dotnet build server/ClearSkyMaps.sln
+      - cmd: npm run build --prefix client/mobile-spa
   - branches:
       only:
         - production
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      NOVE_ENV: production
     build_script:
       - cmd: dotnet publish -c Release -o ../release
+      - cmd: npm run build --prefix client/mobile-spa
     artifacts:
       - path: ./server/release
-        name: ProductionRelease
+        name: API
+        type: Zip
+      - path: ./client/mobile-spa/www
+        name: SPA
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath server/ProductionRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/API.zip -domain api.clearskymaps.totsamiynixon.com
+      - cmd: powershell -file deploy.ps1 -artifactPath ./client/mobile-spa/www/SPA.zip -domain clearskymaps.totsamiynixon.com
   - branches:
       only:
         - staging
     environment:
       ASPNETCORE_ENVIRONMENT: Staging
+      NOVE_ENV: staging
     build_script:
       - cmd: dotnet publish -c Release -o ../release
+      - cmd: npm run build --prefix client/mobile-spa
     artifacts:
-      - path: ./src/release
-        name: StagingRelease
+      - path: ./server/release
+        name: API
+        type: Zip
+      - path: ./client/mobile-spa/www
+        name: SPA
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath server/StagingRelease.zip
-
+      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/API.zip -domain api.staging.clearskymaps.totsamiynixon.com
+      - cmd: powershell -file deploy.ps1 -artifactPath ./client/mobile-spa/www/SPA.zip -domain staging.clearskymaps.totsamiynixon.com
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 install:
   - cmd: dotnet restore ./server/ClearSkyMaps.sln
+  - cmd: npm install --prefix client/mobile-spa
 clone_depth: 1
 test:
   assemblies:

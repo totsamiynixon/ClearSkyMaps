@@ -86,7 +86,7 @@
   </f7-popup>
 </template>
 <script>
-import toTimeFilter from "../../filters/toTime.filter.js";
+import toTimeFilter from "@/filters/toTime.filter.js";
 export default {
   data() {
     return {

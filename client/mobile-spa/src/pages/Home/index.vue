@@ -26,12 +26,12 @@ import HomeNavbar from "./navbar";
 import HomeDetailsPopup from "./details.modal";
 import HomeFooterSheet from "./footer.sheet";
 
-import chart from "../../services/chart.js";
-import hub from "../../services/hub.js";
-import map from "../../services/map.js";
-import api from "../../services/api.js";
+import chart from "@/services/chart.js";
+import hub from "@/services/hub.js";
+import map from "@/services/map.js";
+import api from "@/services/api.js";
 
-import toTimeFilter from "../../filters/toTime.filter.js";
+import toTimeFilter from "@/filters/toTime.filter.js";
 export default {
   data() {
     return {

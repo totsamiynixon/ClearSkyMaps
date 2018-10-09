@@ -31,19 +31,8 @@ namespace Web.Core
                 return Configuration;
             });
             BuildLibDependencies(services);
-            services.AddCors(o => o.AddPolicy("ClearSkyMapsPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials()
-                       ;
-            }));
+            ConfigureCORS(services);
             services.AddMvc();
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("ClearSkyMapsPolicy"));
-            });
             services.AddSignalR();
             services.AddSingleton<Emulator.Emulator, Emulator.Emulator>();
         }
@@ -52,6 +41,21 @@ namespace Web.Core
         {
             new Services.Infrastructure.DIModule().ConfigureServices(services);
             new DAL.Infrastructure.DIModule().ConfigureServices(services);
+        }
+
+        private void ConfigureCORS(IServiceCollection services)
+        {
+            services.AddCors(o => o.AddPolicy("ClearSkyMapsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyHeader()
+                       .AllowCredentials();
+            }));
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("ClearSkyMapsPolicy"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,7 +78,10 @@ namespace Web.Core
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseCors("ClearSkyMapsPolicy");
+            if ((env.IsDevelopment()))
+            {
+                app.UseCors("ClearSkyMapsPolicy");
+            }
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ReadingsHub>("/readings");

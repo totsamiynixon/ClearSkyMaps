@@ -1,4 +1,4 @@
-import config from "../config";
+import config from "@/config";
 import GoogleMapsLoader from "google-maps";
 import rich_marker_js from "googlemaps-js-rich-marker";
 

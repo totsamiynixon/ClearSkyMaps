@@ -18,8 +18,7 @@
         <f7-input type="text"
                   @input="handleQueryChanged"
                   :value="this.query"
-                  ref="query"
-                  v-debounce="500" />
+                  ref="query" />
       </f7-list-item>
       <f7-list-item v-show="!expanded">
         <f7-label floating>Откуда</f7-label>
@@ -46,7 +45,6 @@
 </template>
 
 <script>
-import debounce from "v-debounce";
 export default {
   data() {
     return {
@@ -78,10 +76,7 @@ export default {
       this.$emit("queryChanged", this.query);
     }
   },
-  props: ["opened", "propositions", "waypoints"],
-  directives: {
-    debounce
-  }
+  props: ["opened", "propositions", "waypoints"]
 };
 </script>
 
