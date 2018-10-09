@@ -21,7 +21,7 @@ for:
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
       - cmd: npm run build --prefix client/mobile-spa
-      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
+      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
         name: WebAppProd
@@ -37,7 +37,7 @@ for:
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
       - cmd: npm run build --prefix client/mobile-spa
-      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
+      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
         name: WebAppStaging
@@ -46,7 +46,7 @@ for:
       - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/WebAppStaging.zip -domain {STAGING_DOMAIN}
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
-  - cmd: git config --global core.autocrlf true
+  - fcmd: git config --global core.autocrlf true
 install:
   - cmd: dotnet restore ./server/ClearSkyMaps.sln
   - cmd: cd ./client/mobile-spa && npm install
