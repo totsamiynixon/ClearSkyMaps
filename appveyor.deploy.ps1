@@ -7,9 +7,9 @@
 [string]$accountName =  $env:APPVEYOR_ACCOUNT_NAME;
 [string]$projectName = $env:APPVEYOR_PROJECT_NAME;
 [string]$webSite = $env:WEB_SITE;
-[string]$stage = $env:APPVEYOR_REPO_BRANCH;
-[string]$package = $artifacts[$artifactName].url;
-$postParams = @{AccountName=$accountName;ProjectName=$projectName;Domain=$domain;Stage=$stage;Token=$token;Package=$package}
+[string]$branch = $env:APPVEYOR_REPO_BRANCH;
+[string]$package = "https://ci.appveyor.com/api/projects/$($accountName)/$($projectName)/artifacts/$($artifactName)?branch=$($branch)";
+$postParams = @{Domain=$domain;Token=$token;Package=$package}
 $Response = Invoke-WebRequest -Uri $web_depoy_host -Method POST -Body $postParams
 Write-Host $Response.Content
 if($Response.StatusCode -ne 200) {
