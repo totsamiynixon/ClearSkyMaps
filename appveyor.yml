@@ -49,7 +49,7 @@ init:
   - cmd: git config --global core.autocrlf true
 install:
   - cmd: dotnet restore ./server/ClearSkyMaps.sln
-  - cmd: npm install client/mobile-spa/
+  - cmd: cd ./client/mobile-spa && npm install
 clone_depth: 1
 test:
   assemblies:
