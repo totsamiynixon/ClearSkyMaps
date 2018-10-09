@@ -27,7 +27,7 @@ for:
         name: WebAppProd
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactUrl $artifacts[WebAppProd].url -domain %PRODUCTION_DOMAIN%
+      - cmd: powershell -file deploy.ps1 -artifactName WebAppProd -domain %PRODUCTION_DOMAIN%
   - branches:
       only:
         - staging
@@ -43,7 +43,7 @@ for:
         name: WebAppStaging
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactUrl $artifacts[WebAppStaging].url -domain %STAGING_DOMAIN%
+      - cmd: powershell -file deploy.ps1 -artifactName WebAppStaging -domain %STAGING_DOMAIN%
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
