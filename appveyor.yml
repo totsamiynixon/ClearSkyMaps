@@ -19,18 +19,15 @@ for:
       ASPNETCORE_ENVIRONMENT: Production
       NOVE_ENV: production
     build_script:
-      - cmd: dotnet publish -c Release -o ../release
+      - cmd: dotnet publish -c Release -o ../../release
       - cmd: npm run build --prefix client/mobile-spa
+      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
     artifacts:
-      - path: ./server/release
-        name: API
-        type: Zip
-      - path: ./client/mobile-spa/www
-        name: SPA
+      - path: ./release
+        name: WebAppProd
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/API.zip -domain api.clearskymaps.totsamiynixon.com
-      - cmd: powershell -file deploy.ps1 -artifactPath ./client/mobile-spa/www/SPA.zip -domain clearskymaps.totsamiynixon.com
+      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/WebAppProd.zip -domain {PRODUCTION_DOMAIN}
   - branches:
       only:
         - staging
@@ -38,18 +35,15 @@ for:
       ASPNETCORE_ENVIRONMENT: Staging
       NOVE_ENV: staging
     build_script:
-      - cmd: dotnet publish -c Release -o ../release
+      - cmd: dotnet publish -c Release -o ../../release
       - cmd: npm run build --prefix client/mobile-spa
+      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
     artifacts:
-      - path: ./server/release
-        name: API
-        type: Zip
-      - path: ./client/mobile-spa/www
-        name: SPA
+      - path: ./release
+        name: WebAppStaging
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/API.zip -domain api.staging.clearskymaps.totsamiynixon.com
-      - cmd: powershell -file deploy.ps1 -artifactPath ./client/mobile-spa/www/SPA.zip -domain staging.clearskymaps.totsamiynixon.com
+      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/WebAppStaging.zip -domain {STAGING_DOMAIN}
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true

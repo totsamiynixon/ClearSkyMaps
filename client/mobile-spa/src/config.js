@@ -1,13 +1,6 @@
 const config = {
-  hubName: "readings"
+  hubPath: "/readingsHub"
 };
-if (process.env.NODE_ENV == "production") {
-  config.baseUrl = "http://api.clearskymaps.totsamiynixon.com";
-} else if (process.env.NODE_ENV == "staging") {
-  config.baseUrl = "http://api.staging.clearskymaps.totsamiynixon.com";
-} else {
-  config.baseUrl = "http://localhost:56875/api/";
-}
 
 config.map = {};
 config.map.options = {

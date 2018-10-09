@@ -66,27 +66,6 @@ namespace Web.Core
         {
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<DatabaseMigratorMiddleware>();
-
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseBrowserLink();
-            //    //app.UseDeveloperExceptionPage();
-            //    //app.UseDatabaseErrorPage();
-            //}
-            if (!env.IsDevelopment())
-            {
-                var options = new RewriteOptions().Add(context =>
-                {
-                    var request = context.HttpContext.Request;
-                    var response = context.HttpContext.Response;
-                    var pathValue = request.Path.Value;
-                    if (!pathValue.StartsWith("/api"))
-                    {
-                        request.Path = new PathString("/api" + request.Path.Value);
-                    }
-                });
-                app.UseRewriter(options);
-            }
             app.UseStaticFiles();
             app.UseMvc(routes =>
             {
@@ -100,8 +79,16 @@ namespace Web.Core
             }
             app.UseSignalR(routes =>
             {
-                routes.MapHub<ReadingsHub>("/readings");
+                routes.MapHub<ReadingsHub>("/readingsHub");
             });
+            if (!env.IsDevelopment())
+            {
+                app.Run(async (context) =>
+                {
+                    context.Response.ContentType = "text/html";
+                    await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "spa", "index.html"));
+                });
+            }
         }
     }
 }
