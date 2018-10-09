@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using Web.Core.Hubs;
 using WebUI.Middlewares;
 
@@ -70,7 +73,20 @@ namespace Web.Core
             //    //app.UseDeveloperExceptionPage();
             //    //app.UseDatabaseErrorPage();
             //}
-
+            if (!env.IsDevelopment())
+            {
+                var options = new RewriteOptions().Add(context =>
+                {
+                    var request = context.HttpContext.Request;
+                    var response = context.HttpContext.Response;
+                    var pathValue = request.Path.Value;
+                    if (!pathValue.StartsWith("/api"))
+                    {
+                        request.Path = new PathString("/api" + request.Path.Value);
+                    }
+                });
+                app.UseRewriter(options);
+            }
             app.UseStaticFiles();
             app.UseMvc(routes =>
             {

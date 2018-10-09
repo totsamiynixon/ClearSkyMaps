@@ -6,7 +6,7 @@ if (process.env.NODE_ENV == "production") {
 } else if (process.env.NODE_ENV == "staging") {
   config.baseUrl = "http://api.staging.clearskymaps.totsamiynixon.com";
 } else {
-  config.baseUrl = "http://localhost:56875/";
+  config.baseUrl = "http://localhost:56875/api/";
 }
 
 config.map = {};
