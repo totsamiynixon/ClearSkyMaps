@@ -19,7 +19,7 @@ for:
       ASPNETCORE_ENVIRONMENT: Production
       NOVE_ENV: production
     build_script:
-      - cmd: dotnet publish -c Release -o ../../release
+      - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
       - cmd: npm run build --prefix client/mobile-spa
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
     artifacts:
@@ -35,7 +35,7 @@ for:
       ASPNETCORE_ENVIRONMENT: Staging
       NOVE_ENV: staging
     build_script:
-      - cmd: dotnet publish -c Release -o ../../release
+      - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
       - cmd: npm run build --prefix client/mobile-spa
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
     artifacts:
