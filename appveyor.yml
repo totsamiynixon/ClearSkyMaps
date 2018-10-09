@@ -9,40 +9,47 @@ for:
   - branches:
       only:
         - master
-    build:
-      project: server/ClearSkyMaps.sln
+    build_script:
+      - cmd: dotnet build server/ClearSkyMaps.sln
+      - cmd: npm run build --prefix client/mobile-spa
   - branches:
       only:
         - production
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      NOVE_ENV: production
     build_script:
-      - cmd: dotnet publish -c Release -o ../release
+      - cmd: dotnet publish -c Release -o ../../release
+      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
     artifacts:
-      - path: ./server/release
-        name: ProductionRelease
+      - path: ./release
+        name: WebAppProd
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath server/ProductionRelease.zip
+      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/WebAppProd.zip -domain {PRODUCTION_DOMAIN}
   - branches:
       only:
         - staging
     environment:
       ASPNETCORE_ENVIRONMENT: Staging
+      NOVE_ENV: staging
     build_script:
-      - cmd: dotnet publish -c Release -o ../release
+      - cmd: dotnet publish -c Release -o ../../release
+      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H
     artifacts:
-      - path: ./src/release
-        name: StagingRelease
+      - path: ./release
+        name: WebAppStaging
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactPath server/StagingRelease.zip
-
+      - cmd: powershell -file deploy.ps1 -artifactPath ./server/release/WebAppStaging.zip -domain {STAGING_DOMAIN}
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 install:
   - cmd: dotnet restore ./server/ClearSkyMaps.sln
+  - cmd: cd ./client/mobile-spa && npm install
 clone_depth: 1
 test:
   assemblies:

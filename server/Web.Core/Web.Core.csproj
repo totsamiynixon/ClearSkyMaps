@@ -14,6 +14,7 @@
   </Target>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
   </ItemGroup>
@@ -21,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Middlewares\" />
     <Folder Include="Models\Api\" />
+    <Folder Include="wwwroot\spa\" />
   </ItemGroup>
 
   <ItemGroup>

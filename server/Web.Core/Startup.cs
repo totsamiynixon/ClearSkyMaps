@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using Web.Core.Hubs;
 using WebUI.Middlewares;
 
@@ -29,6 +34,7 @@ namespace Web.Core
                 return Configuration;
             });
             BuildLibDependencies(services);
+            ConfigureCORS(services);
             services.AddMvc();
             services.AddSignalR();
             services.AddSingleton<Emulator.Emulator, Emulator.Emulator>();
@@ -40,19 +46,26 @@ namespace Web.Core
             new DAL.Infrastructure.DIModule().ConfigureServices(services);
         }
 
+        private void ConfigureCORS(IServiceCollection services)
+        {
+            services.AddCors(o => o.AddPolicy("ClearSkyMapsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyHeader()
+                       .AllowCredentials();
+            }));
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("ClearSkyMapsPolicy"));
+            });
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<DatabaseMigratorMiddleware>();
-
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseBrowserLink();
-            //    //app.UseDeveloperExceptionPage();
-            //    //app.UseDatabaseErrorPage();
-            //}
-
             app.UseStaticFiles();
             app.UseMvc(routes =>
             {
@@ -60,10 +73,22 @@ namespace Web.Core
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            if ((env.IsDevelopment()))
+            {
+                app.UseCors("ClearSkyMapsPolicy");
+            }
             app.UseSignalR(routes =>
             {
-                routes.MapHub<ReadingsHub>("/readings");
+                routes.MapHub<ReadingsHub>("/readingsHub");
             });
+            if (!env.IsDevelopment())
+            {
+                app.Run(async (context) =>
+                {
+                    context.Response.ContentType = "text/html";
+                    await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "spa", "index.html"));
+                });
+            }
         }
     }
 }
