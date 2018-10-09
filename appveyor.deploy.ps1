@@ -8,7 +8,7 @@
 [string]$projectName = $env:APPVEYOR_PROJECT_NAME;
 [string]$webSite = $env:WEB_SITE;
 [string]$branch = $env:APPVEYOR_REPO_BRANCH;
-[string]$package = "https://ci.appveyor.com/api/projects/$($accountName)/$($projectName)/artifacts/$($artifactName)?branch=$($branch)";
+[string]$package = [string]::Format("https://ci.appveyor.com/api/projects/{0}/{1}/artifacts/{2}?branch={3}",$accountName,$projectName,$artifactName,$branch);
 $postParams = @{Domain=$domain;Token=$token;Package=$package}
 $Response = Invoke-WebRequest -Uri $web_depoy_host -Method POST -Body $postParams
 Write-Host $Response.Content
