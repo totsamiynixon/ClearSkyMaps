@@ -50,6 +50,7 @@ init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 install:
+  - ps: Install-Product node $env:nodejs_version
   - cmd: dotnet restore ./server/ClearSkyMaps.sln
   - cmd: cd ./client/mobile-spa && npm install
 clone_depth: 1
