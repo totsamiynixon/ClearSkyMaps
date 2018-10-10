@@ -11,7 +11,7 @@ for:
         - master
     build_script:
       - cmd: dotnet build server/ClearSkyMaps.sln
-      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: npm run build-prod --prefix client/mobile-spa
   - branches:
       only:
         - production
