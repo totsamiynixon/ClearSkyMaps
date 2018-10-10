@@ -20,7 +20,7 @@ for:
       NOVE_ENV: production
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
-      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: npm run build-prod --prefix client/mobile-spa
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
@@ -36,7 +36,7 @@ for:
       NOVE_ENV: staging
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
-      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: npm run build-prod --prefix client/mobile-spa
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
