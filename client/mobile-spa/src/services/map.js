@@ -11,7 +11,7 @@ var google,
   directionsService,
   directionsDisplay,
   geocoder;
-function initMap(el, onLoad) {
+function initMap(el, theme, onLoad) {
   GoogleMapsLoader.release();
   google, (map = null);
   areas = {};
@@ -19,6 +19,8 @@ function initMap(el, onLoad) {
   GoogleMapsLoader.LIBRARIES = ["geometry", "places"];
   GoogleMapsLoader.LANGUAGE = "ru";
   GoogleMapsLoader.load(function(google) {
+    config.map.options.styles =
+      config.map[(theme.ios ? "ios" : "md") + "-styles"];
     map = new google.maps.Map(el, config.map.options);
     autocompleteService = new google.maps.places.AutocompleteService();
     placeService = new google.maps.places.PlacesService(map);
