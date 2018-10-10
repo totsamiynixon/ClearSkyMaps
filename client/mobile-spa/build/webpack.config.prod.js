@@ -119,6 +119,9 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "app.css"
+    }),
     new HtmlWebpackPlugin({
       filename: "./index.html",
       template: "./src/index.html",
@@ -131,9 +134,6 @@ module.exports = {
     }),
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
-    new MiniCssExtractPlugin({
-      filename: "app.css"
-    }),
     new CopyWebpackPlugin([
       {
         from: resolvePath("static"),
