@@ -115,7 +115,7 @@ export default {
   },
   mounted() {
     chart.initChart(document.getElementById("chart"));
-    map.initMap(document.getElementById("map"), () => {
+    map.initMap(document.getElementById("map"), this.$theme, () => {
       hub.on("DispatchReadingAsync", readingModel => {
         let mapItem = this.mapItems.find(function(e, i, a) {
           if (e.sensor.id == readingModel.sensorId) {
@@ -137,6 +137,7 @@ export default {
         );
       });
       hub.start().then(() => {
+        console.log("Hub inited")
         api.getAllSensors().then(response => {
           this.mapItems = response.data.map(sensor => {
             return {
