@@ -1,0 +1,47 @@
+$borderStyles :1px #c2c2c2 solid;
+
+table-tab {
+  .scroll-content {
+    overflow: scroll;
+  }
+
+  table {
+    border-bottom: $borderStyles;
+  }
+
+  table th {
+    background: #545659;
+    color: #fff;
+    padding: 4vw 0;
+  }
+
+  table td {
+    text-align: center;
+  }
+
+  table td:not(:last-child) {
+    border-right: $borderStyles;
+  }
+
+  @media (orientation: portrait) {
+    table td {
+      min-width: 20vw;
+      padding: 4vw 0;
+    }
+
+    table th {
+      padding: 4vw 0;
+    }
+  }
+
+  @media (orientation: landscape) {
+    table td {
+      min-width: 11vw;
+      padding: 2vw 0;
+    }
+
+    table th {
+      padding: 2vw 0;
+    }
+  }
+}

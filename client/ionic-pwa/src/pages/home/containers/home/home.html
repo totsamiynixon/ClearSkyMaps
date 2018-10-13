@@ -1,0 +1,23 @@
+<ion-header class="ui-component"
+            [ngClass]="{'hidden': !uiComponentsVisible}">
+  <ion-navbar>
+    <ion-title>ClearSkyMaps</ion-title>
+
+    <ion-buttons end>
+      <button ion-button
+              icon-only>
+        <ion-icon name="search"></ion-icon>
+      </button>
+      <button ion-button
+              icon-only
+              (click)="showModal()">
+        <ion-icon name="home"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <div #map></div>
+</ion-content>

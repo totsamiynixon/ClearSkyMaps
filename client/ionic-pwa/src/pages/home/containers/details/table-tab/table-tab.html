@@ -1,0 +1,31 @@
+<!-- Generated template for ion-cole TableTabComponent component -->
+<ion-content>
+  <table>
+    <thead>
+      <tr>
+        <th class="numeric-cell">Снято</th>
+        <th class="numeric-cell">CO2</th>
+        <th class="numeric-cell">LPG</th>
+        <th class="numeric-cell">CO</th>
+        <th class="numeric-cell">CH4</th>
+        <th class="numeric-cell">Пыль</th>
+        <th class="numeric-cell">Т-ра</th>
+        <th class="numeric-cell">Hum</th>
+        <th class="numeric-cell">Давление</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of readings">
+        <td class="numeric-cell">{{item.created | date:'shortTime'}}</td>
+        <td class="numeric-cell">{{item.cO2}}</td>
+        <td class="numeric-cell">{{item.lpg}}</td>
+        <td class="numeric-cell">{{item.co}}</td>
+        <td class="numeric-cell">{{item.cH4}}</td>
+        <td class="numeric-cell">{{item.dust}}</td>
+        <td class="numeric-cell">{{item.temp}}</td>
+        <td class="numeric-cell">{{item.hum}}</td>
+        <td class="numeric-cell">{{item.preassure}}</td>
+      </tr>
+    </tbody>
+  </table>
+</ion-content>

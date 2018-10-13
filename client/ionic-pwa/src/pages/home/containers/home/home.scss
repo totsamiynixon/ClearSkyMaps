@@ -1,0 +1,13 @@
+page-home {
+  .ui-components {
+    transition: opacity 0.5ms ease-in;
+    opacity: 1;
+    display: block;
+  }
+
+  .ui-components.hidden {
+    transition: 0.5ms ease-out;
+    opacity: 0;
+    display: none;
+  }
+}
