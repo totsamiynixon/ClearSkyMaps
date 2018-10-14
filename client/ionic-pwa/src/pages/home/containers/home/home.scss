@@ -38,9 +38,27 @@ page-home {
 
   @media screen and (max-width: 767px) {
     .settings-button {
-      background: #fff;
+      //background: #fff;
       padding: 1vw 2vw !important;
       border-radius: 5vw;
     }
+  }
+
+  [href^="http://maps.google.com/maps"] {
+    display: none !important
+  }
+
+  a[href^="https://maps.google.com/maps"] {
+    display: none !important
+  }
+
+  .gmnoprint a,
+  .gmnoprint span,
+  .gm-style-cc {
+    display: none;
+  }
+
+  .gmnoprint div {
+    background: none !important;
   }
 }

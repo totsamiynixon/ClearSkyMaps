@@ -1,9 +1,6 @@
 $borderStyles :1px #c2c2c2 solid;
 
 table-tab {
-  .scroll-content {
-    overflow: scroll;
-  }
 
   table {
     border-bottom: $borderStyles;
@@ -22,7 +19,37 @@ table-tab {
     border-right: $borderStyles;
   }
 
-  @media (orientation: portrait) {
+  table td,
+  table th {
+    min-width: 90px;
+    padding: 10px;
+  }
+
+  .expandable-table {
+    height: auto;
+    display: block;
+    overflow-y: hidden;
+  }
+
+  .expandable-table.collapsed {
+    height: calc(35px*2 + 1.4rem*2);
+  }
+
+  @media(max-width:991px) {
+    .scroll-content {
+      overflow: scroll;
+    }
+
+    .expandable-table {
+      overflow-y: hidden;
+    }
+
+    .expandable-table.collapsed {
+      height: calc(8vw*2 + 1.4rem*2);
+    }
+  }
+
+  @media (orientation: portrait) and (max-width:991px) {
     table td {
       min-width: 20vw;
       padding: 4vw 0;
@@ -33,7 +60,7 @@ table-tab {
     }
   }
 
-  @media (orientation: landscape) {
+  @media (orientation: landscape) and (max-width:991px) {
     table td {
       min-width: 11vw;
       padding: 2vw 0;
@@ -44,13 +71,8 @@ table-tab {
     }
   }
 
-  .expandable-table {
-    height: auto;
-    display: block;
-    overflow-y: hidden;
-  }
-
-  .expandable-table.collapsed {
-    height: calc(8vw*2 + 1.4rem*2);
+  .hightLight {
+    background-color: #c2c2c2;
+    color: #fff;
   }
 }

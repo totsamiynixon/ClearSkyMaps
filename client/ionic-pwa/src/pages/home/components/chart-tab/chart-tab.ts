@@ -1,4 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, ViewChild, ElementRef } from "@angular/core";
+import { ChartBuilder } from "../../../../providers/inerfaces";
+import { NavParams } from "ionic-angular";
+import { TabModel } from "../../models/tab.model";
 
 /**
  * Generated class for the ChartTabComponent component.
@@ -11,10 +14,21 @@ import { Component } from "@angular/core";
   templateUrl: "chart-tab.html"
 })
 export class ChartTab {
-  text: string;
+  chartModel: TabModel;
+  @ViewChild("chart")
+  chartRef: ElementRef;
+  constructor(
+    private chartBuilder: ChartBuilder,
+    private navParams: NavParams
+  ) {
+    this.chartModel = this.navParams.get("model");
+  }
 
-  constructor() {
-    console.log("Hello ChartTabComponent Component");
-    this.text = "Вкладка графика";
+  ionViewDidLoad() {
+    let model = this.chartBuilder.initChart(this.chartRef.nativeElement);
+    this.chartBuilder.updateDataset(
+      this.chartModel.sensor,
+      this.chartModel.filterByParameter
+    );
   }
 }

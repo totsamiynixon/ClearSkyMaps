@@ -16,6 +16,7 @@ import { IHomePageState } from "../../store/home.state";
 import { getSensorById } from "../../store/home.reducer";
 import { Parameters } from "../../../../models/parameters.enum";
 import { SetFilterParameterAction } from "../../store/home.actions";
+import { ChartBuilder } from "../../../../providers/inerfaces";
 
 /**
  * Generated class for the DetailsPage page.
@@ -32,7 +33,7 @@ import { SetFilterParameterAction } from "../../store/home.actions";
 export class DetailsModal {
   tableTab: any;
   chartTab: any;
-  tabParams: TabModel;
+  tabParams: Object;
   filterByParameter: string;
   constructor(
     public navCtrl: NavController,
@@ -40,19 +41,32 @@ export class DetailsModal {
     public modalCtrl: ModalController,
     private store: Store<IHomePageState>,
     private actionSheetCtrl: ActionSheetController,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private chartBuilder: ChartBuilder
   ) {
     this.tableTab = TableTab;
     this.chartTab = ChartTab;
-    this.tabParams = new TabModel();
+    this.tabParams = { model: null };
     let id = navParams.get("sensorId") as number | null;
     if (id != null) {
       this.store
         .pipe(select("homeState"))
         .subscribe((state: IHomePageState) => {
-          this.tabParams.sensor = state.sensors.find(f => f.id == id);
-          this.tabParams.filterByParameter = state.filterByParameter;
+          console.log("Details catched state chage", state);
+          if (this.tabParams["model"] == null) {
+            this.tabParams["model"] = new TabModel();
+          }
+          let model = this.tabParams["model"] as TabModel;
+          model.sensor = state.sensors.find(f => f.id == id);
+          model.filterByParameter = state.filterByParameter;
+          this.tabParams["model"] = model;
           this.filterByParameter = Parameters[state.filterByParameter];
+          try {
+            this.chartBuilder.updateDataset(
+              model.sensor,
+              model.filterByParameter
+            );
+          } catch (ex) {}
         });
     }
   }

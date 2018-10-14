@@ -15,28 +15,28 @@
          [ngClass]="{'collapsed':!expanded}">
     <thead>
       <tr>
-        <th class="numeric-cell">Снято</th>
-        <th class="numeric-cell">CO2</th>
-        <th class="numeric-cell">LPG</th>
-        <th class="numeric-cell">CO</th>
-        <th class="numeric-cell">CH4</th>
-        <th class="numeric-cell">Пыль</th>
-        <th class="numeric-cell">Т-ра</th>
-        <th class="numeric-cell">Hum</th>
-        <th class="numeric-cell">Давление</th>
+        <th>Снято</th>
+        <th>CO2</th>
+        <th>LPG</th>
+        <th>CO</th>
+        <th>CH4</th>
+        <th>Пыль</th>
+        <th>Т-ра</th>
+        <th>Hum</th>
+        <th>Давление</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of readings">
-        <td class="numeric-cell">{{item.created | date:'shortTime'}}</td>
-        <td class="numeric-cell">{{item.cO2}}</td>
-        <td class="numeric-cell">{{item.lpg}}</td>
-        <td class="numeric-cell">{{item.co}}</td>
-        <td class="numeric-cell">{{item.cH4}}</td>
-        <td class="numeric-cell">{{item.dust}}</td>
-        <td class="numeric-cell">{{item.temp}}</td>
-        <td class="numeric-cell">{{item.hum}}</td>
-        <td class="numeric-cell">{{item.preassure}}</td>
+      <tr *ngFor="let item of tabModel.sensor.readings">
+        <td>{{item.created | date:'shortTime'}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('cO2')}">{{item.cO2}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('lpg')}">{{item.lpg}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('co')}">{{item.co}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('cH4')}">{{item.cH4}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('dust')}">{{item.dust}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('temp')}">{{item.temp}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('hum')}">{{item.hum}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('preassure')}">{{item.preassure}}</td>
       </tr>
     </tbody>
   </table>

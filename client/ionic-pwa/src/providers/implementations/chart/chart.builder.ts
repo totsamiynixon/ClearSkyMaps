@@ -72,10 +72,6 @@ export class ChartJSChartBuilder implements ChartBuilder {
       fill: false
     };
     this.chart.data.datasets.push(dataset);
-    this.chart.data.labels.push(moment(reading.created).format("h:mm:ss"));
-    this.chart.data.labels.shift();
-    dataset.data.push(reading[currentParameter]);
-    dataset.data.shift();
     this.chart.update();
   }
 }
