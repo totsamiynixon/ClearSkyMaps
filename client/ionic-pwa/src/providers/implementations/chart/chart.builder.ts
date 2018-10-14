@@ -3,10 +3,10 @@ import moment from "moment";
 import Chart from "chart.js";
 import { Sensor } from "../../../models/sensor.model";
 import { Parameters } from "../../../models/parameters.enum";
-import { IChartBuilder } from "../../inerfaces/chart/chart.builder";
+import { ChartBuilder } from "../../inerfaces/chart/chart.builder";
 
 @Injectable()
-export class ChartBuilder implements IChartBuilder {
+export class ChartJSChartBuilder implements ChartBuilder {
   chart: Chart;
   initChart(element: HTMLCanvasElement): void {
     var ctx = element.getContext("2d");

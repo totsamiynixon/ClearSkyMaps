@@ -10,6 +10,11 @@ import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { IonicApp, IonicErrorHandler, IonicModule } from "ionic-angular";
 import { MyApp } from "./app.component";
 import { Config } from "../models/providers/config";
+import {
+  ConfigProvider,
+  ToastAlertsService
+} from "../providers/implementations";
+import { AlertsService } from "../providers/inerfaces";
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -38,7 +43,8 @@ export function createTranslateLoader(http: HttpClient) {
   providers: [
     SplashScreen,
     StatusBar,
-    { provide: Config, useValue: ConfigProvider },
+    { provide: Config, useValue: ConfigProvider.getConfig() },
+    { provide: AlertsService, useClass: ToastAlertsService },
     // Keep this to enable Ionic's runtime error handling during development
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]

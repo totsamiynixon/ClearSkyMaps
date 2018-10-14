@@ -1,6 +1,18 @@
 <!-- Generated template for ion-cole TableTabComponent component -->
+
 <ion-content>
-  <table>
+  <ion-toolbar>
+    <ion-title>Таблица</ion-title>
+    <ion-buttons end>
+      <button ion-button
+              icon-only
+              (click)="changeExpand()">
+        <ion-icon name="expand"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+  <table class="expandable-table"
+         [ngClass]="{'collapsed':!expanded}">
     <thead>
       <tr>
         <th class="numeric-cell">Снято</th>

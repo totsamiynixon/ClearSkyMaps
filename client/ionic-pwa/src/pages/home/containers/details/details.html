@@ -7,7 +7,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>Детали</ion-title>
-    <ion-buttons start>
+    <ion-buttons end>
       <button ion-button
               icon-only
               (click)="dismissModal()">
@@ -15,19 +15,24 @@
       </button>
     </ion-buttons>
     <ion-title></ion-title>
-    <ion-buttons end>
-      <button ion-button
-              icon-only>
-        <ion-icon name="expand"></ion-icon>
+    <ion-buttons start>
+      <button class="settings-button"
+              ion-button
+              icon-only
+              (click)="showParamsSheet()">
+        {{filterByParameter}}
+        <ion-icon name="cog"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-tabs>
+  <ion-tabs (ionChange)="tabChanged()">
     <ion-tab tabIcon="list"
-             [root]="tableTab"></ion-tab>
+             [root]="tableTab"
+             [rootParams]="tabParams"></ion-tab>
     <ion-tab tabIcon="trending-up"
-             [root]="chartTab"></ion-tab>
+             [root]="chartTab"
+             [rootParams]="tabParams"></ion-tab>
   </ion-tabs>
 </ion-content>

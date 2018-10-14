@@ -2,12 +2,15 @@ import GoogleMapsLoader, { google } from "google-maps";
 //import RichMarker from "js-rich-marker";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs";
-import { Inject } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Config } from "../../../models/providers/config";
 import { PollutionLevels } from "../../../models/sensor.model";
 import { MapProposition } from "../../../models/providers/map-proposition.model";
-import { IMapBuilder } from "../../inerfaces/map/map.builder";
-export class MapBuilder implements IMapBuilder {
+import { MapBuilder } from "../../inerfaces";
+import { EventEmitter } from "events";
+declare const google: any;
+@Injectable()
+export class GoogleMapBuilder implements MapBuilder {
   private map: google.maps.Map;
   private areas: Object;
   private autocompleteService: google.maps.places.AutocompleteService;
@@ -16,9 +19,17 @@ export class MapBuilder implements IMapBuilder {
   private directionsDisplay: google.maps.DirectionsRenderer;
   private geocoder: google.maps.Geocoder;
   private dragEmitter: BehaviorSubject<string>;
-  constructor(@Inject(Config) public config: Config) {
+  private eventEmitter: EventEmitter = new EventEmitter();
+  constructor(public config: Config) {
     this.areas = {};
     this.dragEmitter = new BehaviorSubject<string>(null);
+  }
+
+  public onDrag(handler: (...args: any[]) => void) {
+    this.eventEmitter.on("dragstart", handler);
+  }
+  public onDragEnd(handler: (...args: any[]) => void) {
+    this.eventEmitter.on("dragend", handler);
   }
   public initMap(element: HTMLElement): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -36,11 +47,11 @@ export class MapBuilder implements IMapBuilder {
         this.directionsService = new google.maps.DirectionsService();
         this.directionsDisplay = new google.maps.DirectionsRenderer();
         this.geocoder = new google.maps.Geocoder();
-        this.map.addListener("drag", () => {
-          this.dragEmitter.next("drag");
+        this.map.addListener("dragstart", () => {
+          this.eventEmitter.emit("dragstart");
         });
         this.map.addListener("dragend", () => {
-          this.dragEmitter.next("dragend");
+          this.eventEmitter.emit("dragend");
         });
         resolve();
       });
@@ -50,16 +61,16 @@ export class MapBuilder implements IMapBuilder {
     });
   }
   public createNewArea(
+    sensorId: number,
     pollutionLevel: PollutionLevels,
     lat: number,
     lng: number,
     markerText: string,
     onMarkerClick: Function
-  ) {
-    let guid = this.createGuid();
-    this.areas[guid] = {};
+  ): void {
+    this.areas[sensorId] = {};
     let position = new google.maps.LatLng(lat, lng);
-    this.areas[guid].circle = new google.maps.Circle({
+    this.areas[sensorId].circle = new google.maps.Circle({
       strokeColor: this.getStrokeColorByPollutionLevel(pollutionLevel),
       strokeOpacity: 0.8,
       strokeWeight: 2,
@@ -69,27 +80,19 @@ export class MapBuilder implements IMapBuilder {
       center: position,
       radius: 1000
     });
-    // this.areas[guid].marker = new RichMarker({
-    //   position: position,
-    //   map: this.map,
-    //   content: this.generateMarker(markerText),
-    //   shadow: "none"
-    // });
-    // this.areas[guid].marker.setOptions({ opacity: 0.8 });
-    // this.areas[guid].marker.addListener("click", onMarkerClick);
-    return guid;
+    this.areas[sensorId].circle.addListener("click", onMarkerClick);
   }
 
   public updateArea(
-    areaId: string,
+    sensorId: number,
     pollutionLevel: PollutionLevels,
     markerText: string
   ): void {
-    this.areas[areaId].circle.setOptions({
+    this.areas[sensorId].circle.setOptions({
       strokeColor: this.getStrokeColorByPollutionLevel(pollutionLevel),
       fillColor: this.getFillColorByPollutionLevel(pollutionLevel)
     });
-    this.areas[areaId].marker.setContent(this.generateMarker(markerText));
+    //this.areas[areaId].marker.setContent(this.generateMarker(markerText));
   }
   public getPropositionsByQuery(query: string): Promise<Array<MapProposition>> {
     return new Promise((resolve, reject) => {
@@ -171,7 +174,7 @@ export class MapBuilder implements IMapBuilder {
   }
 
   private createGuid(): string {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+    return (([1e7] as any) + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
       (
         c ^
         (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))

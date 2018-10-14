@@ -1,16 +1,20 @@
-import { Parameters } from "./../../models/parameters.enum";
-import { ApiProvider } from "./../../providers/api/apiProvider";
-import { Observable } from "rxjs/Observable";
-import { IHomePageState } from "./../../stores/home.module.store/interfaces/home.state";
-import { HubDispatchModel } from "./../../models/providers/dispatch-reading.model";
-import { HubProvider } from "./../../providers/hub/hubProvider";
-import { MapItemModel } from "./../../models/pages/home/map-item.model";
-import { MapBuilder } from "./../../providers/map/mapBuilder";
-import { DetailsModal } from "./details/details";
-
-import { Component, ViewChild, ElementRef } from "@angular/core";
+import { IHomePageState } from "./../../store/home.state";
 import {
-  IonicPage,
+  SetFilterParameterAction,
+  SetSensorsAction,
+  UpdateSensorAction,
+  SET_SENSORS,
+  UPDATE_SENSOR
+} from "./../../store/home.actions";
+import { Observable } from "rxjs/Observable";
+
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  ChangeDetectorRef
+} from "@angular/core";
+import {
   NavController,
   NavParams,
   ModalController,
@@ -18,17 +22,19 @@ import {
   ActionSheetController
 } from "ionic-angular";
 import { Store, select } from "@ngrx/store";
-import { Sensor } from "../../models/sensor.model";
-import { SetParameterAction } from "../../stores/home.module.store/implementations/home.actions";
+import {
+  MapBuilder,
+  ApiProvider,
+  HubProvider,
+  AlertsService
+} from "../../../../providers/inerfaces";
+import { MapItemModel } from "../../models/map-item.model";
+import { HubDispatchModel } from "../../../../models/providers/dispatch-reading.model";
+import { Sensor } from "../../../../models/sensor.model";
+import { Parameters } from "../../../../models/parameters.enum";
+import { DetailsModal } from "../details/details";
+import { getFilterByParameter } from "../../store/home.reducer";
 
-/**
- * Generated class for the HomePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
 @Component({
   selector: "page-home",
   templateUrl: "home.html"
@@ -36,85 +42,80 @@ import { SetParameterAction } from "../../stores/home.module.store/implementatio
 export class HomePage {
   @ViewChild("map")
   mapRef: ElementRef;
-  mapItems: Array<MapItemModel> = [];
   uiComponentsVisible: boolean = true;
+  filterByParameter: string;
   constructor(
     private navCtrl: NavController,
     private navParams: NavParams,
     private modalCtrl: ModalController,
     private mapBuilder: MapBuilder,
     private hubProvider: HubProvider,
-    private store: Store<IHomePageState>,
-    private toastCtrl: ToastController,
+    private store$: Store<IHomePageState>,
+    private alertsService: AlertsService,
     private apiProvider: ApiProvider,
-    private actionSheetCtrl: ActionSheetController
-  ) {}
+    private actionSheetCtrl: ActionSheetController,
+    private cd: ChangeDetectorRef
+  ) {
+    this.store$
+      .pipe(select(getFilterByParameter))
+      .subscribe((value: Parameters) => {
+        this.filterByParameter = Parameters[value];
+      });
+  }
 
   ionViewDidLoad() {
-    console.log("322");
-    this.mapBuilder.initMap(this.mapRef.nativeElement).then(
-      () => {
-        this.mapBuilder.drag().subscribe((eventType: string) => {
-          switch (eventType) {
-            case "drag":
-              this.hideUiComponents();
-            case "dragend":
-              this.showUIComponents();
-          }
-        });
-        let hub = this.hubProvider.getHub();
+    this.mapBuilder.onDrag(() => {
+      this.hideUiComponents();
+    });
+    this.mapBuilder.onDragEnd(() => {
+      this.showUIComponents();
+    });
+    this.mapBuilder.initMap(this.mapRef.nativeElement).then(() => {
+      this.hubProvider.getHub().then(hub => {
         hub.on("DispatchReadingAsync", (hubDispatchModel: HubDispatchModel) => {
-          let mapItem = this.mapItems.find(item => {
-            if (item.sensor.id == hubDispatchModel.sensorId) {
-              return true;
-            }
-          });
-          if (mapItem == null) {
-            return;
-          }
-          mapItem.sensor.latestPollutionLevel =
-            hubDispatchModel.latestPollutionLevel;
-          mapItem.sensor.readings.unshift(hubDispatchModel.reading);
-          if (mapItem.sensor.readings.length > 10) {
-            mapItem.sensor.readings.pop();
-          }
+          this.store$.dispatch(
+            new UpdateSensorAction(
+              hubDispatchModel.reading,
+              hubDispatchModel.sensorId,
+              hubDispatchModel.latestPollutionLevel
+            )
+          );
           this.mapBuilder.updateArea(
-            mapItem.areaId,
-            mapItem.sensor.latestPollutionLevel,
-            mapItem.sensor.readings[0][this.getState().parameter]
+            hubDispatchModel.sensorId,
+            hubDispatchModel.latestPollutionLevel,
+            hubDispatchModel.reading[this.filterByParameter]
           );
         });
-        hub.start().then(() => {
-          this.apiProvider.getAllSensors().subscribe(response => {
-            this.mapItems = response.map(sensor => {
-              return {
-                sensor,
-                areaId: this.mapBuilder.createNewArea(
+        hub.start().then(
+          () => {
+            this.apiProvider.getAllSensors().subscribe(response => {
+              this.store$.dispatch(new SetSensorsAction(response));
+              response.forEach(sensor => {
+                this.mapBuilder.createNewArea(
+                  sensor.id,
                   sensor.latestPollutionLevel,
                   sensor.latitude,
                   sensor.longitude,
-                  sensor.readings[0][this.getState().parameter],
+                  sensor.readings[0][this.filterByParameter],
                   () => {
-                    this.openDetailsSheet(sensor);
+                    this.openDetailsModal(sensor.id);
                   }
-                )
-              };
+                );
+              });
             });
-          });
-        });
-      },
-      (error: Error) => {
-        this.toastCtrl.create({
-          message: error.message,
-          duration: 3000,
-          position: "top"
-        });
-      }
-    );
+          },
+          error => this.alertsService.showError(error)
+        );
+      }, this.alertsService.showError);
+    }, this.alertsService.showError);
   }
 
-  openDetailsSheet(sensor: Sensor) {
-    let currentParameter = this.getState().parameter;
+  openDetailsModal(sensorId: number) {
+    const modal = this.modalCtrl.create(DetailsModal, { sensorId: sensorId });
+    modal.present();
+  }
+  showParamsSheet() {
+    let currentParameter = this.getState().filterByParameter;
     const setClass = (parameter: Parameters) => {
       if (parameter == currentParameter) {
         return "active";
@@ -128,50 +129,52 @@ export class HomePage {
           text: "СO2",
           cssClass: setClass(Parameters.cO2),
           handler: () => {
-            this.store.dispatch(new SetParameterAction(Parameters.cO2));
+            this.store$.dispatch(new SetFilterParameterAction(Parameters.cO2));
           }
         },
         {
           text: "LPG",
           cssClass: setClass(Parameters.lpg),
           handler: () => {
-            this.store.dispatch(new SetParameterAction(Parameters.lpg));
+            this.store$.dispatch(new SetFilterParameterAction(Parameters.lpg));
           }
         },
         {
           text: "CO",
           cssClass: setClass(Parameters.co),
           handler: () => {
-            this.store.dispatch(new SetParameterAction(Parameters.co));
+            this.store$.dispatch(new SetFilterParameterAction(Parameters.co));
           }
         },
         {
           text: "Пыль",
           cssClass: setClass(Parameters.dust),
           handler: () => {
-            this.store.dispatch(new SetParameterAction(Parameters.dust));
+            this.store$.dispatch(new SetFilterParameterAction(Parameters.dust));
           }
         }
       ]
     });
     actionSheet.present();
   }
-  showModal() {
-    const modal = this.modalCtrl.create(DetailsModal);
-    modal.present();
-  }
 
   hideUiComponents() {
-    this.uiComponentsVisible = false;
+    if (this.uiComponentsVisible) {
+      this.uiComponentsVisible = false;
+      this.cd.detectChanges();
+    }
   }
 
   showUIComponents() {
-    this.uiComponentsVisible = true;
+    if (!this.uiComponentsVisible) {
+      this.uiComponentsVisible = true;
+      this.cd.detectChanges();
+    }
   }
   private getState(): IHomePageState {
     let state: IHomePageState;
 
-    this.store.take(1).subscribe(s => (state = s));
+    this.store$.take(1).subscribe(s => (state = s));
 
     return state;
   }

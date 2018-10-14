@@ -1,17 +1,18 @@
-<ion-header class="ui-component"
-            [ngClass]="{'hidden': !uiComponentsVisible}">
+<ion-header [ngClass]="{'hidden': !uiComponentsVisible,'ui-components': true}">
   <ion-navbar>
-    <ion-title>ClearSkyMaps</ion-title>
-
-    <ion-buttons end>
+    <ion-buttons>
       <button ion-button
               icon-only>
-        <ion-icon name="search"></ion-icon>
+        <ion-icon name="pin"></ion-icon>
       </button>
-      <button ion-button
+    </ion-buttons>
+    <ion-buttons end>
+      <button class="settings-button"
+              ion-button
               icon-only
-              (click)="showModal()">
-        <ion-icon name="home"></ion-icon>
+              (click)="showParamsSheet()">
+        {{filterByParameter}}
+        <ion-icon name="cog"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -19,5 +20,6 @@
 
 
 <ion-content>
-  <div #map></div>
+  <div #map
+       class="map-holder"></div>
 </ion-content>

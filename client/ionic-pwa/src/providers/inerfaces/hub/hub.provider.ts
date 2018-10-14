@@ -1,5 +1,6 @@
 import { HubConnection } from "@aspnet/signalr";
-
-export interface IHubProvider {
-  getHub(): HubConnection;
+import { Injectable } from "@angular/core";
+@Injectable()
+export abstract class HubProvider {
+  abstract getHub(): Promise<HubConnection>;
 }

@@ -52,7 +52,7 @@ namespace Web.Core
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyHeader()
-                       .AllowAnyHeader()
+                       .AllowAnyMethod()
                        .AllowCredentials();
             }));
             services.Configure<MvcOptions>(options =>

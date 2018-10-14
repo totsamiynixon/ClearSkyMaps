@@ -1,6 +1,8 @@
 import { Observable } from "rxjs/Observable";
 import { Sensor } from "../../../models/sensor.model";
+import { Injectable } from "@angular/core";
 
-export interface IApiProvider {
-  getAllSensors(): Observable<Sensor[]>;
+@Injectable()
+export abstract class ApiProvider {
+  abstract getAllSensors(): Observable<Sensor[]>;
 }

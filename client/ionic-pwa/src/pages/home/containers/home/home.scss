@@ -1,13 +1,46 @@
 page-home {
-  .ui-components {
-    transition: opacity 0.5ms ease-in;
-    opacity: 1;
-    display: block;
+
+  @media (max-width: 1024px) {
+    .toolbar-background {
+      background: transparent;
+    }
+
+    .header-md::after {
+      content: none;
+    }
+
+    .ui-components {
+      transition: opacity 0.5s ease-in;
+      opacity: 1;
+    }
+
+    .ui-components.hidden {
+      transition: 1s ease-out;
+      opacity: 0;
+    }
+
+    .content>.scroll-content {
+      margin-top: 0 !important;
+    }
   }
 
-  .ui-components.hidden {
-    transition: 0.5ms ease-out;
-    opacity: 0;
-    display: none;
+  .map-holder {
+    height: 100vh;
+    width: 100%;
+    position: static !important;
+  }
+
+  // .settings-button {
+  //   background: #fff;
+  //   padding: 10px;
+  //   border-radius: 20px;
+  // }
+
+  @media screen and (max-width: 767px) {
+    .settings-button {
+      background: #fff;
+      padding: 1vw 2vw !important;
+      border-radius: 5vw;
+    }
   }
 }

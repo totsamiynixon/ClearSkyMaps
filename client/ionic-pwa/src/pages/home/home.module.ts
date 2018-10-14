@@ -1,17 +1,21 @@
-import { ConfigProvider } from "./../../providers/config/configProvider";
-import { ChartBuilder } from "./../../providers/chart/chartBuilder";
-import { MapBuilder } from "./../../providers/map/mapBuilder";
-
 import { NgModule } from "@angular/core";
 import { IonicPageModule } from "ionic-angular";
 import { HomePage } from "./containers/home/home";
 import { TranslateModule } from "@ngx-translate/core";
 import { StoreModule } from "@ngrx/store";
-import { homeReducer } from "../../stores/home.module.store/implementations/home.reducer";
-import { ApiProvider } from "../../providers/api/apiProvider";
-import { HubProvider } from "../../providers/hub/hubProvider";
 import { Config } from "../../models/providers/config";
 import { DetailsModalModule } from "./containers/details/details.module";
+import { homeReducer } from "./store/home.reducer";
+import {
+  DefaultApiProvider,
+  SignalRHubProvider,
+  GoogleMapBuilder
+} from "../../providers/implementations";
+import {
+  HubProvider,
+  ApiProvider,
+  MapBuilder
+} from "../../providers/inerfaces";
 
 @NgModule({
   declarations: [HomePage],
@@ -21,6 +25,11 @@ import { DetailsModalModule } from "./containers/details/details.module";
     TranslateModule.forChild(),
     StoreModule.forRoot({ homeState: homeReducer })
   ],
-  providers: [ApiProvider, HubProvider, MapBuilder, ChartBuilder]
+  entryComponents: [HomePage],
+  providers: [
+    { provide: ApiProvider, useClass: DefaultApiProvider },
+    { provide: MapBuilder, useClass: GoogleMapBuilder },
+    { provide: HubProvider, useClass: SignalRHubProvider }
+  ]
 })
 export class HomePageModule {}

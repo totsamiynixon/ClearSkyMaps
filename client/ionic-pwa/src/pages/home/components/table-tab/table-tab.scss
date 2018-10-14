@@ -12,7 +12,6 @@ table-tab {
   table th {
     background: #545659;
     color: #fff;
-    padding: 4vw 0;
   }
 
   table td {
@@ -43,5 +42,15 @@ table-tab {
     table th {
       padding: 2vw 0;
     }
+  }
+
+  .expandable-table {
+    height: auto;
+    display: block;
+    overflow-y: hidden;
+  }
+
+  .expandable-table.collapsed {
+    height: calc(8vw*2 + 1.4rem*2);
   }
 }

@@ -3,7 +3,7 @@ import { google } from "google-maps";
 @Injectable()
 export class Config {
   hubPath: string;
-  apiUrl: string;
+  applicationServerUrl: string;
   map: ConfigMap;
 }
 
