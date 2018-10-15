@@ -11,7 +11,8 @@ import { Parameters } from "../../../models/parameters.enum";
 import { IHomePageState } from "./home.state";
 const currentState: IHomePageState = {
   filterByParameter: Parameters.cO2,
-  sensors: []
+  sensors: [],
+  lastAction: null
 };
 
 export function homeReducer(
@@ -22,11 +23,13 @@ export function homeReducer(
     case SET_FILTER_PARAMETER:
       return {
         ...state,
+        lastAction: action,
         filterByParameter: (action as SetFilterParameterAction).payload
       };
     case SET_SENSORS:
       return {
         ...state,
+        lastAction: action,
         sensors: (action as SetSensorsAction).payload
       };
     case UPDATE_SENSOR: {
@@ -38,7 +41,8 @@ export function homeReducer(
         updateSensor.readings.pop();
       }
       return {
-        ...state
+        ...state,
+        lastAction: action
       };
     }
     default:
@@ -55,6 +59,9 @@ export const getFilterByParameter = createSelector(
 );
 
 export const getSensorById = (sensorId: number) =>
-  createSelector(getHomePageState, state =>
-    state.sensors.find(f => f.id == sensorId)
-  );
+  createSelector(getHomePageState, state => {
+    return {
+      sensor: state.sensors.find(f => f.id == sensorId),
+      filterByParameter: state.filterByParameter
+    };
+  });

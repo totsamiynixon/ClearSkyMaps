@@ -1,3 +1,5 @@
+import { UpdateSensorAction } from "./../../store/home.actions";
+import { Parameters } from "./../../../../models/parameters.enum";
 import { TabModel } from "./../../models/tab.model";
 import { Component, ChangeDetectorRef } from "@angular/core";
 import {
@@ -14,7 +16,6 @@ import { Observable } from "rxjs/Observable";
 import { Store, select } from "@ngrx/store";
 import { IHomePageState } from "../../store/home.state";
 import { getSensorById } from "../../store/home.reducer";
-import { Parameters } from "../../../../models/parameters.enum";
 import { SetFilterParameterAction } from "../../store/home.actions";
 import { ChartBuilder } from "../../../../providers/inerfaces";
 
@@ -52,21 +53,30 @@ export class DetailsModal {
       this.store
         .pipe(select("homeState"))
         .subscribe((state: IHomePageState) => {
-          console.log("Details catched state chage", state);
-          if (this.tabParams["model"] == null) {
-            this.tabParams["model"] = new TabModel();
-          }
-          let model = this.tabParams["model"] as TabModel;
-          model.sensor = state.sensors.find(f => f.id == id);
-          model.filterByParameter = state.filterByParameter;
-          this.tabParams["model"] = model;
           this.filterByParameter = Parameters[state.filterByParameter];
-          try {
-            this.chartBuilder.updateDataset(
-              model.sensor,
-              model.filterByParameter
-            );
-          } catch (ex) {}
+          if (this.tabParams["model"] != null) {
+            this.tabParams["model"].filterByParameter = state.filterByParameter;
+          }
+          let lastAction = state.lastAction as UpdateSensorAction;
+          if (
+            (lastAction != null && lastAction.sensorId == id) ||
+            this.tabParams["model"] == null
+          ) {
+            console.log("Details catched state chage", state);
+            if (this.tabParams["model"] == null) {
+              this.tabParams["model"] = new TabModel();
+            }
+            let model = this.tabParams["model"] as TabModel;
+            model.sensor = state.sensors.find(f => f.id == id);
+            model.filterByParameter = state.filterByParameter;
+            this.tabParams["model"] = model;
+            try {
+              this.chartBuilder.updateDataset(
+                model.sensor,
+                model.filterByParameter
+              );
+            } catch (ex) {}
+          }
         });
     }
   }
@@ -78,7 +88,7 @@ export class DetailsModal {
     this.navCtrl.pop();
   }
   showParamsSheet() {
-    let currentParameter = this.tabParams.filterByParameter;
+    let currentParameter = Parameters[this.filterByParameter] as Parameters;
     const setClass = (parameter: Parameters) => {
       if (parameter == currentParameter) {
         return "active";

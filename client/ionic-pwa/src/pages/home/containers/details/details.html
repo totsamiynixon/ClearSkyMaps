@@ -5,16 +5,15 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-  <ion-navbar>
-    <ion-title>Детали</ion-title>
-    <ion-buttons end>
+  <ion-toolbar>
+    <ion-buttons left>
       <button ion-button
               icon-only
               (click)="dismissModal()">
-        <ion-icon name="close"></ion-icon>
+        <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-title></ion-title>
+    <ion-title>Детали</ion-title>
     <ion-buttons start>
       <button class="settings-button"
               ion-button
@@ -24,7 +23,7 @@
         <ion-icon name="cog"></ion-icon>
       </button>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-tabs (ionChange)="tabChanged()">
