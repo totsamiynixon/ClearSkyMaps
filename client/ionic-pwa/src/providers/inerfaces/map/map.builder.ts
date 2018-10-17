@@ -27,4 +27,12 @@ export abstract class MapBuilder {
   abstract initMap(element: HTMLElement): Promise<void>;
   abstract onDrag(handler: (...args: any[]) => void);
   abstract onDragEnd(handler: (...args: any[]) => void);
+  abstract enableNavigationMode(): Promise<null>;
+  abstract isNavigationModeEnabled(): boolean;
+  abstract disableNavigationMode(): Promise<null>;
+  abstract onStartPointSelected(handler: (...args: any[]) => void);
+  abstract navigationModeSetStartPostionMarkerByPointCoordinates(
+    x: number,
+    y: number
+  ): void;
 }

@@ -12,7 +12,7 @@ import { IHomePageState } from "./home.state";
 const currentState: IHomePageState = {
   filterByParameter: Parameters.cO2,
   sensors: [],
-  lastAction: null
+  lastAction: { type: null }
 };
 
 export function homeReducer(

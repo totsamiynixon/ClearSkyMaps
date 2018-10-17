@@ -16,7 +16,7 @@ import {
   ApiProvider,
   MapBuilder
 } from "../../providers/inerfaces";
-
+import { Geolocation } from "@ionic-native/geolocation";
 @NgModule({
   declarations: [HomePage],
   imports: [
@@ -27,6 +27,7 @@ import {
   ],
   entryComponents: [HomePage],
   providers: [
+    Geolocation,
     { provide: ApiProvider, useClass: DefaultApiProvider },
     { provide: MapBuilder, useClass: GoogleMapBuilder },
     { provide: HubProvider, useClass: SignalRHubProvider }

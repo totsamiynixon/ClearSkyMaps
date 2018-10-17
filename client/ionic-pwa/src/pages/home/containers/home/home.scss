@@ -18,10 +18,10 @@ page-home {
       transition: 1s ease-out;
       opacity: 0;
     }
+  }
 
-    .content>.scroll-content {
-      margin-top: 0 !important;
-    }
+  .content>.scroll-content {
+    margin-top: 0 !important;
   }
 
   .map-holder {
@@ -60,5 +60,17 @@ page-home {
 
   .gmnoprint div {
     background: none !important;
+  }
+
+  #position-marker {
+    background-image: url('https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png');
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
   }
 }

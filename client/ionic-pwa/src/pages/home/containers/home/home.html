@@ -2,8 +2,16 @@
   <ion-navbar>
     <ion-buttons>
       <button ion-button
-              icon-only>
+              *ngIf="!showPositionMarker"
+              icon-only
+              (click)="enableNavigationMode()">
         <ion-icon name="pin"></ion-icon>
+      </button>
+      <button ion-button
+              *ngIf="showPositionMarker"
+              icon-only
+              (click)="disableNavigationMode()">
+        <ion-icon name="close"></ion-icon>
       </button>
     </ion-buttons>
     <ion-buttons end>
@@ -20,6 +28,9 @@
 
 
 <ion-content>
+  <div id="position-marker"
+       #positionMarker
+       [hidden]="!showPositionMarker"></div>
   <div #map
        class="map-holder"></div>
 </ion-content>

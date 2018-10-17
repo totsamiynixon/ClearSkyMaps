@@ -12,7 +12,7 @@ import { MyApp } from "./app.component";
 import { Config } from "../models/providers/config";
 import {
   ConfigProvider,
-  ToastAlertsService
+  IonicAlertsService
 } from "../providers/implementations";
 import { AlertsService } from "../providers/inerfaces";
 
@@ -44,7 +44,7 @@ export function createTranslateLoader(http: HttpClient) {
     SplashScreen,
     StatusBar,
     { provide: Config, useValue: ConfigProvider.getConfig() },
-    { provide: AlertsService, useClass: ToastAlertsService },
+    { provide: AlertsService, useClass: IonicAlertsService },
     // Keep this to enable Ionic's runtime error handling during development
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]

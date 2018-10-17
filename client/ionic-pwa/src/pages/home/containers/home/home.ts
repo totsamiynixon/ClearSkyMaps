@@ -42,8 +42,13 @@ import { getFilterByParameter } from "../../store/home.reducer";
 export class HomePage {
   @ViewChild("map")
   mapRef: ElementRef;
+  @ViewChild("positionMarker")
+  navigationMarkerRef: ElementRef;
   uiComponentsVisible: boolean = true;
   filterByParameter: string;
+  showPositionMarker: boolean = false;
+  readyToGetHubValues: boolean = false;
+
   constructor(
     private navCtrl: NavController,
     private navParams: NavParams,
@@ -61,18 +66,37 @@ export class HomePage {
       .subscribe((value: Parameters) => {
         this.filterByParameter = Parameters[value];
       });
+    let subscr = this.store$
+      .pipe(select("homeState"))
+      .subscribe((state: IHomePageState) => {
+        if (state.lastAction.type == SET_SENSORS) {
+          this.readyToGetHubValues;
+          subscr.unsubscribe();
+        }
+      });
   }
-
   ionViewDidLoad() {
+    this.alertsService.showLoading("Инициализация приложения!");
     this.mapBuilder.onDrag(() => {
       this.hideUiComponents();
+      this.cd.detectChanges();
     });
     this.mapBuilder.onDragEnd(() => {
+      if (this.mapBuilder.isNavigationModeEnabled()) {
+        this.mapBuilder.navigationModeSetStartPostionMarkerByPointCoordinates(
+          this.navigationMarkerRef.nativeElement.offsetLeft,
+          this.navigationMarkerRef.nativeElement.offsetTop
+        );
+      }
       this.showUIComponents();
+      this.cd.detectChanges();
     });
     this.mapBuilder.initMap(this.mapRef.nativeElement).then(() => {
       this.hubProvider.getHub().then(hub => {
         hub.on("DispatchReadingAsync", (hubDispatchModel: HubDispatchModel) => {
+          if (!this.readyToGetHubValues) {
+            return;
+          }
           this.store$.dispatch(
             new UpdateSensorAction(
               hubDispatchModel.reading,
@@ -102,6 +126,7 @@ export class HomePage {
                   }
                 );
               });
+              this.alertsService.hideLoading();
             });
           },
           error => this.alertsService.showError(error)
@@ -161,15 +186,30 @@ export class HomePage {
   hideUiComponents() {
     if (this.uiComponentsVisible) {
       this.uiComponentsVisible = false;
-      this.cd.detectChanges();
     }
   }
 
   showUIComponents() {
     if (!this.uiComponentsVisible) {
       this.uiComponentsVisible = true;
-      this.cd.detectChanges();
     }
+  }
+
+  enableNavigationMode() {
+    this.alertsService.showLoading();
+    this.mapBuilder.enableNavigationMode().then(() => {
+      this.showPositionMarker = true;
+      this.alertsService.hideLoading();
+      this.cd.detectChanges();
+    }, this.alertsService.showError);
+  }
+  disableNavigationMode() {
+    this.alertsService.showLoading();
+    this.mapBuilder.disableNavigationMode().then(() => {
+      this.showPositionMarker = false;
+      this.alertsService.hideLoading();
+      this.cd.detectChanges();
+    }, this.alertsService.showError);
   }
   private getState(): IHomePageState {
     let state: IHomePageState;

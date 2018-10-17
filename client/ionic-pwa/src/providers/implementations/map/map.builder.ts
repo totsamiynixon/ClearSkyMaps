@@ -6,8 +6,10 @@ import { Inject, Injectable } from "@angular/core";
 import { Config } from "../../../models/providers/config";
 import { PollutionLevels } from "../../../models/sensor.model";
 import { MapProposition } from "../../../models/providers/map-proposition.model";
-import { MapBuilder } from "../../inerfaces";
+import { MapBuilder, AlertsService } from "../../inerfaces";
 import { EventEmitter } from "events";
+import { Geolocation } from "@ionic-native/geolocation";
+import { EmulationModeTracker } from "./models/emulation.mode.tracker.model";
 declare const google: any;
 @Injectable()
 export class GoogleMapBuilder implements MapBuilder {
@@ -18,13 +20,99 @@ export class GoogleMapBuilder implements MapBuilder {
   private directionsService: google.maps.DirectionsService;
   private directionsDisplay: google.maps.DirectionsRenderer;
   private geocoder: google.maps.Geocoder;
-  private dragEmitter: BehaviorSubject<string>;
   private eventEmitter: EventEmitter = new EventEmitter();
-  constructor(public config: Config) {
+  private emulationModeTracker: EmulationModeTracker;
+  constructor(public config: Config, private geolocation: Geolocation) {
     this.areas = {};
-    this.dragEmitter = new BehaviorSubject<string>(null);
+  }
+  enableNavigationMode(): Promise<null> {
+    return new Promise((resolve, reject) => {
+      this.emulationModeTracker = new EmulationModeTracker();
+      this.emulationModeTracker.userSelectionMarker = new google.maps.Marker({
+        map: this.map,
+        position: this.map.getCenter(),
+        icon: {
+          url:
+            "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png", // url
+          scaledSize: new google.maps.Size(50, 50), // scaled size
+          origin: new google.maps.Point(0, 0), // origin
+          anchor: new google.maps.Point(25, 25)
+        },
+        visible: false
+      });
+      this.emulationModeTracker.realUserPositionMarker = new google.maps.Marker(
+        {
+          icon: {
+            url:
+              "https://www.materialui.co/materialIcons/maps/my_location_grey_192x192.png", // url
+            scaledSize: new google.maps.Size(25, 25), // scaled size
+            origin: new google.maps.Point(0, 0), // origin
+            anchor: new google.maps.Point(0, 0),
+            labelOrigin: new google.maps.Point(10, -5) // anchor
+          },
+          map: null,
+          position: this.map.getCenter(),
+          label: "Вы"
+        }
+      );
+      this.geolocation
+        .getCurrentPosition()
+        .then(resp => {
+          this.map.setCenter(
+            new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude)
+          );
+          this.map.setZoom(20);
+          this.emulationModeTracker.userSelectionMarker.setPosition(
+            this.map.getCenter()
+          );
+          this.emulationModeTracker.userSelectionMarker.setMap(this.map);
+          this.emulationModeTracker.realUserPositionMarker.setPosition(
+            new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude)
+          );
+          this.emulationModeTracker.realUserPositionMarker.setMap(this.map);
+          resolve();
+        })
+        .catch(reject);
+      this.emulationModeTracker.userPositionWatcher = this.geolocation
+        .watchPosition()
+        .subscribe(resp => {
+          this.emulationModeTracker.realUserPositionMarker.setPosition(
+            new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude)
+          );
+        });
+    });
   }
 
+  navigationModeSetStartPostionMarkerByPointCoordinates(x: number, y: number) {
+    if (this.emulationModeTracker.userSelectionMarker != null) {
+      let point = new google.maps.Point(x, y);
+      this.emulationModeTracker.userSelectionMarker.setPosition(
+        this.point2LatLng(point, this.map)
+      );
+    }
+  }
+
+  isNavigationModeEnabled(): boolean {
+    return this.emulationModeTracker != null;
+  }
+
+  disableNavigationMode(): Promise<null> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.map.setOptions(this.config.map.options);
+        this.emulationModeTracker.realUserPositionMarker.setMap(null);
+        this.emulationModeTracker.userPositionWatcher.unsubscribe();
+        this.emulationModeTracker.userSelectionMarker.setMap(null);
+        this.emulationModeTracker = null;
+        resolve();
+      } catch (ex) {
+        reject(ex);
+      }
+    });
+  }
+  onStartPointSelected(handler: (...args: any[]) => void) {
+    throw new Error("Method not implemented.");
+  }
   public onDrag(handler: (...args: any[]) => void) {
     this.eventEmitter.on("dragstart", handler);
   }
@@ -140,9 +228,6 @@ export class GoogleMapBuilder implements MapBuilder {
     });
   }
 
-  public drag(): Observable<string> {
-    return this.dragEmitter;
-  }
   private getStrokeColorByPollutionLevel(
     pollutionLevel: PollutionLevels
   ): string {
@@ -180,5 +265,41 @@ export class GoogleMapBuilder implements MapBuilder {
         (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
       ).toString(16)
     );
+  }
+
+  private latLng2Point(
+    latLng: google.maps.LatLng,
+    map: google.maps.Map
+  ): google.maps.Point {
+    var topRight = map
+      .getProjection()
+      .fromLatLngToPoint(map.getBounds().getNorthEast());
+    var bottomLeft = map
+      .getProjection()
+      .fromLatLngToPoint(map.getBounds().getSouthWest());
+    var scale = Math.pow(2, map.getZoom());
+    var worldPoint = map.getProjection().fromLatLngToPoint(latLng);
+    return new google.maps.Point(
+      (worldPoint.x - bottomLeft.x) * scale,
+      (worldPoint.y - topRight.y) * scale
+    );
+  }
+
+  private point2LatLng(
+    point: google.maps.Point,
+    map: google.maps.Map
+  ): google.maps.LatLng {
+    var topRight = map
+      .getProjection()
+      .fromLatLngToPoint(map.getBounds().getNorthEast());
+    var bottomLeft = map
+      .getProjection()
+      .fromLatLngToPoint(map.getBounds().getSouthWest());
+    var scale = Math.pow(2, map.getZoom());
+    var worldPoint = new google.maps.Point(
+      point.x / scale + bottomLeft.x,
+      point.y / scale + topRight.y
+    );
+    return map.getProjection().fromPointToLatLng(worldPoint);
   }
 }
