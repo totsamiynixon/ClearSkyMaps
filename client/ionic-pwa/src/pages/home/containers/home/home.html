@@ -2,13 +2,13 @@
   <ion-navbar>
     <ion-buttons>
       <button ion-button
-              *ngIf="!showPositionMarker"
+              *ngIf="!(showStartPositionMarker || showEndPositionMarker) && this.startPosition == null"
               icon-only
               (click)="enableNavigationMode()">
         <ion-icon name="pin"></ion-icon>
       </button>
       <button ion-button
-              *ngIf="showPositionMarker"
+              *ngIf="(showStartPositionMarker || showEndPositionMarker) || this.startPosition != null"
               icon-only
               (click)="disableNavigationMode()">
         <ion-icon name="close"></ion-icon>
@@ -28,9 +28,19 @@
 
 
 <ion-content>
-  <div id="position-marker"
-       #positionMarker
-       [hidden]="!showPositionMarker"></div>
+  <div id="start-position-marker"
+       #startPositionMarker
+       [hidden]="!showStartPositionMarker"></div>
+  <div id="end-position-marker"
+       #endPositionMarker
+       [hidden]="!showEndPositionMarker"></div>
+  <ion-buttons id="confirm-buttons">
+    <button [hidden]="!(showStartPositionMarker || showEndPositionMarker)"
+            ion-button
+            (click)="confirmNavigationPoint()">
+      Подтвердить
+    </button>
+  </ion-buttons>
   <div #map
        class="map-holder"></div>
 </ion-content>

@@ -30,9 +30,15 @@ export abstract class MapBuilder {
   abstract enableNavigationMode(): Promise<null>;
   abstract isNavigationModeEnabled(): boolean;
   abstract disableNavigationMode(): Promise<null>;
-  abstract onStartPointSelected(handler: (...args: any[]) => void);
-  abstract navigationModeSetStartPostionMarkerByPointCoordinates(
+  abstract navigationModeSetAndGetStartPostionByPointCoordinates(
     x: number,
     y: number
-  ): void;
+  ): google.maps.LatLng;
+
+  abstract navigationModeSetAndGetEndPostionByPointCoordinates(
+    x: number,
+    y: number
+  ): google.maps.LatLng;
+
+  abstract releaseRoutes();
 }

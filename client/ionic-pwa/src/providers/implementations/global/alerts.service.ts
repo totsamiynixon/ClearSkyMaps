@@ -38,6 +38,15 @@ export class IonicAlertsService implements AlertsService {
     let toast = this.toastCtrl.create({
       message: message,
       duration: 3000,
+      position: "bottom",
+      showCloseButton: true
+    });
+    toast.present();
+  }
+  showInfo(message: string): void {
+    let toast = this.toastCtrl.create({
+      message: message,
+      duration: 8000,
       position: "bottom"
     });
     toast.present();

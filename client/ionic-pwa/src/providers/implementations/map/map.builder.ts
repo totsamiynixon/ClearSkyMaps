@@ -28,33 +28,43 @@ export class GoogleMapBuilder implements MapBuilder {
   enableNavigationMode(): Promise<null> {
     return new Promise((resolve, reject) => {
       this.emulationModeTracker = new EmulationModeTracker();
-      this.emulationModeTracker.userSelectionMarker = new google.maps.Marker({
+      this.emulationModeTracker.startRouteMarker = new google.maps.Marker({
         map: this.map,
         position: this.map.getCenter(),
         icon: {
           url:
-            "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png", // url
+            "http://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-PNG-Picture.png", // url
           scaledSize: new google.maps.Size(50, 50), // scaled size
           origin: new google.maps.Point(0, 0), // origin
           anchor: new google.maps.Point(25, 25)
         },
         visible: false
       });
-      this.emulationModeTracker.realUserPositionMarker = new google.maps.Marker(
-        {
-          icon: {
-            url:
-              "https://www.materialui.co/materialIcons/maps/my_location_grey_192x192.png", // url
-            scaledSize: new google.maps.Size(25, 25), // scaled size
-            origin: new google.maps.Point(0, 0), // origin
-            anchor: new google.maps.Point(0, 0),
-            labelOrigin: new google.maps.Point(10, -5) // anchor
-          },
-          map: null,
-          position: this.map.getCenter(),
-          label: "Вы"
-        }
-      );
+      this.emulationModeTracker.endRouteMarker = new google.maps.Marker({
+        map: this.map,
+        position: this.map.getCenter(),
+        icon: {
+          url:
+            "https://png2.kisspng.com/20180403/ybq/kisspng-google-map-maker-google-maps-computer-icons-openst-map-marker-5ac3098700e9d3.6315947215227313990038.png", // url
+          scaledSize: new google.maps.Size(50, 50), // scaled size
+          origin: new google.maps.Point(0, 0), // origin
+          anchor: new google.maps.Point(25, 25)
+        },
+        visible: false
+      });
+      this.emulationModeTracker.userPositionMarker = new google.maps.Marker({
+        icon: {
+          url:
+            "https://www.materialui.co/materialIcons/maps/my_location_grey_192x192.png", // url
+          scaledSize: new google.maps.Size(25, 25), // scaled size
+          origin: new google.maps.Point(0, 0), // origin
+          anchor: new google.maps.Point(0, 0),
+          labelOrigin: new google.maps.Point(10, -5) // anchor
+        },
+        map: null,
+        position: this.map.getCenter(),
+        label: "Вы"
+      });
       this.geolocation
         .getCurrentPosition()
         .then(resp => {
@@ -62,33 +72,50 @@ export class GoogleMapBuilder implements MapBuilder {
             new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude)
           );
           this.map.setZoom(20);
-          this.emulationModeTracker.userSelectionMarker.setPosition(
+          this.emulationModeTracker.startRouteMarker.setPosition(
             this.map.getCenter()
           );
-          this.emulationModeTracker.userSelectionMarker.setMap(this.map);
-          this.emulationModeTracker.realUserPositionMarker.setPosition(
+          this.emulationModeTracker.startRouteMarker.setMap(this.map);
+          this.emulationModeTracker.userPositionMarker.setPosition(
             new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude)
           );
-          this.emulationModeTracker.realUserPositionMarker.setMap(this.map);
+          this.emulationModeTracker.userPositionMarker.setMap(this.map);
           resolve();
         })
         .catch(reject);
       this.emulationModeTracker.userPositionWatcher = this.geolocation
         .watchPosition()
         .subscribe(resp => {
-          this.emulationModeTracker.realUserPositionMarker.setPosition(
+          this.emulationModeTracker.userPositionMarker.setPosition(
             new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude)
           );
         });
     });
   }
 
-  navigationModeSetStartPostionMarkerByPointCoordinates(x: number, y: number) {
-    if (this.emulationModeTracker.userSelectionMarker != null) {
+  navigationModeSetAndGetStartPostionByPointCoordinates(
+    x: number,
+    y: number
+  ): google.maps.LatLng {
+    if (this.emulationModeTracker.startRouteMarker != null) {
       let point = new google.maps.Point(x, y);
-      this.emulationModeTracker.userSelectionMarker.setPosition(
-        this.point2LatLng(point, this.map)
-      );
+      let position = this.point2LatLng(point, this.map);
+      this.emulationModeTracker.startRouteMarker.setPosition(position);
+      this.emulationModeTracker.startRouteMarker.setVisible(true);
+      return position;
+    }
+  }
+
+  navigationModeSetAndGetEndPostionByPointCoordinates(
+    x: number,
+    y: number
+  ): google.maps.LatLng {
+    if (this.emulationModeTracker.endRouteMarker != null) {
+      let point = new google.maps.Point(x, y);
+      let position = this.point2LatLng(point, this.map);
+      this.emulationModeTracker.endRouteMarker.setPosition(position);
+      this.emulationModeTracker.endRouteMarker.setVisible(true);
+      return position;
     }
   }
 
@@ -100,10 +127,12 @@ export class GoogleMapBuilder implements MapBuilder {
     return new Promise((resolve, reject) => {
       try {
         this.map.setOptions(this.config.map.options);
-        this.emulationModeTracker.realUserPositionMarker.setMap(null);
+        this.emulationModeTracker.userPositionMarker.setMap(null);
         this.emulationModeTracker.userPositionWatcher.unsubscribe();
-        this.emulationModeTracker.userSelectionMarker.setMap(null);
+        this.emulationModeTracker.startRouteMarker.setMap(null);
+        this.emulationModeTracker.endRouteMarker.setMap(null);
         this.emulationModeTracker = null;
+        this.releaseRoutes();
         resolve();
       } catch (ex) {
         reject(ex);
@@ -211,11 +240,6 @@ export class GoogleMapBuilder implements MapBuilder {
     to: google.maps.LatLng | google.maps.LatLngLiteral
   ): void {
     this.directionsDisplay.setMap(this.map);
-    var abc = {
-      origin: from,
-      destination: to,
-      travelMode: google.maps.TravelMode.WALKING
-    };
     let request: google.maps.DirectionsRequest = {
       origin: from,
       destination: to,
@@ -226,6 +250,10 @@ export class GoogleMapBuilder implements MapBuilder {
         this.directionsDisplay.setDirections(response);
       }
     });
+  }
+
+  public releaseRoutes() {
+    this.directionsDisplay.setMap(null);
   }
 
   private getStrokeColorByPollutionLevel(

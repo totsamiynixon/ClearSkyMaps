@@ -42,11 +42,16 @@ import { getFilterByParameter } from "../../store/home.reducer";
 export class HomePage {
   @ViewChild("map")
   mapRef: ElementRef;
-  @ViewChild("positionMarker")
-  navigationMarkerRef: ElementRef;
+  @ViewChild("startPositionMarker")
+  startPositionMarkerRef: ElementRef;
+  @ViewChild("endPositionMarker")
+  endPositionMarkerRef: ElementRef;
   uiComponentsVisible: boolean = true;
   filterByParameter: string;
-  showPositionMarker: boolean = false;
+  showStartPositionMarker: boolean = false;
+  showEndPositionMarker: boolean = false;
+  startPosition: google.maps.LatLng;
+  endPostion: google.maps.LatLng;
   readyToGetHubValues: boolean = false;
 
   constructor(
@@ -70,7 +75,7 @@ export class HomePage {
       .pipe(select("homeState"))
       .subscribe((state: IHomePageState) => {
         if (state.lastAction.type == SET_SENSORS) {
-          this.readyToGetHubValues;
+          this.readyToGetHubValues = true;
           subscr.unsubscribe();
         }
       });
@@ -82,12 +87,6 @@ export class HomePage {
       this.cd.detectChanges();
     });
     this.mapBuilder.onDragEnd(() => {
-      if (this.mapBuilder.isNavigationModeEnabled()) {
-        this.mapBuilder.navigationModeSetStartPostionMarkerByPointCoordinates(
-          this.navigationMarkerRef.nativeElement.offsetLeft,
-          this.navigationMarkerRef.nativeElement.offsetTop
-        );
-      }
       this.showUIComponents();
       this.cd.detectChanges();
     });
@@ -198,15 +197,46 @@ export class HomePage {
   enableNavigationMode() {
     this.alertsService.showLoading();
     this.mapBuilder.enableNavigationMode().then(() => {
-      this.showPositionMarker = true;
+      this.showStartPositionMarker = true;
       this.alertsService.hideLoading();
       this.cd.detectChanges();
     }, this.alertsService.showError);
   }
+
+  confirmNavigationPoint() {
+    if (this.startPosition == null) {
+      this.startPosition = this.mapBuilder.navigationModeSetAndGetStartPostionByPointCoordinates(
+        this.startPositionMarkerRef.nativeElement.offsetLeft,
+        this.startPositionMarkerRef.nativeElement.offsetTop
+      );
+      this.showStartPositionMarker = false;
+      this.showEndPositionMarker = true;
+      this.cd.detectChanges();
+      return;
+    }
+    if (this.endPostion == null) {
+      this.endPostion = this.mapBuilder.navigationModeSetAndGetEndPostionByPointCoordinates(
+        this.endPositionMarkerRef.nativeElement.offsetLeft,
+        this.endPositionMarkerRef.nativeElement.offsetTop
+      );
+      this.showEndPositionMarker = false;
+      this.cd.detectChanges();
+    }
+    if (this.startPosition != null && this.endPostion != null) {
+      this.mapBuilder.buildRoute(this.startPosition, this.endPostion);
+      this.alertsService.showInfo(
+        "Если вы хотите построить маршрут заново - просто выйдите и войдите в режим навигации снова!"
+      );
+    }
+  }
+
   disableNavigationMode() {
     this.alertsService.showLoading();
     this.mapBuilder.disableNavigationMode().then(() => {
-      this.showPositionMarker = false;
+      this.showStartPositionMarker = false;
+      this.showEndPositionMarker = false;
+      this.startPosition = null;
+      this.endPostion = null;
       this.alertsService.hideLoading();
       this.cd.detectChanges();
     }, this.alertsService.showError);
