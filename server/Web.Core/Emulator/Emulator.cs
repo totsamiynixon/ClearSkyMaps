@@ -1,5 +1,4 @@
-﻿using ArduinoServer.Controllers.Api;
-using DAL.Intarfaces;
+﻿using DAL.Intarfaces;
 using Domain;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -33,12 +32,12 @@ namespace Web.Core.Emulator
 
         public bool IsEmulationEnabled => _configuration.GetValue<bool?>("emulationEnabled") ?? false;
 
-        public void RunEmulation()
+        public async Task RunEmulationAsync()
         {
             if (!IsEmulationEnabled)
             {
                 _configuration["emulationEnabled"] = bool.TrueString.ToLower();
-                SeedSensors();
+                await SeedSensorsAsync();
                 StartTask();
             }
         }
@@ -47,46 +46,50 @@ namespace Web.Core.Emulator
         {
             memoryLimit = limit;
         }
-        public void StopEmulation()
+        public async Task StopEmulationAsync()
         {
             if (IsEmulationEnabled)
             {
                 _configuration["emulationEnabled"] = bool.FalseString.ToLower();
-                ClearSensors();
+                await ClearSensorsAsync();
             }
         }
 
         private void StartTask()
         {
-            var task = Task.Run(() =>
+            var task = Task.Run(async () =>
             {
                 while (IsEmulationEnabled)
                 {
-                    DispatchFakeData();
                     try
                     {
+                        await DispatchFakeDataAsync();
                         CheckMemory();
                     }
-                    catch (OutOfMemoryException ex)
+                    catch (Exception ex)
                     {
-                        StopEmulation();
+                        await StopEmulationAsync();
                     }
                 }
             });
         }
 
-        private async void SeedSensors()
+        private async Task SeedSensorsAsync()
         {
+            var databaseMigrator = (IDatabaseMigrator)_resolver.GetService(typeof(IDatabaseMigrator));
+            databaseMigrator.Migrate();
+            await ClearSensorsAsync();
             var service = (ISensorService)_resolver.GetService(typeof(ISensorService));
             _trackingKeys = new List<string>();
             var iterations = _emulatorRandom.Next(1, 20);
             for (int i = 0; i < iterations; i++)
             {
-                _trackingKeys.Add(await service.RegisterAndGetTrackingKeyAsync(GetFakeSensor()));
+                var sensorKey = await service.RegisterAndGetTrackingKeyAsync(GetFakeSensor());
+                _trackingKeys.Add(sensorKey);
             }
         }
 
-        private async void ClearSensors()
+        private async Task ClearSensorsAsync()
         {
             var context = (IDataContext)_resolver.GetService(typeof(IDataContext));
             var repo = context.GetRepository<Sensor>();
@@ -95,15 +98,16 @@ namespace Web.Core.Emulator
             _trackingKeys = null;
         }
 
-        private async void DispatchFakeData()
+        private async Task DispatchFakeDataAsync()
         {
+
             int delayTime = 10000 / _trackingKeys.Count;
             foreach (var key in _trackingKeys)
             {
                 var controller = new ReadingsController((IReadingService)_resolver.GetService(typeof(IReadingService)), (ISensorService)_resolver.GetService(typeof(ISensorService)), (IHubContext<ReadingsHub, IReadingsClient>)_resolver.GetService(typeof(IHubContext<ReadingsHub, IReadingsClient>)));
                 var fakeReading = GetFakeReading();
                 await controller.PostReading(key, fakeReading);
-                Thread.Sleep(delayTime);
+                await Task.Delay(delayTime);
             }
         }
 

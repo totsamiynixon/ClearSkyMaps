@@ -22,7 +22,7 @@
   <ItemGroup>
     <Folder Include="Middlewares\" />
     <Folder Include="Models\Api\" />
-    <Folder Include="wwwroot\spa\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

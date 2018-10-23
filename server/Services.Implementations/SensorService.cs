@@ -49,7 +49,7 @@ namespace Services.Implementations
 
         public async Task<(int sensorId, PollutionLevel level)> GetSensorPollutionLevelInfoAsync(string trackingKey)
         {
-            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => new { Id = f.Id, Readings = f.Readings.Take(10) }).FirstOrDefaultAsync();
+            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => new { Id = f.Id, Readings = f.Readings.Take(10).ToArray()}).FirstOrDefaultAsync();
             return (sensor.Id, _pollutionLevelCalculationService.Calculate(_mapper.Map<IEnumerable<Reading>, ReadingForPollutionCalculation[]>(sensor.Readings)));
         }
 
