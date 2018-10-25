@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Services.DTO.Reading;
+using Services.DTO.Models.Reading;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,36 +11,62 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Web.Core.Hubs;
+using Web.Core.Models.Api.Readings;
 using Web.Core.Models.Hub;
 
 namespace Web.Core.Controllers.Api
 {
-    [Route("api/sensors")]
+    [Route("api/readings")]
+    [Produces("application/json")]
     public class ReadingsController : Controller
     {
         private readonly IHubContext<ReadingsHub, IReadingsClient> _hubContext;
         private readonly IReadingService _readingService;
         private readonly ISensorService _sensorService;
-        public ReadingsController(IReadingService readingService, ISensorService sensorService, IHubContext<ReadingsHub, IReadingsClient> hubContext)
+        private readonly IMapper _mapper;
+        public ReadingsController(
+            IReadingService readingService,
+            ISensorService sensorService,
+            IHubContext<ReadingsHub, IReadingsClient> hubContext,
+            Func<Type, IMapper> serviceAccessor)
         {
             _hubContext = hubContext;
             _readingService = readingService;
             _sensorService = sensorService;
+            _mapper = serviceAccessor(typeof(ReadingsController));
         }
-
+        /// <summary>
+        /// Saves reading into system for sensor with specified tracking key   
+        /// </summary>
+        /// <param name="model">The data model</param>
+        /// <response code="200">Readings was successfuly posted</response>
+        /// <response code="400">Model is not valid</response>
+        /// <response code="404">Sensor with such tracking key was not found</response>  
+        /// <returns>Status code</returns>
         [HttpPost]
-        public async Task<IActionResult> PostReading(string trackingKey, SaveReadingDTO model)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> PostReading(ApiPostReadingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await _readingService.SaveReadingAsync(trackingKey, model);
-            var sensorPollutionModel = await _sensorService.GetSensorPollutionLevelInfoAsync(trackingKey);
+            SaveReadingResultDTO result = null;
+            try
+            {
+                result = await _readingService.SaveReadingAsync(model.SensorTrackingKey, _mapper.Map<ApiPostReadingModel, SaveReadingDTO>(model));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            var sensorPollutionLevel = await _sensorService.GetSensorPollutionLevelInfoAsync(model.SensorTrackingKey);
             var hubReadings = new SensorReadingDispatchModel
             {
-                SensorId = sensorPollutionModel.sensorId,
-                LatestPollutionLevel = sensorPollutionModel.level,
+                SensorId = result.SensorId,
+                LatestPollutionLevel = sensorPollutionLevel,
                 Reading = new SensorReadingDTO
                 {
                     CH4 = model.CH4,
@@ -51,7 +77,7 @@ namespace Web.Core.Controllers.Api
                     LPG = model.LPG,
                     Preassure = model.Preassure,
                     Temp = model.Temp,
-                    Created = model.Created
+                    Created = result.Created
                 }
             };
             await _hubContext.Clients.All.DispatchReadingAsync(hubReadings);
