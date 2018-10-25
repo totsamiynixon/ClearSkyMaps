@@ -14,7 +14,7 @@ export class DefaultApiProvider implements ApiProvider {
 
   getAllSensors(): Observable<Sensor[]> {
     return this.http.get<Sensor[]>(
-      this.config.applicationServerUrl + "/api/sensors"
+      this.config.applicationServerUrl + "api/sensors"
     );
   }
 }

@@ -64,7 +64,6 @@ namespace Web.Core.Emulator
                     try
                     {
                         await DispatchFakeDataAsync();
-                        CheckMemory();
                     }
                     catch (Exception ex)
                     {
@@ -159,16 +158,6 @@ namespace Web.Core.Emulator
             double foundLongitude = new_x + longitude;
             double foundLatitude = y + latittude;
             return (foundLongitude, foundLatitude);
-        }
-
-        private void CheckMemory()
-        {
-            Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-            long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
-            if (totalBytesOfMemoryUsed > memoryLimit)
-            {
-                throw new OutOfMemoryException("Too much memory used!");
-            }
         }
     }
 }

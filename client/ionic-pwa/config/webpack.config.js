@@ -1,8 +1,10 @@
 const path = require("path");
+const fs = require("fs");
 const { dev, prod } = require("@ionic/app-scripts/config/webpack.config");
 const webpackMerge = require("webpack-merge");
 const webpack = require("webpack");
-const newDefinePlugin = new webpack.DefinePlugin({
+const customConfig = {};
+const state = {
   APP_WEBSERVER_URL: JSON.stringify(
     process.env["APP_WEBSERVER_URL_" + process.env.APP_STAGE] ||
       "http://localhost:56875/"
@@ -11,21 +13,31 @@ const newDefinePlugin = new webpack.DefinePlugin({
   APP_MAP_API_KEY: JSON.stringify(
     process.env.APP_MAP_API_KEY || "AIzaSyAfj-ARjZc7VEGb0_grdk5VFu5wXphQyjo"
   )
-});
-const customConfig = {
-  plugins: [newDefinePlugin]
 };
-const mergedPlugin = webpackMerge.smart(
-  dev.plugins[0],
-  customConfig.plugins[0]
-);
-console.log("I USE MY CUSTOM CONFIG");
-console.log(mergedPlugin);
-dev.plugins.shift();
-prod.plugins.shift();
-console.log("Dev conf after merge", webpackMerge(dev, customConfig));
-console.log("Prod conf after merge", webpackMerge(dev, customConfig));
+initConfigXML();
+initWebpackConfig();
 module.exports = {
   dev: webpackMerge(dev, customConfig),
   prod: webpackMerge(prod, customConfig)
 };
+
+function initWebpackConfig() {
+  let newDefinePlugin = new webpack.DefinePlugin(state);
+  customConfig.plugins = [newDefinePlugin];
+  let mergedPlugin = webpackMerge.smart(
+    dev.plugins[0],
+    customConfig.plugins[0]
+  );
+  dev.plugins.shift();
+  prod.plugins.shift();
+}
+function initConfigXML() {
+  const replaceAll = function(target, search, replacement) {
+    return target.split(search).join(replacement);
+  };
+  let file = fs.readFileSync(path.join(__dirname, "../config.tpl.xml"), "utf8");
+  for (var key in state) {
+    file = replaceAll(file, `"$(${key})"`, state[key]);
+  }
+  fs.writeFileSync(path.join(__dirname, "../config.xml"), file, "utf8");
+}

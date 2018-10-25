@@ -76,13 +76,13 @@ requests to an API endpoint that you will need to configure.
 ### Api
 
 The `Api` provider is a simple CRUD frontend to an API. Simply put the root of
-your API url in the Api class and call get/post/put/patch/delete 
+your API url in the Api class and call get/post/put/patch/delete
 
 ## i18n
 
 Ionic Super Starter comes with internationalization (i18n) out of the box with
 [ngx-translate](https://github.com/ngx-translate/core). This makes it easy to
-change the text used in the app by modifying only one file. 
+change the text used in the app by modifying only one file.
 
 ### Adding Languages
 
@@ -94,3 +94,12 @@ code (ex: en/gb/de/es/etc.).
 
 To change the language of the app, edit `src/app/app.component.ts` and modify
 `translate.use('en')` to use the LANGCODE from `src/assets/i18n/`
+
+// "API_KEY_FOR_ANDROID": "AIzaSyAfj-ARjZc7VEGb0_grdk5VFu5wXphQyjo",
+// "API_KEY_FOR_IOS": "AIzaSyAfj-ARjZc7VEGb0_grdk5VFu5wXphQyjo",
+// "PLAY_SERVICES_VERSION": "15.0.1",
+// "ANDROID_SUPPORT_V4_VERSION": "27.+",
+// "LOCATION_WHEN_IN_USE_DESCRIPTION":
+// "This app wants to get your location while this app runs only.",
+// "LOCATION_ALWAYS_USAGE_DESCRIPTION":
+// "This app wants to get your location always, even this app runs in background."

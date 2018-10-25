@@ -10,10 +10,13 @@ import { MapBuilder, AlertsService } from "../../inerfaces";
 import { EventEmitter } from "events";
 import { Geolocation } from "@ionic-native/geolocation";
 import { EmulationModeTracker } from "./models/emulation.mode.tracker.model";
+//import { GoogleMaps, GoogleMap } from "@ionic-native/google-maps";
+import { Platform } from "ionic-angular";
 declare const google: any;
 @Injectable()
 export class GoogleMapBuilder implements MapBuilder {
-  private map: google.maps.Map;
+  //private map: google.maps.Map;
+  private map: any;
   private areas: Object;
   private autocompleteService: google.maps.places.AutocompleteService;
   private placeService: google.maps.places.PlacesService;
@@ -22,7 +25,11 @@ export class GoogleMapBuilder implements MapBuilder {
   private geocoder: google.maps.Geocoder;
   private eventEmitter: EventEmitter = new EventEmitter();
   private emulationModeTracker: EmulationModeTracker;
-  constructor(public config: Config, private geolocation: Geolocation) {
+  constructor(
+    public config: Config,
+    private geolocation: Geolocation,
+    public plt: Platform
+  ) {
     this.areas = {};
   }
   enableNavigationMode(): Promise<null> {
@@ -150,6 +157,15 @@ export class GoogleMapBuilder implements MapBuilder {
   }
   public initMap(element: HTMLElement): Promise<void> {
     return new Promise((resolve, reject) => {
+      // //if (this.plt.is("andorid") || this.plt.is("ios")) {
+      //   this.map = GoogleMaps.create(element, this.config.map.options);
+      //   resolve();
+      //   return;
+      // //}  // //if (this.plt.is("andorid") || this.plt.is("ios")) {
+      //   this.map = GoogleMaps.create(element, this.config.map.options);
+      //   resolve();
+      //   return;
+      // //}
       GoogleMapsLoader.release(() => {
         this.map = null;
         this.areas = {};
