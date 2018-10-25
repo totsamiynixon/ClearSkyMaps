@@ -1,5 +1,5 @@
 ﻿using Services.DTO.Enums;
-using Services.DTO.Reading;
+using Services.DTO.Models.Reading;
 using System;
 using System.Collections.Generic;
 using System.Linq;

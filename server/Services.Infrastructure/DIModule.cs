@@ -4,7 +4,7 @@ using DAL.Intarfaces;
 using Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Services.DTO.PollutionCalculator;
-using Services.DTO.Reading;
+using Services.DTO.Models.Reading;
 using Services.Implementations;
 using Services.Interfaces;
 using System;
