@@ -11,7 +11,7 @@ for:
         - master
     build_script:
       - cmd: dotnet build server/ClearSkyMaps.sln
-      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: npm run build-prod --prefix client/mobile-spa
   - branches:
       only:
         - production
@@ -20,14 +20,14 @@ for:
       NOVE_ENV: production
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
-      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: npm run build-prod --prefix client/mobile-spa
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
         name: WebAppProd
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactUrl $artifacts[WebAppProd].url -domain %PRODUCTION_DOMAIN%
+      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppProd.zip -domain %PRODUCTION_DOMAIN%
   - branches:
       only:
         - staging
@@ -36,14 +36,14 @@ for:
       NOVE_ENV: staging
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.sln -c Release -o ../../release
-      - cmd: npm run build --prefix client/mobile-spa
+      - cmd: npm run build-prod --prefix client/mobile-spa
       - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
     artifacts:
       - path: ./release
         name: WebAppStaging
         type: Zip
     deploy_script:
-      - cmd: powershell -file deploy.ps1 -artifactUrl $artifacts[WebAppStaging].url -domain %STAGING_DOMAIN%
+      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppStaging.zip -domain %STAGING_DOMAIN%
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true

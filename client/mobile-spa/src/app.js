@@ -10,10 +10,12 @@ import Framework7Vue from "framework7-vue/framework7-vue.esm.bundle.js";
 // Import F7 Styles
 import Framework7Styles from "framework7/css/framework7.css";
 
-import MaterialIcons from "material-design-icons/iconfont/material-icons.css";
-import FontAwesome from "font-awesome/css/font-awesome.css";
+// Import Icons and App Custom Styles
+import AppStyles from "./css/app.css";
+import IconsStyles from "./css/icons.css";
+
 // Import App Component
-import App from "./app";
+import App from "./app.vue";
 
 // Init F7 Vue Plugin
 Framework7.use(Framework7Vue);
