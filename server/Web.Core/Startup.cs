@@ -52,7 +52,7 @@ namespace Web.Core
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyHeader()
-                       .AllowAnyHeader()
+                       .AllowAnyMethod()
                        .AllowCredentials();
             }));
             services.Configure<MvcOptions>(options =>
@@ -73,22 +73,11 @@ namespace Web.Core
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            if ((env.IsDevelopment()))
-            {
-                app.UseCors("ClearSkyMapsPolicy");
-            }
+            app.UseCors("ClearSkyMapsPolicy");
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ReadingsHub>("/readingsHub");
             });
-            if (!env.IsDevelopment())
-            {
-                app.Run(async (context) =>
-                {
-                    context.Response.ContentType = "text/html";
-                    await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "spa", "index.html"));
-                });
-            }
         }
     }
 }

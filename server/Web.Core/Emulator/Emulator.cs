@@ -1,5 +1,4 @@
-﻿using ArduinoServer.Controllers.Api;
-using DAL.Intarfaces;
+﻿using DAL.Intarfaces;
 using Domain;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Web.Core.Controllers.Api;
 using Web.Core.Hubs;
@@ -19,7 +19,7 @@ namespace Web.Core.Emulator
     public class Emulator
     {
         private static Random _emulatorRandom = new Random();
-        private static double memoryLimit = 5e+8;
+        private static double memoryLimit = 8e+8;
 
         private List<string> _trackingKeys;
         private readonly IServiceProvider _resolver;
@@ -32,12 +32,12 @@ namespace Web.Core.Emulator
 
         public bool IsEmulationEnabled => _configuration.GetValue<bool?>("emulationEnabled") ?? false;
 
-        public void RunEmulation()
+        public async Task RunEmulationAsync()
         {
             if (!IsEmulationEnabled)
             {
                 _configuration["emulationEnabled"] = bool.TrueString.ToLower();
-                SeedSensors();
+                await SeedSensorsAsync();
                 StartTask();
             }
         }
@@ -46,12 +46,12 @@ namespace Web.Core.Emulator
         {
             memoryLimit = limit;
         }
-        public void StopEmulation()
+        public async Task StopEmulationAsync()
         {
             if (IsEmulationEnabled)
             {
                 _configuration["emulationEnabled"] = bool.FalseString.ToLower();
-                ClearSensors();
+                await ClearSensorsAsync();
             }
         }
 
@@ -61,32 +61,34 @@ namespace Web.Core.Emulator
             {
                 while (IsEmulationEnabled)
                 {
-                    DispatchFakeData();
-                    await Task.Delay(10000);
                     try
                     {
-                        CheckMemory();
+                        await DispatchFakeDataAsync();
                     }
-                    catch (OutOfMemoryException ex)
+                    catch (Exception ex)
                     {
-                        StopEmulation();
+                        await StopEmulationAsync();
                     }
                 }
             });
         }
 
-        private async void SeedSensors()
+        private async Task SeedSensorsAsync()
         {
+            var databaseMigrator = (IDatabaseMigrator)_resolver.GetService(typeof(IDatabaseMigrator));
+            databaseMigrator.Migrate();
+            await ClearSensorsAsync();
             var service = (ISensorService)_resolver.GetService(typeof(ISensorService));
             _trackingKeys = new List<string>();
             var iterations = _emulatorRandom.Next(1, 20);
             for (int i = 0; i < iterations; i++)
             {
-                _trackingKeys.Add(await service.RegisterAndGetTrackingKeyAsync(GetFakeSensor()));
+                var sensorKey = await service.RegisterAndGetTrackingKeyAsync(GetFakeSensor());
+                _trackingKeys.Add(sensorKey);
             }
         }
 
-        private async void ClearSensors()
+        private async Task ClearSensorsAsync()
         {
             var context = (IDataContext)_resolver.GetService(typeof(IDataContext));
             var repo = context.GetRepository<Sensor>();
@@ -95,17 +97,20 @@ namespace Web.Core.Emulator
             _trackingKeys = null;
         }
 
-        private  void DispatchFakeData()
+        private async Task DispatchFakeDataAsync()
         {
-            Parallel.ForEach(_trackingKeys, async (key) =>
+
+            int delayTime = 10000 / _trackingKeys.Count;
+            foreach (var key in _trackingKeys)
             {
-                var controller = new ReadingsController((IReadingService)_resolver.GetService(typeof(IReadingService)), (ISensorService)_resolver.GetService(typeof(ISensorService)), (IHubContext<ReadingsHub,IReadingsClient>)_resolver.GetService(typeof(IHubContext<ReadingsHub, IReadingsClient>)));
+                var controller = new ReadingsController((IReadingService)_resolver.GetService(typeof(IReadingService)), (ISensorService)_resolver.GetService(typeof(ISensorService)), (IHubContext<ReadingsHub, IReadingsClient>)_resolver.GetService(typeof(IHubContext<ReadingsHub, IReadingsClient>)));
                 var fakeReading = GetFakeReading();
                 await controller.PostReading(key, fakeReading);
-            });
+                await Task.Delay(delayTime);
+            }
         }
 
-        private  SaveReadingDTO GetFakeReading()
+        private SaveReadingDTO GetFakeReading()
         {
             return new SaveReadingDTO
             {
@@ -122,7 +127,7 @@ namespace Web.Core.Emulator
         }
 
 
-        private  RegisterSensorDTO GetFakeSensor()
+        private RegisterSensorDTO GetFakeSensor()
         {
             var fakeLatLong = GetLocation(27.560597, 53.904588, 8000);
             var sensor = new RegisterSensorDTO
@@ -133,7 +138,7 @@ namespace Web.Core.Emulator
             return sensor;
         }
 
-        private  (double randomLongitude, double randomLatitude) GetLocation(double longitude, double latittude, int radius)
+        private (double randomLongitude, double randomLatitude) GetLocation(double longitude, double latittude, int radius)
         {
             Random random = _emulatorRandom;
 
@@ -153,16 +158,6 @@ namespace Web.Core.Emulator
             double foundLongitude = new_x + longitude;
             double foundLatitude = y + latittude;
             return (foundLongitude, foundLatitude);
-        }
-
-        private  void CheckMemory()
-        {
-            Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-            long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
-            if (totalBytesOfMemoryUsed > memoryLimit)
-            {
-                throw new OutOfMemoryException("Too much memory used!");
-            }
         }
     }
 }

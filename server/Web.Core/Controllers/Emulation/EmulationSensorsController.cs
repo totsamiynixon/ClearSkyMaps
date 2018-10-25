@@ -19,17 +19,17 @@ namespace ArduinoServer.Controllers.Api
 
         [HttpGet]
         [Route("start")]
-        public IActionResult StartEmulation()
+        public async Task<IActionResult> StartEmulationAsync()
         {
-            _emulator.RunEmulation();
+            await _emulator.RunEmulationAsync();
             return Ok("Emulation was enabled!");
         }
 
         [HttpGet]
         [Route("stop")]
-        public IActionResult StopEmulation()
+        public async Task<IActionResult> StopEmulationAsync()
         {
-            _emulator.StopEmulation();
+            await _emulator.StopEmulationAsync();
             return Ok("Emulation was stopped!");
         }
 
