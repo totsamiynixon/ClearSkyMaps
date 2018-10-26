@@ -50,7 +50,6 @@ namespace ArduinoServer.Controllers.Api
         [Route("status")]
         public IActionResult GetStatus()
         {
-            throw new Exception("Мамку ебал");
             _logger.LogInformation($"Emulation is {(_emulator.IsEmulationEnabled ? "enabled" : "stopped")}!");
             return Ok($"Emulation is {(_emulator.IsEmulationEnabled ? "enabled" : "stopped")}!");
         }
