@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Services.DTO.Sensor;
 using Services.Interfaces;
 using System;
@@ -12,9 +13,11 @@ namespace ArduinoServer.Controllers.Api
     public class EmulationSensorsController : Controller
     {
         private readonly Emulator _emulator;
-        public EmulationSensorsController(Emulator emulator)
+        private readonly ILogger<EmulationSensorsController> _logger;
+        public EmulationSensorsController(Emulator emulator, ILogger<EmulationSensorsController> logger)
         {
             _emulator = emulator;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -22,6 +25,7 @@ namespace ArduinoServer.Controllers.Api
         public async Task<IActionResult> StartEmulationAsync()
         {
             await _emulator.RunEmulationAsync();
+            _logger.LogInformation("Emulation was enabled!");
             return Ok("Emulation was enabled!");
         }
 
@@ -30,6 +34,7 @@ namespace ArduinoServer.Controllers.Api
         public async Task<IActionResult> StopEmulationAsync()
         {
             await _emulator.StopEmulationAsync();
+            _logger.LogInformation("Emulation was stopped!");
             return Ok("Emulation was stopped!");
         }
 
@@ -44,6 +49,7 @@ namespace ArduinoServer.Controllers.Api
         [Route("status")]
         public IActionResult GetStatus()
         {
+            _logger.LogDebug($"Emulation is {(_emulator.IsEmulationEnabled ? "enabled" : "stopped")}!");
             return Ok($"Emulation is {(_emulator.IsEmulationEnabled ? "enabled" : "stopped")}!");
         }
 

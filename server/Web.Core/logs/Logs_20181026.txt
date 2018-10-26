@@ -1,0 +1,38 @@
+2018-10-26 03:37:09,874 [23] ERROR ArduinoServer.Controllers.Api.EmulationSensorsController - Emulation is stopped!
+2018-10-26 00:44:33,294|WARN |ArduinoServer.Controllers.Api.EmulationSensorsController|5| Emulation is stopped! 
+2018-10-26 00:46:25,479|DEBUG|Microsoft.AspNetCore.SignalR.Internal.DefaultHubProtocolResolver|1| Registered SignalR Protocol: json, implemented by Microsoft.AspNetCore.SignalR.Protocol.JsonHubProtocol. 
+2018-10-26 00:46:25,701|DEBUG|Microsoft.AspNetCore.Hosting.Internal.WebHost|1| Hosting starting 
+2018-10-26 00:46:25,881|DEBUG|Microsoft.AspNetCore.Hosting.Internal.WebHost|6| Hosting started 
+2018-10-26 00:46:25,910|DEBUG|Microsoft.AspNetCore.Hosting.Internal.WebHost|6| Loaded hosting startup assembly Web.Core 
+2018-10-26 00:46:25,942|DEBUG|Microsoft.AspNetCore.Hosting.Internal.WebHost|6| Loaded hosting startup assembly Microsoft.AspNetCore.Server.IISIntegration 
+2018-10-26 00:46:25,948|DEBUG|Microsoft.AspNetCore.Hosting.Internal.WebHost|6| Loaded hosting startup assembly Microsoft.AspNetCore.ApplicationInsights.HostingStartup 
+2018-10-26 00:46:25,972|DEBUG|Microsoft.AspNetCore.Server.Kestrel|LibuvThread| Connection id "0HLHQRHQOI0G9" started. 
+2018-10-26 00:46:25,975|DEBUG|Microsoft.AspNetCore.Server.Kestrel|LibuvThread| Connection id "0HLHQRHQOI0GA" started. 
+2018-10-26 00:46:26,202|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|5| Request starting HTTP/1.1 DEBUG http://localhost:56875/  0 
+2018-10-26 00:46:26,211|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|10| Request starting HTTP/1.1 GET http://localhost:44352/index.html   
+2018-10-26 00:46:26,276|DEBUG|Microsoft.AspNetCore.Server.Kestrel|5| Connection id "0HLHQRHQOI0GA" completed keep alive response. 
+2018-10-26 00:46:26,288|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|5| Request finished in 168.6082ms 200  
+2018-10-26 00:46:28,649|DEBUG|Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware|10| The request path /index.html does not match an existing file 
+2018-10-26 00:46:28,718|DEBUG|Microsoft.AspNetCore.Server.Kestrel|10| Connection id "0HLHQRHQOI0G9" completed keep alive response. 
+2018-10-26 00:46:28,753|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|10| Request finished in 2610.8383ms 200 text/html 
+2018-10-26 00:46:29,998|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|5| Request starting HTTP/1.1 GET http://localhost:44352/swagger/v1/swagger.json   
+2018-10-26 00:46:30,006|DEBUG|Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware|5| The request path /swagger/v1/swagger.json does not match an existing file 
+2018-10-26 00:46:30,529|DEBUG|Microsoft.AspNetCore.Server.Kestrel|5| Connection id "0HLHQRHQOI0GA" completed keep alive response. 
+2018-10-26 00:46:30,539|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|5| Request finished in 543.6376ms 200 application/json;charset=utf-8 
+2018-10-26 00:46:36,752|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|10| Request starting HTTP/1.1 GET http://localhost:44352/api/emulation/status   
+2018-10-26 00:46:36,759|DEBUG|Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware|10| The request path /api/emulation/status does not match a supported file type 
+2018-10-26 00:46:36,767|DEBUG|Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware|10| The request path /api/emulation/status does not match a supported file type 
+2018-10-26 00:46:36,881|DEBUG|Microsoft.AspNetCore.Routing.Tree.TreeRouter|10| Request successfully matched the route with name '(null)' and template 'api/emulation/status'. 
+2018-10-26 00:46:36,966|DEBUG|Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker|10| Executing action ArduinoServer.Controllers.Api.EmulationSensorsController.GetStatus (Web.Core) 
+2018-10-26 00:46:37,415|INFO |Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker|10| Executing action method ArduinoServer.Controllers.Api.EmulationSensorsController.GetStatus (Web.Core) with arguments ((null)) - ModelState is Valid 
+2018-10-26 00:46:41,486|DEBUG|ArduinoServer.Controllers.Api.EmulationSensorsController|10| Emulation is stopped! 
+2018-10-26 00:46:42,791|DEBUG|Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker|10| Executed action method ArduinoServer.Controllers.Api.EmulationSensorsController.GetStatus (Web.Core), returned result Microsoft.AspNetCore.Mvc.OkObjectResult. 
+2018-10-26 00:46:42,812|DEBUG|Microsoft.AspNetCore.Mvc.Internal.ObjectResultExecutor|10| Selected output formatter 'Microsoft.AspNetCore.Mvc.Formatters.JsonOutputFormatter' and content type 'application/json' to write the response. 
+2018-10-26 00:46:42,821|INFO |Microsoft.AspNetCore.Mvc.Internal.ObjectResultExecutor|10| Executing ObjectResult, writing value Microsoft.AspNetCore.Mvc.ControllerContext. 
+2018-10-26 00:46:42,857|INFO |Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker|10| Executed action ArduinoServer.Controllers.Api.EmulationSensorsController.GetStatus (Web.Core) in 5875.4573ms 
+2018-10-26 00:46:42,865|DEBUG|Microsoft.AspNetCore.Server.Kestrel|10| Connection id "0HLHQRHQOI0G9" completed keep alive response. 
+2018-10-26 00:46:42,878|INFO |Microsoft.AspNetCore.Hosting.Internal.WebHost|10| Request finished in 6123.4003ms 200 application/json; charset=utf-8 
+2018-10-26 00:47:41,883|DEBUG|Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv|LibuvThread| Connection id "0HLHQRHQOI0GA" received FIN. 
+2018-10-26 00:47:41,889|DEBUG|Microsoft.AspNetCore.Server.Kestrel|LibuvThread| Connection id "0HLHQRHQOI0GA" disconnecting. 
+2018-10-26 00:47:41,896|DEBUG|Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv|LibuvThread| Connection id "0HLHQRHQOI0GA" sending FIN. 
+2018-10-26 00:47:41,906|DEBUG|Microsoft.AspNetCore.Server.Kestrel|5| Connection id "0HLHQRHQOI0GA" stopped. 
