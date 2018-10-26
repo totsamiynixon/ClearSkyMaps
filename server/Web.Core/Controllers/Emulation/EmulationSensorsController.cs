@@ -43,12 +43,14 @@ namespace ArduinoServer.Controllers.Api
         public IActionResult EmulatorLimit(double limit)
         {
             _emulator.SetMemoryLimit(limit);
+            _logger.LogInformation("Limit was updated to: " + limit);
             return Ok("Limit was updated to: " + limit);
         }
         [HttpGet]
         [Route("status")]
         public IActionResult GetStatus()
         {
+            throw new Exception("Мамку ебал");
             _logger.LogInformation($"Emulation is {(_emulator.IsEmulationEnabled ? "enabled" : "stopped")}!");
             return Ok($"Emulation is {(_emulator.IsEmulationEnabled ? "enabled" : "stopped")}!");
         }
