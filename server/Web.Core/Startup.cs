@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.IO;
 using Web.Core.Extensions;
 using Web.Core.Hubs;
@@ -40,11 +41,18 @@ namespace Web.Core
             services.AddMvc();
             services.AddSignalR();
             services.ConfigureDI();
+            services.AddLogging();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            //if (env.IsDevelopment())
+            //{
+            //    loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //    loggerFactory.AddDebug();
+            //}
+            loggerFactory.AddLog4Net(Path.Combine(env.ContentRootPath, Configuration.GetValue<string>("Log4NetConfigFile:Name")));
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<DatabaseMigratorMiddleware>();
             app.UseStaticFiles();

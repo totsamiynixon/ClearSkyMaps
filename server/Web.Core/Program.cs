@@ -21,6 +21,10 @@ namespace Web.Core
         public static IWebHost BuildWebHost(string[] args) =>
            WebHost.CreateDefaultBuilder(args)
               .UseKestrel()
+                .ConfigureLogging((context, logging) =>
+                {
+                    logging.ClearProviders();
+                })
               .UseContentRoot(Directory.GetCurrentDirectory())
               .UseIISIntegration()
               .UseStartup<Startup>()

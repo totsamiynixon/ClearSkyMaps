@@ -7,29 +7,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F0E136
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BLL", "BLL", "{9EA82A40-749F-4B3E-89DA-6B4A7C81BD48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.DTO", "Services.DTO\Services.DTO.csproj", "{03AF0BAB-A8D8-4525-AFAC-DD1E79C8ECBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.DTO", "Services.DTO\Services.DTO.csproj", "{03AF0BAB-A8D8-4525-AFAC-DD1E79C8ECBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Implementations", "Services.Implementations\Services.Implementations.csproj", "{6703B5B6-DA01-4B63-9B2B-2C7D2308C8C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Implementations", "Services.Implementations\Services.Implementations.csproj", "{6703B5B6-DA01-4B63-9B2B-2C7D2308C8C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Interfaces", "Services.Interfaces\Services.Interfaces.csproj", "{AD07E1F8-B915-4E90-9B2B-EBB5BA70094F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Interfaces", "Services.Interfaces\Services.Interfaces.csproj", "{AD07E1F8-B915-4E90-9B2B-EBB5BA70094F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{EF24FB35-148E-4B3C-98A7-7937BCC41AB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.Intarfaces", "DAL.Intarfaces\DAL.Intarfaces.csproj", "{578DDA9A-54B1-4821-A1BD-2E1E6850E51B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Intarfaces", "DAL.Intarfaces\DAL.Intarfaces.csproj", "{578DDA9A-54B1-4821-A1BD-2E1E6850E51B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.Implementations", "DAL.Implementations\DAL.Implementations.csproj", "{B5E75C43-E8AA-4B1A-A760-848C47BE22A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Implementations", "DAL.Implementations\DAL.Implementations.csproj", "{B5E75C43-E8AA-4B1A-A760-848C47BE22A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{C3A11229-D0E0-4D78-8802-D93519E746A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D2B5F674-F18B-48A8-9F4F-32291BEAB726}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{BBF93305-7973-4CE4-A0F7-8BD2C072115D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{BBF93305-7973-4CE4-A0F7-8BD2C072115D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{0DEEBD2D-97B7-4119-9F2B-2F39A6316ECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{0DEEBD2D-97B7-4119-9F2B-2F39A6316ECD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Infrastructure", "Services.Infrastructure\Services.Infrastructure.csproj", "{09667795-1EDA-4F4E-9E56-452CF8761F8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Infrastructure", "Services.Infrastructure\Services.Infrastructure.csproj", "{09667795-1EDA-4F4E-9E56-452CF8761F8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.Infrastructure", "DAL.Infrastructure\DAL.Infrastructure.csproj", "{8138136E-0C02-4852-A1C4-C6F7551B6AA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Infrastructure", "DAL.Infrastructure\DAL.Infrastructure.csproj", "{8138136E-0C02-4852-A1C4-C6F7551B6AA8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Core", "Web.Core\Web.Core.csproj", "{FCC982CC-D4E6-4706-A5C1-01F077EC5544}"
 EndProject
