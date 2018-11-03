@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ClearSkyMaps.Xamarin.Forms.Delegates;
+using ClearSkyMaps.Xamarin.Forms.Models;
+using ClearSkyMaps.Xamarin.Forms.ViewModels.Home;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,17 +15,12 @@ namespace ClearSkyMaps.Xamarin.Forms.Pages.Home
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChartPage : ContentPage
     {
-        public ChartPage()
+        private readonly SensorDetailsChartViewModel _vm;
+        public ChartPage(Sensor sensor, SensorReadingsWasUpdatedEventHandler ev)
         {
             InitializeComponent();
-            ToolbarItems.Clear();
-            var abc = this;
-            this.ToolbarItems.Clear();
-            if (this.Parent != null)
-            {
-                var parent = (NavigationPage)this.Parent;
-                parent.ToolbarItems.Clear();
-            }
+            _vm = new SensorDetailsChartViewModel(sensor, ev, Navigation);
+            BindingContext = _vm;
         }
     }
 }

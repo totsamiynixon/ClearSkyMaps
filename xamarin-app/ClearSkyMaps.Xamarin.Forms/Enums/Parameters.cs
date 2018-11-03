@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearSkyMaps.Xamarin.Forms.Enums
 {
-    public enum Parameter
+    public enum Parameters
     {
         CO2,
         LPG,

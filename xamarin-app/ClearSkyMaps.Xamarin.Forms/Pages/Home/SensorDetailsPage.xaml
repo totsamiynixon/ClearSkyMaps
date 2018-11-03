@@ -4,11 +4,4 @@
              xmlns:local="clr-namespace:ClearSkyMaps.Xamarin.Forms.Pages.Home"
              x:Class="ClearSkyMaps.Xamarin.Forms.Pages.Home.SensorDetailsPage"
             Title="Details">
-    <TabbedPage.ToolbarItems>
-        <ToolbarItem Text="{Binding IsTableExpanded}" Clicked="IconExpand_Clicked"></ToolbarItem>
-    </TabbedPage.ToolbarItems>
-    <local:TablePage Title="Table" x:Name="TablePage">
-    </local:TablePage>
-    <local:ChartPage Title="Chart" x:Name="ChartPage">
-    </local:ChartPage>
 </TabbedPage>

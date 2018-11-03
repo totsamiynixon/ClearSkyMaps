@@ -6,11 +6,11 @@
         <ToolbarItem Order="Primary" Text="Details" Clicked="IconToolbarItem_Clicked"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout>
+        <!--<StackLayout>
             <Label Text="Home Page"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
             <Button Text="To Tabs" Clicked="IconToolbarItem_Clicked"></Button>
-        </StackLayout>
+        </StackLayout>-->
     </ContentPage.Content>
 </ContentPage>

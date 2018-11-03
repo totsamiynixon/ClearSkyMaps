@@ -1,4 +1,11 @@
-﻿using ClearSkyMaps.Xamarin.Forms.ViewModels.Home;
+﻿using ClearSkyMaps.Xamarin.Forms.Delegates;
+using ClearSkyMaps.Xamarin.Forms.Models;
+using ClearSkyMaps.Xamarin.Forms.Store;
+using ClearSkyMaps.Xamarin.Forms.Store.Home;
+using ClearSkyMaps.Xamarin.Forms.Store.Home.Actions;
+using ClearSkyMaps.Xamarin.Forms.ViewModels.Home;
+using CommonServiceLocator;
+using Redux;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,37 +20,26 @@ namespace ClearSkyMaps.Xamarin.Forms.Pages.Home
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SensorDetailsPage : TabbedPage
     {
-        private readonly SensorDetailsViewModel _vm;
-        public SensorDetailsPage()
+        public event SensorReadingsWasUpdatedEventHandler OnSensorReadingsUpdated;
+        private readonly IStore<HomePageState> _store;
+        public SensorDetailsPage(Sensor sensor)
         {
+            _store = ServiceLocator.Current.GetService<IStore<HomePageState>>();
             InitializeComponent();
-            _vm = new SensorDetailsViewModel(Navigation);
-            BindingContext = _vm;
-            //if (this.CurrentPage != null && this.CurrentPage is NavigationPage)
-            //{
-            //    this.CurrentPage.ToolbarItems.Clear();
-            //    NavigationPage.SetHasNavigationBar(this.CurrentPage, false);
-            //}
-            //NavigationPage.SetHasNavigationBar(this, false);
-            //this.ToolbarItems.Clear();
-            var abc = this;
-
-        }
-
-        public new SensorDetailsViewModel BindingContext
-        {
-            set
+            Children.Add(new TablePage(sensor, OnSensorReadingsUpdated));
+            Children.Add(new ChartPage(sensor, OnSensorReadingsUpdated));
+            _store.Subscribe(state =>
             {
-                base.BindingContext = value;
-                base.OnPropertyChanged("BindingContext");
-            }
-        }
+                if (state.LastAction is UpdateSensorAction)
+                {
+                    var action = (state.LastAction as UpdateSensorAction);
+                    if (sensor.Id == action.SensorId)
+                    {
+                        OnSensorReadingsUpdated(action.Payload);
+                    }
+                }
+            });
 
-        private void IconExpand_Clicked(object sender, EventArgs e)
-        {
-            var iconBtn = (ToolbarItem)sender;
-            _vm.IsTableExpanded = !_vm.IsTableExpanded;
-            iconBtn.Text = _vm.IsTableExpanded ? "fas-compress" : "fas-expand";
         }
     }
 }

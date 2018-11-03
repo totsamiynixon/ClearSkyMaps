@@ -10,7 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Redux.NET" Version="2.0.0" />
+    <PackageReference Include="Unity" Version="5.8.11" />
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.925479-pre1" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="3.3.0.967583" />
   </ItemGroup>
 
   <ItemGroup>
