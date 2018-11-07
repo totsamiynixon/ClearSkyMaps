@@ -1,4 +1,5 @@
 ﻿using ClearSkyMaps.Xamarin.Forms.Config;
+using ClearSkyMaps.Xamarin.Forms.Pages;
 using ClearSkyMaps.Xamarin.Forms.Services.Implementations;
 using ClearSkyMaps.Xamarin.Forms.Services.Interfaces;
 using ClearSkyMaps.Xamarin.Forms.Store.Home;
@@ -19,7 +20,7 @@ namespace ClearSkyMaps.Xamarin.Forms
     {
         private static void RegisterPlatformDependencies(UnityContainer container)
         {
-
+            //container.RegisterInstance<INavigation>(DependencyService.Get<INavigation>());
         }
 
         private static void RegisterAppDependencies(UnityContainer container)
@@ -28,6 +29,7 @@ namespace ClearSkyMaps.Xamarin.Forms
                 new ContainerControlledLifetimeManager(),
                 new InjectionFactory(c => AppConfigInitializer.InitializeConfig()));
             container.RegisterType<IApiClientService, ApiClientService>();
+            container.RegisterType<HomePage>();
             container.RegisterSingleton<IStore<HomePageState>>(new InjectionFactory(c => new Store<HomePageState>(reducer: HomePageReducer.Execute, initialState: new HomePageState())));
         }
 

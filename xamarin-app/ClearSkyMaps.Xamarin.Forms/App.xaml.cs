@@ -1,6 +1,7 @@
 ﻿using ClearSkyMaps.Xamarin.Forms.Pages;
 using ClearSkyMaps.Xamarin.Forms.Pages.Home;
 using ClearSkyMaps.Xamarin.Forms.Store;
+using CommonServiceLocator;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -14,7 +15,7 @@ namespace ClearSkyMaps.Xamarin.Forms
         {
             InitializeComponent();
             Bootstrapper.RegisterDependencies();
-            MainPage = new NavigationPage(new HomePage());
+            MainPage = new NavigationPage(ServiceLocator.Current.GetService<HomePage>());
         }
 
         protected override void OnStart()
