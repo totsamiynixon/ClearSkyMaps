@@ -16,7 +16,7 @@ using Xamarin.Forms.GoogleMaps;
 
 namespace ClearSkyMaps.CP.Mobile.ViewModels
 {
-    public class SensorsMapPageViewModel : ViewModelBase, INavigatedAwareAsync
+    public class SensorsMapPageViewModel : ViewModelBase, INavigationAware
     {
         private readonly Dictionary<Sensor, Circle> _sensorMapCircleDictionary;
         private readonly IApiClientService ApiService;
@@ -63,7 +63,7 @@ namespace ClearSkyMaps.CP.Mobile.ViewModels
 
         public ObservableCollection<Circle> Circles
         {
-            get { return _circles; }
+            get { return _circles ?? (_circles = new ObservableCollection<Circle>()); }
             set { SetProperty(ref _circles, value); }
         }
 
@@ -77,7 +77,7 @@ namespace ClearSkyMaps.CP.Mobile.ViewModels
             NavigationService.NavigateAsync("SensorDetailsPage");
         }
 
-        public async Task OnNavigatedToAsync(INavigationParameters parameters)
+        public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             var state = Store.GetState();
             if (state.Sensors == null || !state.Sensors.Any())
