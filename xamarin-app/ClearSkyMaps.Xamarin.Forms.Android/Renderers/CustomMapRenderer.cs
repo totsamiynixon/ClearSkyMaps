@@ -2,15 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-
-using Android.App;
 using Android.Content;
 using Android.Gms.Maps.Model;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using ClearSkyMaps.Xamarin.Forms.Controls.CustomMap;
 using ClearSkyMaps.Xamarin.Forms.Droid.Renderers;
 using Xamarin.Forms;
@@ -24,8 +17,9 @@ namespace ClearSkyMaps.Xamarin.Forms.Droid.Renderers
 {
     public class CustomMapRenderer : MapRenderer
     {
-        IList<CustomMapCircle> circles;
 
+        private CustomMap _customMap;
+        private Dictionary<CustomMapCircle, Circle> _dictionary = new Dictionary<CustomMapCircle, Circle>();
         public CustomMapRenderer(Context context) : base(context)
         {
         }
@@ -36,13 +30,12 @@ namespace ClearSkyMaps.Xamarin.Forms.Droid.Renderers
 
             if (e.OldElement != null)
             {
-                // Unsubscribe
+                Unsubscribe((CustomMap)e.OldElement);
             }
 
             if (e.NewElement != null)
             {
-                var formsMap = (CustomMap)e.NewElement;
-                circles = formsMap.Circles;
+                _customMap = (CustomMap)e.NewElement;
                 Control.GetMapAsync(this);
             }
         }
@@ -50,11 +43,42 @@ namespace ClearSkyMaps.Xamarin.Forms.Droid.Renderers
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
+            if (e.PropertyName == CustomMap.CirclesProperty.PropertyName)
+            {
+                if (NativeMap != null)
+                {
+                    SetCircles(_customMap.Circles);
+                }
+            }
         }
 
         protected override void OnMapReady(Android.Gms.Maps.GoogleMap map)
         {
             base.OnMapReady(map);
+            SetCircles(_customMap.Circles);
+            NativeMap.SetOnCircleClickListener(new OnCircleClickListener(_dictionary));
+        }
+
+        private void Unsubscribe(CustomMap map)
+        {
+            map.PropertyChanged -= OnElementPropertyChanged;
+            foreach (var circle in map.Circles)
+            {
+                circle.PropertyChanged -= CirclePropertyChangedHandler;
+            }
+        }
+
+        private void SetCircles(IList<CustomMapCircle> circles)
+        {
+            foreach (var key in _dictionary.Keys)
+            {
+                _dictionary[key].Remove();
+            }
+            _dictionary.Clear();
+            if (circles == null)
+            {
+                return;
+            }
             foreach (var circle in circles)
             {
                 var circleOptions = new CircleOptions();
@@ -64,23 +88,47 @@ namespace ClearSkyMaps.Xamarin.Forms.Droid.Renderers
                 circleOptions.InvokeStrokeColor(0X66FF0000);
                 circleOptions.Clickable(true);
                 circleOptions.InvokeStrokeWidth(0);
-                NativeMap.AddCircle(circleOptions);
-                NativeMap.SetOnCircleClickListener(new OnCircleClickListener(circle.OnClick));
+                var mapCircle = NativeMap.AddCircle(circleOptions);
+                _dictionary.Add(circle, mapCircle);
+                circle.PropertyChanged += CirclePropertyChangedHandler;
             }
         }
 
+        private void CirclePropertyChangedHandler(object sender, PropertyChangedEventArgs e)
+        {
+            var customCircle = (CustomMapCircle)sender;
+            var mapCircle = _dictionary[customCircle];
+            if (e.PropertyName == CustomMapCircle.RadiusProperty.PropertyName)
+            {
+                mapCircle.Radius = customCircle.Radius;
+            }
+            if (e.PropertyName == CustomMapCircle.AreaColorProperty.PropertyName)
+            {
+                //mapCircle.Radius = customCircle.AreaColor;
+            }
+            if (e.PropertyName == CustomMapCircle.StrokeColorProperty.PropertyName)
+            {
+                //mapCircle.Radius = customCircle.StrokeColor;
+            }
+
+        }
 
         public class OnCircleClickListener : Java.Lang.Object, IOnCircleClickListener
         {
-            private readonly Action _onClick;
-            public OnCircleClickListener(Action onClick)
-            {
-                _onClick = onClick;
-            }
 
+            public readonly Dictionary<CustomMapCircle, Circle> _dictionary;
+            public OnCircleClickListener(Dictionary<CustomMapCircle, Circle> dictionary)
+            {
+                _dictionary = dictionary;
+
+            }
             public void OnCircleClick(Circle circle)
             {
-                _onClick();
+                var mapCircle = _dictionary.FirstOrDefault(s => s.Value.Id == circle.Id).Key;
+                if (mapCircle != null)
+                {
+                    mapCircle.OnClick();
+                }
             }
         }
 

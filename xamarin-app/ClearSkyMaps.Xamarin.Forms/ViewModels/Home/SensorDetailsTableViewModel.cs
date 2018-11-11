@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using ClearSkyMaps.Xamarin.Forms.Data;
 using ClearSkyMaps.Xamarin.Forms.Delegates;
 using ClearSkyMaps.Xamarin.Forms.Models;
 using ClearSkyMaps.Xamarin.Forms.Pages.Home;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
 
@@ -11,25 +13,8 @@ namespace ClearSkyMaps.Xamarin.Forms.ViewModels.Home
 {
     public class SensorDetailsTableViewModel : ViewModelBase
     {
-        private readonly Sensor _sensor;
-        private static IMapper _mapper;
-        public SensorDetailsTableViewModel(Sensor sensor, SensorReadingsWasUpdatedEventHandler ev, INavigation navigation) : base(navigation)
+        public SensorDetailsTableViewModel(INavigation navigation) : base(navigation)
         {
-            _sensor = sensor;
-            SetReadings(_sensor.Readings);
-            ev += (reading) =>
-            {
-                Readings.Add(_mapper.Map<Reading, SensorReadingViewModel>(reading));
-            };
-        }
-
-        private void SetReadings(IEnumerable<Reading> readings)
-        {
-            if (_mapper == null)
-            {
-                _mapper = new Mapper(new MapperConfiguration(x => x.CreateMap<Reading, SensorReadingViewModel>()));
-            }
-            Readings = _mapper.Map<IEnumerable<Reading>, ICollection<SensorReadingViewModel>>(readings);
         }
 
         private bool _isTableExpanded;
@@ -40,7 +25,24 @@ namespace ClearSkyMaps.Xamarin.Forms.ViewModels.Home
             set { SetProperty(ref _isTableExpanded, nameof(IsTableExpanded), value); }
         }
 
-        public ICollection<SensorReadingViewModel> Readings { get; private set; }
+        private string _title;
+
+        public string Title
+        {
+            get { return _title; }
+            set { SetProperty(ref _title, nameof(Title), value); }
+        }
+
+        private ObservableCollection<SensorReadingViewModel> _readings;
+
+        public ObservableCollection<SensorReadingViewModel> Readings
+        {
+            get
+            {
+                return _readings;
+            }
+            set { SetProperty(ref _readings, nameof(Readings), value); }
+        }
 
 
         private Command _expandCollapseTable;
@@ -56,23 +58,23 @@ namespace ClearSkyMaps.Xamarin.Forms.ViewModels.Home
 
     public class SensorReadingViewModel
     {
-        public float CO2 { get; }
+        public float CO2 { get; set; }
 
-        public float LPG { get; }
+        public float LPG { get; set; }
 
-        public float CO { get; }
+        public float CO { get; set; }
 
-        public float CH4 { get; }
+        public float CH4 { get; set; }
 
-        public float Dust { get; }
+        public float Dust { get; set; }
 
-        public float Temp { get; }
+        public float Temp { get; set; }
 
-        public float Hum { get; }
+        public float Hum { get; set; }
 
-        public float Preassure { get; }
+        public float Preassure { get; set; }
 
-        public DateTime Created { get; }
+        public DateTime Created { get; set; }
     }
 
 }

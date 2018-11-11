@@ -1,7 +1,10 @@
-﻿using ClearSkyMaps.Xamarin.Forms.Delegates;
+﻿using ClearSkyMaps.Xamarin.Forms.Data;
+using ClearSkyMaps.Xamarin.Forms.Delegates;
 using ClearSkyMaps.Xamarin.Forms.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -9,16 +12,17 @@ namespace ClearSkyMaps.Xamarin.Forms.ViewModels.Home
 {
     public class SensorDetailsChartViewModel : ViewModelBase
     {
-        private readonly Sensor _sensor;
-        public SensorDetailsChartViewModel(Sensor sensor, SensorReadingsWasUpdatedEventHandler ev, INavigation navigation) : base(navigation)
+        public SensorDetailsChartViewModel(INavigation navigation) : base(navigation)
         {
-            _sensor = sensor;
-            ev += (reading) =>
-            {
-                Readings.Add(reading);
-            };
         }
-
-        public ICollection<Reading> Readings { get; private set; }
+        private ObservableCollection<SensorReadingViewModel> _readings;
+        public ObservableCollection<SensorReadingViewModel> Readings
+        {
+            get
+            {
+                return _readings;
+            }
+            set { _readings = value; }
+        }
     }
 }

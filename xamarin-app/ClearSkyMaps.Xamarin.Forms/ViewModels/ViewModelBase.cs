@@ -64,6 +64,20 @@ namespace ClearSkyMaps.Xamarin.Forms.ViewModels
             OnPropertyChanged(changedPropertyName);
         }
 
+        #region INotifyPropertyChanging implementation
+
+        public event System.ComponentModel.PropertyChangingEventHandler PropertyChanging;
+
+        #endregion
+
+        public void OnPropertyChanging(string propertyName)
+        {
+            if (PropertyChanging == null)
+                return;
+
+            PropertyChanging(this, new System.ComponentModel.PropertyChangingEventArgs(propertyName));
+        }
+
         #region INotifyPropertyChanged implementation
 
         public event PropertyChangedEventHandler PropertyChanged;
