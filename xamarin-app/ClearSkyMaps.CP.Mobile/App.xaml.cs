@@ -4,6 +4,13 @@ using ClearSkyMaps.CP.Mobile.ViewModels;
 using ClearSkyMaps.CP.Mobile.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using ClearSkyMaps.CP.Mobile.Interfaces;
+using ClearSkyMaps.CP.Mobile.Implementations;
+using ClearSkyMaps.CP.Mobile.Config;
+using Unity.Lifetime;
+using Unity.Injection;
+using ClearSkyMaps.CP.Mobile.Store;
+using Redux;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace ClearSkyMaps.CP.Mobile
@@ -28,10 +35,16 @@ namespace ClearSkyMaps.CP.Mobile
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //Pages
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();
             containerRegistry.RegisterForNavigation<SensorsMapPage, SensorsMapPageViewModel>();
             containerRegistry.RegisterForNavigation<SensorDetailsPage, SensorDetailsPageViewModel>();
+
+            //Services
+            containerRegistry.Register<IApiClientService, ApiClientService>();
+            containerRegistry.RegisterSingleton<AppConfig>();
+            containerRegistry.RegisterInstance<IStore<AppState>>(new Store<AppState>(reducer: AppReducer.Execute, initialState: new AppState()));
         }
     }
 }
