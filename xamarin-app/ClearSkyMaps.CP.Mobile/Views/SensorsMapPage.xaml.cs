@@ -8,13 +8,18 @@ using Xamarin.Forms.GoogleMaps;
 
 namespace ClearSkyMaps.CP.Mobile.Views
 {
-    public partial class SensorsMapPage : ContentPage, INavigationAware
+    public partial class SensorsMapPage : ContentPage, INavigationAware, IDestructible
     {
         private ViewModelBase ViewModel;
         public SensorsMapPage()
         {
             InitializeComponent();
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(53.903192, 27.558389), Distance.FromKilometers(5)));
+        }
+
+        public void Destroy()
+        {
+            
         }
 
         public void OnNavigatedFrom(INavigationParameters parameters)

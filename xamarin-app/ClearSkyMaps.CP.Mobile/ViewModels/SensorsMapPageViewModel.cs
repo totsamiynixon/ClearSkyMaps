@@ -1,7 +1,12 @@
-﻿using ClearSkyMaps.CP.Mobile.Interfaces;
+﻿using ClearSkyMaps.CP.Mobile.Config;
+using ClearSkyMaps.CP.Mobile.Interfaces;
+using ClearSkyMaps.CP.Mobile.Services.Interfaces;
 using ClearSkyMaps.CP.Mobile.Store;
 using ClearSkyMaps.CP.Mobile.Store.Actions;
 using ClearSkyMaps.Mobile.Models;
+using ClearSkyMaps.Mobile.Models.Enums;
+using ClearSkyMaps.Mobile.Models.Hub;
+using Microsoft.AspNetCore.SignalR.Client;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -10,52 +15,97 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 
 namespace ClearSkyMaps.CP.Mobile.ViewModels
 {
-    public class SensorsMapPageViewModel : ViewModelBase, INavigationAware
+    public class SensorsMapPageViewModel : ViewModelBase, INavigationAware, IDestructible
     {
-        private readonly Dictionary<Sensor, Circle> _sensorMapCircleDictionary;
+        private readonly Dictionary<Sensor, Circle> SensorMapCircleDictionary;
         private readonly IApiClientService ApiService;
         private readonly IStore<AppState> Store;
+        private readonly HubConnection HubConnection;
+        private readonly INonUITasksManager NonUITasksManager;
         public SensorsMapPageViewModel(
             INavigationService navigationService,
             IApiClientService apiClientService,
-            IStore<AppState> store) : base(navigationService)
+            IStore<AppState> store,
+            AppConfig config,
+            INonUITasksManager nonUITasksManager) : base(navigationService)
         {
-            _sensorMapCircleDictionary = new Dictionary<Sensor, Circle>();
             ApiService = apiClientService;
             Store = store;
-            Store.Subscribe(state =>
+            SensorMapCircleDictionary = new Dictionary<Sensor, Circle>();
+            HubConnection = new HubConnectionBuilder().WithUrl($"{config.BaseServiceUrl}/readingsHub").Build();
+            NonUITasksManager = nonUITasksManager;
+            NonUITasksManager.BeginInvokeInNonUIThread(() =>
             {
-                if (state.LastAction is SetSensorsAction)
+                HubConnection.On<HubDispatchModel>("DispatchReadingAsync", (reading) =>
                 {
-                    var sensors = (state.LastAction as SetSensorsAction).Payload;
-                    Circles.Clear();
-                    foreach (var sensor in sensors)
+                    Store.Dispatch(new UpdateSensorAction(reading.Reading, reading.SensorId, reading.LatestPollutionLevel));
+                });
+                Store.Subscribe(state =>
+                {
+                    if (state.LastAction is SetSensorsAction)
                     {
-                        var circle = new Circle
+                        var sensors = (state.LastAction as SetSensorsAction).Payload;
+                        Circles.Clear();
+                        foreach (var sensor in sensors)
                         {
-                            Center = new Position(sensor.Latitude, sensor.Longitude),
-                            IsClickable = true,
-                            Radius = Distance.FromMeters(50),
-                            StrokeColor = Color.Red,
-                            FillColor = Color.Blue,
-                        };
-                        circle.Clicked += (s, e) =>
+                            var circle = new Circle
+                            {
+                                Center = new Position(sensor.Latitude, sensor.Longitude),
+                                IsClickable = true,
+                                Radius = Distance.FromMeters(50),
+                                StrokeColor = Color.Red,
+                                FillColor = Color.Blue,
+                            };
+                            circle.Clicked += (s, e) =>
+                            {
+                                NavigationService.NavigateAsync($"SensorDetailsPage?sensorId={sensor.Id}");
+                            };
+                            SensorMapCircleDictionary.Add(sensor, circle);
+                        }
+                        Device.BeginInvokeOnMainThread(() =>
                         {
-                            NavigationService.NavigateAsync($"SensorDetailsPage?sensorId={sensor.Id}");
-                        };
-                        Circles.Add(circle);
-                        _sensorMapCircleDictionary.Add(sensor, circle);
+                            foreach (var circle in SensorMapCircleDictionary)
+                            {
+                                Circles.Add(circle.Value);
+                            }
+                        });
                     }
-
-                }
+                    if (state.LastAction is UpdateSensorAction)
+                    {
+                        var action = (state.LastAction as UpdateSensorAction);
+                        var circle = SensorMapCircleDictionary.FirstOrDefault(f => f.Key.Id == action.SensorId).Value;
+                        if (circle == null)
+                        {
+                            return;
+                        }
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            switch (action.PollutionLevel)
+                            {
+                                case PollutionLevels.Low:
+                                    circle.FillColor = Color.Green;
+                                    circle.StrokeColor = Color.GreenYellow;
+                                    break;
+                                case PollutionLevels.Medium:
+                                    circle.FillColor = Color.Yellow;
+                                    circle.StrokeColor = Color.YellowGreen;
+                                    break;
+                                case PollutionLevels.High:
+                                    circle.FillColor = Color.Red;
+                                    circle.StrokeColor = Color.DarkRed;
+                                    break;
+                            }
+                        });
+                    }
+                });
             });
-
         }
 
 
@@ -77,14 +127,27 @@ namespace ClearSkyMaps.CP.Mobile.ViewModels
             NavigationService.NavigateAsync("SensorDetailsPage");
         }
 
-        public override async void OnNavigatedTo(INavigationParameters parameters)
+        public override void OnNavigatedTo(INavigationParameters parameters)
         {
-            var state = Store.GetState();
-            if (state.Sensors == null || !state.Sensors.Any())
+            NonUITasksManager.BeginInvokeInNonUIThread(async () =>
+           {
+               var state = Store.GetState();
+               await HubConnection.StartAsync();
+               if (state.Sensors == null || !state.Sensors.Any())
+               {
+                   var result = await ApiService.GetSensorsAsync();
+                   Store.Dispatch(new SetSensorsAction(result));
+               }
+           });
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            NonUITasksManager.BeginInvokeInNonUIThread(async () =>
             {
-                var result = await ApiService.GetSensorsAsync();
-                Store.Dispatch(new SetSensorsAction(result));
-            }
+                await HubConnection.StopAsync();
+            });
         }
     }
 

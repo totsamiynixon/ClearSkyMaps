@@ -11,6 +11,8 @@ using Unity.Lifetime;
 using Unity.Injection;
 using ClearSkyMaps.CP.Mobile.Store;
 using Redux;
+using ClearSkyMaps.CP.Mobile.Services.Interfaces;
+using ClearSkyMaps.CP.Mobile.Services.Implementations;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace ClearSkyMaps.CP.Mobile
@@ -42,9 +44,10 @@ namespace ClearSkyMaps.CP.Mobile
             containerRegistry.RegisterForNavigation<SensorDetailsPage, SensorDetailsPageViewModel>();
 
             //Services
-            containerRegistry.Register<IApiClientService, ApiClientService>();
+            containerRegistry.RegisterSingleton<IApiClientService, ApiClientService>();
             containerRegistry.RegisterSingleton<AppConfig>();
             containerRegistry.RegisterInstance<IStore<AppState>>(new Store<AppState>(reducer: AppReducer.Execute, initialState: new AppState()));
+            containerRegistry.RegisterSingleton<INonUITasksManager, NonUITasksManager>();
         }
     }
 }

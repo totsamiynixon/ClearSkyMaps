@@ -9,7 +9,8 @@
         <ContentPage Title="Menu">
             <StackLayout Padding="20">
                 <!-- TODO: // Update the Layout and add some real menu items  -->
-                <Button Text="ViewA" Command="{Binding NavigateCommand}" CommandParameter="ViewA" />
+                <Button Text="Start Emulation" Command="{Binding EmulationCommand}" CommandParameter="start" />
+                <Button Text="Stop Emulation" Command="{Binding EmulationCommand}" CommandParameter="stop" />
             </StackLayout>
         </ContentPage>
     </MasterDetailPage.Master>
