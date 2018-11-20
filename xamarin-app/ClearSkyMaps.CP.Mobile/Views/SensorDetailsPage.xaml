@@ -3,6 +3,9 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
             prism:ViewModelLocator.AutowireViewModel="True"
-            x:Class="ClearSkyMaps.CP.Mobile.Views.SensorDetailsPage">
-  
+            xmlns:local="clr-namespace:ClearSkyMaps.CP.Mobile.Views"
+            x:Class="ClearSkyMaps.CP.Mobile.Views.SensorDetailsPage"
+            Title="Details">
+    <!--<local:SensorDetailsTablePage Title="Table"/>
+    <local:SensorDetailsChartPage Title="Chart"/>-->
 </TabbedPage>

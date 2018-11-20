@@ -48,6 +48,8 @@ namespace ClearSkyMaps.CP.Mobile
             containerRegistry.RegisterSingleton<AppConfig>();
             containerRegistry.RegisterInstance<IStore<AppState>>(new Store<AppState>(reducer: AppReducer.Execute, initialState: new AppState()));
             containerRegistry.RegisterSingleton<INonUITasksManager, NonUITasksManager>();
+            containerRegistry.RegisterForNavigation<SensorDetailsTablePage, SensorDetailsTablePageViewModel>();
+            containerRegistry.RegisterForNavigation<SensorDetailsChartPage, SensorDetailsChartPageViewModel>();
         }
     }
 }

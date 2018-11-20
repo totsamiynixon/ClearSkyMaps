@@ -29,22 +29,15 @@ namespace ClearSkyMaps.CP.Mobile.Store
             if (action is UpdateSensorAction)
             {
                 var updateAction = action as UpdateSensorAction;
-                var updateSensor = state.Sensors.FirstOrDefault(f => f.Id == updateAction.SensorId);
+                var updateSensor = newState.Sensors.FirstOrDefault(f => f.Id == updateAction.SensorId);
                 if (updateSensor == null)
                 {
                     //throw new ArgumentNullException($"No such sensor to update {nameof(updateSensor)}");
                     return newState;
                 }
                 updateSensor.LatestPollutionLevel = updateAction.PollutionLevel;
-                var newList = new List<Reading> {
-                    updateAction.Payload
-                };
-                newList.AddRange(updateSensor.Readings);
-                updateSensor.Readings = newList;
-                if (updateSensor.Readings.Count > 10)
-                {
-                    newList.RemoveAt(newList.Count - 1);
-                }
+                updateSensor.Readings.Add(updateAction.Payload);
+                updateSensor.Readings = updateSensor.Readings.OrderByDescending(f => f.Created).Take(10).ToList();
                 return newState;
             }
             return newState;
