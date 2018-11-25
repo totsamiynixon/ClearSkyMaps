@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/bootstrapper.dart';
 import 'package:flutter_app/widgets/sensors_details_tab_controller.dart';
 import 'package:flutter_app/widgets/sensors_map_page.dart';
 
 void main() {
+  Bootstrapper.run();
   runApp(MyApp());
 }
 

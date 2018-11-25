@@ -3,7 +3,7 @@ import 'package:flutter_app/store/actions/update_sensor_action.dart';
 import 'package:flutter_app/store/app_state.dart';
 
 class AppReducer {
-  static AppState Execute(AppState state, Object action) {
+  static AppState Execute(AppState state, dynamic action) {
     if (action is SetSensorsAction) {
       state.sensors = (action as SetSensorsAction).payload;
       return state;

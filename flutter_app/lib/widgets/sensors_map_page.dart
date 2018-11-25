@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/infrastructure/service_locator.dart';
+import 'package:flutter_app/services/implicits/api_service.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
 class MapsDemo extends StatelessWidget {
+  ApiClientService _apiClient;
+
+  MapsDemo() {
+    _apiClient = ServiceLocator.getService<ApiClientService>();
+  }
+
   Drawer getDrawer(BuildContext context) {
     return Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -84,11 +92,36 @@ class MapsDemo extends StatelessWidget {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, "/details");
+          onPressed: () async {
+            //Navigator.pushNamed(context, "/details");
+            var sensors = await _apiClient.getSensorsAsync();
+            _showDialog(context, sensors.length.toString());
           },
         )
       ],
+    );
+  }
+
+  void _showDialog(BuildContext context, String info) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Alert Dialog title"),
+          content: new Text(info),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
