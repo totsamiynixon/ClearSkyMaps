@@ -30,9 +30,6 @@ class _SensorsMapState extends State<SensorsMap> {
           });
       }
     });
-    _apiClient.getSensorsAsync().then((sensors) {
-      _store.dispatch(SetSensorsAction(sensors));
-    });
   }
 
   Drawer getDrawer(BuildContext context) {
@@ -96,7 +93,7 @@ class _SensorsMapState extends State<SensorsMap> {
                   point: new LatLng(sensor.latitude, sensor.longitude),
                   builder: (ctx) => new Container(
                         child: InkWell(
-                          child: Icon(Icons.directions_transit),
+                          child: Icon(Icons.cloud_circle),
                           onTap: () {
                             //Navigator.pushNamed(ctx, '/details');
                             var route = new MaterialPageRoute(
@@ -119,10 +116,13 @@ class _SensorsMapState extends State<SensorsMap> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.add),
-          onPressed: () async {
-            Navigator.pushNamed(context, "/details");
+          onPressed: () {
+            //Navigator.pushNamed(context, "/details");
             // var sensors = await _apiClient.getSensorsAsync();
             // _showDialog(context, sensors.length.toString());
+            _apiClient.getSensorsAsync().then((sensors) {
+              _store.dispatch(SetSensorsAction(sensors));
+            });
           },
         )
       ],

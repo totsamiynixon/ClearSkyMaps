@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/widgets/sensor_details_tab_chart.dart';
 import 'package:flutter_app/widgets/sensor_details_tab_table.dart';
 
 class SensorDetailsTabController extends DefaultTabController {
@@ -10,8 +11,8 @@ class SensorDetailsTabController extends DefaultTabController {
                 appBar: AppBar(
                   bottom: TabBar(
                     tabs: [
-                      Tab(icon: Icon(Icons.directions_car)),
-                      Tab(icon: Icon(Icons.directions_transit)),
+                      Tab(icon: Icon(Icons.table_chart)),
+                      Tab(icon: Icon(Icons.show_chart)),
                     ],
                   ),
                   title: Text('Tabs Demo'),
@@ -20,7 +21,7 @@ class SensorDetailsTabController extends DefaultTabController {
                   physics: new NeverScrollableScrollPhysics(),
                   children: [
                     SensorDetailsTabTable(_sensorId),
-                    Icon(Icons.directions_transit),
+                    SensorDetailsTabChart(_sensorId),
                   ],
                 ))) {}
 }
