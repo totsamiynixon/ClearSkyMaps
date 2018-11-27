@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/widgets/sensor_details_tab_table.dart';
 
 class SensorDetailsTabController extends DefaultTabController {
-  SensorDetailsTabController()
+  num _sensorId;
+  SensorDetailsTabController(this._sensorId)
       : super(
             length: 2,
             child: Scaffold(
@@ -15,8 +17,9 @@ class SensorDetailsTabController extends DefaultTabController {
                   title: Text('Tabs Demo'),
                 ),
                 body: TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
                   children: [
-                    Icon(Icons.directions_car),
+                    SensorDetailsTabTable(_sensorId),
                     Icon(Icons.directions_transit),
                   ],
                 ))) {}

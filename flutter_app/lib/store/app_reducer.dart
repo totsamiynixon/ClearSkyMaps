@@ -4,6 +4,7 @@ import 'package:flutter_app/store/app_state.dart';
 
 class AppReducer {
   static AppState Execute(AppState state, dynamic action) {
+    state.lastAction = action;
     if (action is SetSensorsAction) {
       state.sensors = (action as SetSensorsAction).payload;
       return state;

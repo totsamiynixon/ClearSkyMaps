@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/bootstrapper.dart';
-import 'package:flutter_app/widgets/sensors_details_tab_controller.dart';
+import 'package:flutter_app/widgets/sensor_details_tab_controller.dart';
 import 'package:flutter_app/widgets/sensors_map_page.dart';
 
 void main() {
@@ -17,8 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.teal),
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) =>
-            MapsDemo(), //MapsDemo(_mapWidget, _mapController)
-        '/details': (BuildContext context) => SensorDetailsTabController()
+            SensorsMap(), //MapsDemo(_mapWidget, _mapController)
       },
     );
   }
