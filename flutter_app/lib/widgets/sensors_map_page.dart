@@ -30,6 +30,9 @@ class _SensorsMapState extends State<SensorsMap> {
           });
       }
     });
+    _apiClient.getSensorsAsync().then((sensors) {
+      _store.dispatch(SetSensorsAction(sensors));
+    });
   }
 
   Drawer getDrawer(BuildContext context) {
