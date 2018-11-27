@@ -17,7 +17,7 @@ class SensorDetailsTabController extends DefaultTabController {
                   title: Text('Tabs Demo'),
                 ),
                 body: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: new NeverScrollableScrollPhysics(),
                   children: [
                     SensorDetailsTabTable(_sensorId),
                     Icon(Icons.directions_transit),

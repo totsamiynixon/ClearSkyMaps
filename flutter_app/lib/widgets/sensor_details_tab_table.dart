@@ -15,7 +15,8 @@ class SensorDetailsTabTable extends StatefulWidget {
       _SensorDetailsTabTableState(_sensorId);
 }
 
-class _SensorDetailsTabTableState extends State<SensorDetailsTabTable> {
+class _SensorDetailsTabTableState extends State<SensorDetailsTabTable>
+    with AutomaticKeepAliveClientMixin<SensorDetailsTabTable> {
   List<Reading> _readings = [];
   Store<AppState> _store;
   num _sensorId;
@@ -64,41 +65,48 @@ class _SensorDetailsTabTableState extends State<SensorDetailsTabTable> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: ListView(padding: const EdgeInsets.all(5.0), children: <Widget>[
-      DataTable(columns: <DataColumn>[
-        DataColumn(
-          label: const Text('Снято'),
-        ),
-        DataColumn(
-          label: const Text('CO2'),
-          numeric: true,
-        ),
-        DataColumn(
-          label: const Text('LPG'),
-          numeric: true,
-        ),
-        DataColumn(label: const Text('CO'), numeric: true),
-        DataColumn(
-          label: const Text('CH4'),
-          numeric: true,
-        ),
-        DataColumn(
-          label: const Text('Пыль'),
-          numeric: true,
-        ),
-        DataColumn(
-          label: const Text('Т-ра'),
-          numeric: true,
-        ),
-        DataColumn(
-          label: const Text('Hum'),
-          numeric: true,
-        ),
-        DataColumn(
-          label: const Text('P'),
-          numeric: true,
-        )
-      ], rows: _getRows())
-    ]));
+        child: ListView(
+            padding: const EdgeInsets.all(15.0),
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+          DataTable(columns: <DataColumn>[
+            DataColumn(
+              label: const Text('Снято'),
+            ),
+            DataColumn(
+              label: const Text('CO2'),
+              numeric: true,
+            ),
+            DataColumn(
+              label: const Text('LPG'),
+              numeric: true,
+            ),
+            DataColumn(label: const Text('CO'), numeric: true),
+            DataColumn(
+              label: const Text('CH4'),
+              numeric: true,
+            ),
+            DataColumn(
+              label: const Text('Пыль'),
+              numeric: true,
+            ),
+            DataColumn(
+              label: const Text('Т-ра'),
+              numeric: true,
+            ),
+            DataColumn(
+              label: const Text('Hum'),
+              numeric: true,
+            ),
+            DataColumn(
+              label: const Text('P'),
+              numeric: true,
+            )
+          ], rows: _getRows())
+        ]));
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
