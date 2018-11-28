@@ -19,7 +19,8 @@ class AppReducer {
       updateSensor.latestPollutionLevel = updateAction.pollutionLevel;
       updateSensor.readings.add(updateAction.payload);
       updateSensor.readings.sort((a, b) =>
-          (a.created.difference(b.created).inMilliseconds) > 0 ? 1 : 0);
+          (b.created.difference(a.created).inMilliseconds) > 0 ? 1 : 0);
+      updateSensor.readings = updateSensor.readings.take(10).toList();
       return state;
     }
     return state;

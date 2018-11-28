@@ -30,6 +30,7 @@ class Reading {
     reading.lPG = data['lPG'];
     reading.preassure = data['preassure'];
     reading.temp = data['temp'];
+    reading.created = DateTime.now();
     //reading.created = DateTime.parse(data['created'].toString());
     return reading;
   }

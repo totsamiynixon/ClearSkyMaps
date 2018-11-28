@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/infrastructure/service_locator.dart';
@@ -20,6 +22,7 @@ class _SensorDetailsTabTableState extends State<SensorDetailsTabTable>
   List<Reading> _readings = [];
   Store<AppState> _store;
   num _sensorId;
+  StreamSubscription<AppState> _stateSubscription;
 
   _SensorDetailsTabTableState(this._sensorId) {
     _store = ServiceLocator.getService<Store<AppState>>();
@@ -31,16 +34,25 @@ class _SensorDetailsTabTableState extends State<SensorDetailsTabTable>
     setState(() {
       _readings = _store.state.getSensorById(_sensorId).readings;
     });
-    _store.onChange.listen((state) {
-      if (_sensorId != null && state.lastAction is UpdateSensorAction) {
-        var action = (state.lastAction as UpdateSensorAction);
-        if (action.sensorId == _sensorId) {
-          setState(() {
-            _readings = state.getSensorById(_sensorId).readings;
-          });
-        }
+    _stateSubscription = _store.onChange.listen(_handleStateChange);
+  }
+
+  @protected
+  @mustCallSuper
+  void deactivate() {
+    super.deactivate();
+    _stateSubscription.cancel();
+  }
+
+  void _handleStateChange(AppState state) {
+    if (_sensorId != null && state.lastAction is UpdateSensorAction) {
+      var action = (state.lastAction as UpdateSensorAction);
+      if (action.sensorId == _sensorId) {
+        setState(() {
+          _readings = state.getSensorById(_sensorId).readings;
+        });
       }
-    });
+    }
   }
 
   List<DataRow> _getRows() {
@@ -51,7 +63,7 @@ class _SensorDetailsTabTableState extends State<SensorDetailsTabTable>
         .map((reading) => DataRow(cells: <DataCell>[
               DataCell(Text('${DateFormat('Hms').format(DateTime.now())}')),
               DataCell(Text('${reading.cO2}')),
-              DataCell(Text('${reading.lPG}')),
+              DataCell(Text('${reading.cO2}')),
               DataCell(Text('${reading.cO}')),
               DataCell(Text('${reading.cH4}')),
               DataCell(Text('${reading.dust}')),
@@ -64,6 +76,7 @@ class _SensorDetailsTabTableState extends State<SensorDetailsTabTable>
 
   @override
   Widget build(BuildContext context) {
+    //Bug with Data Table and Keep Alive! Don't forget to report!
     return Container(
         child: ListView(
             padding: const EdgeInsets.all(15.0),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 /// Example of a simple line chart.
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
@@ -24,6 +26,7 @@ class _SensorDetailsTabChartState extends State<SensorDetailsTabChart>
   List<Reading> _readings = [];
   Store<AppState> _store;
   num _sensorId;
+  StreamSubscription<AppState> _stateSubscription;
 
   _SensorDetailsTabChartState(this._sensorId) {
     _store = ServiceLocator.getService<Store<AppState>>();
@@ -35,16 +38,25 @@ class _SensorDetailsTabChartState extends State<SensorDetailsTabChart>
     setState(() {
       _readings = _store.state.getSensorById(_sensorId).readings;
     });
-    _store.onChange.listen((state) {
-      if (_sensorId != null && state.lastAction is UpdateSensorAction) {
-        var action = (state.lastAction as UpdateSensorAction);
-        if (action.sensorId == _sensorId) {
-          setState(() {
-            _readings = state.getSensorById(_sensorId).readings;
-          });
-        }
+    _stateSubscription = _store.onChange.listen(_handleStateChange);
+  }
+
+  @protected
+  @mustCallSuper
+  void deactivate() {
+    super.deactivate();
+    _stateSubscription.cancel();
+  }
+
+  void _handleStateChange(AppState state) {
+    if (_sensorId != null && state.lastAction is UpdateSensorAction) {
+      var action = (state.lastAction as UpdateSensorAction);
+      if (action.sensorId == _sensorId) {
+        setState(() {
+          _readings = state.getSensorById(_sensorId).readings;
+        });
       }
-    });
+    }
   }
 
   @override

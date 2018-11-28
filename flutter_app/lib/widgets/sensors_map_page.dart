@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/config/app_config.dart';
 import 'package:flutter_app/infrastructure/service_locator.dart';
+import 'package:flutter_app/models/enum/pollution_levels_enum.dart';
+import 'package:flutter_app/models/hub/hub_reading_model.dart';
 import 'package:flutter_app/models/sensor.dart';
 import 'package:flutter_app/services/implicits/api_service.dart';
 import 'package:flutter_app/store/actions/set_sensors_action.dart';
+import 'package:flutter_app/store/actions/update_sensor_action.dart';
 import 'package:flutter_app/store/app_state.dart';
 import 'package:flutter_app/widgets/sensor_details_tab_controller.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:redux/redux.dart';
+import 'package:signalr_client/signalr_client.dart';
 
 class _SensorsMapState extends State<SensorsMap> {
   ApiClientService _apiClient;
   Store<AppState> _store;
+  HubConnection _hubConnection;
   List<Sensor> _sensors = List<Sensor>();
   _SensorsMapState() {
     _apiClient = ServiceLocator.getService<ApiClientService>();
     _store = ServiceLocator.getService<Store<AppState>>();
+    _hubConnection = HubConnectionBuilder()
+        .withUrl(
+            '${ServiceLocator.getService<AppConfig>().baseServiceUrl}/readingsHub')
+        .build();
+    _hubConnection.on("DispatchReadingAsync", (reading) {
+      var data = reading[0] as Map<String, dynamic>;
+      var model = HubDispatchModel.fromJson(data);
+      _store.dispatch(new UpdateSensorAction(
+          model.reading, model.sensorId, model.latestPollutionLevel));
+    });
   }
 
   @override
@@ -24,10 +40,19 @@ class _SensorsMapState extends State<SensorsMap> {
     _store.onChange.listen((state) {
       if (state.lastAction is SetSensorsAction) {
         var action = state.lastAction as SetSensorsAction;
-        if (this.mounted)
+        if (this.mounted) {
+          if (_hubConnection.state != HubConnectionState.Connected) {
+            _hubConnection.start();
+          }
           setState(() {
             _sensors = action.payload;
           });
+        }
+      }
+      if (state.lastAction is UpdateSensorAction) {
+        setState(() {
+          _sensors = state.sensors;
+        });
       }
     });
     _apiClient.getSensorsAsync().then((sensors) {
@@ -96,7 +121,10 @@ class _SensorsMapState extends State<SensorsMap> {
                   point: new LatLng(sensor.latitude, sensor.longitude),
                   builder: (ctx) => new Container(
                         child: InkWell(
-                          child: Icon(Icons.cloud_circle),
+                          child: Icon(
+                            Icons.cloud_circle,
+                            color: _getColor(sensor.latestPollutionLevel),
+                          ),
                           onTap: () {
                             //Navigator.pushNamed(ctx, '/details');
                             var route = new MaterialPageRoute(
@@ -111,6 +139,17 @@ class _SensorsMapState extends State<SensorsMap> {
         ),
       ],
     );
+  }
+
+  Color _getColor(PollutionLevels pollutionLevels) {
+    switch (pollutionLevels) {
+      case PollutionLevels.low:
+        return Colors.green;
+      case PollutionLevels.medium:
+        return Colors.yellow;
+      case PollutionLevels.high:
+        return Colors.red;
+    }
   }
 
   AppBar getAppBar(BuildContext context) {
@@ -129,29 +168,6 @@ class _SensorsMapState extends State<SensorsMap> {
           },
         )
       ],
-    );
-  }
-
-  void _showDialog(BuildContext context, String info) {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Alert Dialog title"),
-          content: new Text(info),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 
