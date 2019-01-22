@@ -51,7 +51,7 @@ for:
         type: WebDeployPackage
     deploy:
       provider: WebDeploy
-      server: http://totsamiynixon.com:8172/msdeployagentservice
+      server: http://$(MAIN_DOMAIN):8172/MsDeploy.axd
       website: $(STAGING_SITE_NAME)
       username: $(WEB_DEPLOY_USERNAME)
       password: $(WEB_DEPLOY_PASSWORD)
