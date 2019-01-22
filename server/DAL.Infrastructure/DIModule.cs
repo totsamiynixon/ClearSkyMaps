@@ -26,7 +26,8 @@ namespace DAL.Infrastructure
             var builder = new DbContextOptionsBuilder<DataContext>();
             if (emulationEnabled)
             {
-                builder.UseInMemoryDatabase("EmulationDB");
+
+                builder.UseSqlServer(ctx.GetService<IConfiguration>().GetConnectionString("EmulationConnection"));
             }
             else
             {

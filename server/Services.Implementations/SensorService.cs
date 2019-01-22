@@ -4,7 +4,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Services.DTO.Enums;
 using Services.DTO.PollutionCalculator;
-using Services.DTO.Reading;
+using Services.DTO.Models.Reading;
 using Services.DTO.Sensor;
 using Services.Interfaces;
 using System;
@@ -31,11 +31,7 @@ namespace Services.Implementations
             _mapper = mapper;
             _pollutionLevelCalculationService = pollutionLevelCalculationService;
         }
-        /// <summary>
-        /// Checks does sensor with provided tracking key exist.
-        /// </summary>
-        /// <param name="trackingKey"> Sensor's tracking key </param>
-        /// <returns></returns>
+
         public Task<bool> CheckTrackingKeyAsync(string trackingKey)
         {
             return _sensorRepository.AnyAsync(f => f.TrackingKey == trackingKey);
@@ -46,17 +42,12 @@ namespace Services.Implementations
             return _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => f.Id).FirstOrDefaultAsync();
         }
 
-
-        public async Task<(int sensorId, PollutionLevel level)> GetSensorPollutionLevelInfoAsync(string trackingKey)
+        public async Task<PollutionLevel> GetSensorPollutionLevelInfoAsync(string trackingKey)
         {
-            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => new { Id = f.Id, Readings = f.Readings.Take(10) }).FirstOrDefaultAsync();
-            return (sensor.Id, _pollutionLevelCalculationService.Calculate(_mapper.Map<IEnumerable<Reading>, ReadingForPollutionCalculation[]>(sensor.Readings)));
+            var sensor = await _sensorRepository.Where(s => s.TrackingKey == trackingKey).Select(f => new { Id = f.Id, Readings = f.Readings.Take(10).ToArray() }).FirstOrDefaultAsync();
+            return (_pollutionLevelCalculationService.Calculate(_mapper.Map<IEnumerable<Reading>, ReadingForPollutionCalculation[]>(sensor.Readings)));
         }
 
-        /// <summary>
-        /// Returns list of records with provided length.
-        /// </summary>
-        /// <returns> List of sensors with readings </returns>
         public async Task<List<SensorInfoDTO>> GetSensorListAsync()
         {
             var sensors = await _sensorRepository.Select(f => new SensorInfoDTO
@@ -83,11 +74,7 @@ namespace Services.Implementations
             });
             return sensors;
         }
-        /// <summary>
-        /// Every sensor should be registered in system to be able to send data. Use this method to do it.
-        /// </summary>
-        /// <param name="sensor">Object with data about sensor</param>
-        /// <returns> Tracking key for registered sensor </returns>
+
         public async Task<string> RegisterAndGetTrackingKeyAsync(RegisterSensorDTO sensor)
         {
             var entity = new Sensor

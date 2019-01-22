@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.DTO.Reading
+namespace Services.DTO.Models.Reading
 {
     public class SaveReadingDTO
     {
@@ -16,7 +16,5 @@ namespace Services.DTO.Reading
         public float Temp { get; set; }
         public float Hum { get; set; }
         public float Preassure { get; set; }
-        public string SensorTrackingKey { get; set; }
-        public DateTime Created { get; set; }
     }
 }

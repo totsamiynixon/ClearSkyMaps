@@ -2,7 +2,7 @@
 using DAL.Intarfaces;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using Services.DTO.Reading;
+using Services.DTO.Models.Reading;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace Services.Implementations
         /// <returns></returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">Thrown where there are no such sensors with provided tracking key 
         /// and the other is greater than 0.</exception>
-        public async Task SaveReadingAsync(string trackingKey, SaveReadingDTO readingModel)
+        public async Task<SaveReadingResultDTO> SaveReadingAsync(string trackingKey, SaveReadingDTO readingModel)
         {
             var sensor = await _sensorRepository.FirstOrDefaultAsync(s => s.TrackingKey == trackingKey);
             if (sensor == null)
@@ -48,9 +48,16 @@ namespace Services.Implementations
                 throw new KeyNotFoundException("Tracking key doesn't exist! Register sensor first, please!");
             }
             var entity = _mapper.Map<SaveReadingDTO, Reading>(readingModel);
+            entity.Created = DateTime.UtcNow;
             entity.SensorId = sensor.Id;
             _readingRepository.Add(entity);
             await _db.SaveChangesAsync();
+            return new SaveReadingResultDTO
+            {
+                Id = entity.Id,
+                SensorId = entity.SensorId,
+                Created = entity.Created
+            };
         }
     }
 }

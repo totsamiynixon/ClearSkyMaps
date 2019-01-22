@@ -1,0 +1,96 @@
+page-home {
+
+  @media (max-width: 1024px) {
+    .toolbar-background {
+      background: transparent;
+    }
+
+    .header-md::after {
+      content: none;
+    }
+
+    .ui-components {
+      transition: opacity 0.5s ease-in;
+      opacity: 1;
+    }
+
+    .ui-components.hidden {
+      transition: 1s ease-out;
+      opacity: 0;
+    }
+  }
+
+  .content>.scroll-content {
+    margin-top: 0 !important;
+  }
+
+  .map-holder {
+    height: 100vh;
+    width: 100%;
+    position: static !important;
+  }
+
+  // .settings-button {
+  //   background: #fff;
+  //   padding: 10px;
+  //   border-radius: 20px;
+  // }
+
+  @media screen and (max-width: 767px) {
+    .settings-button {
+      //background: #fff;
+      padding: 1vw 2vw !important;
+      border-radius: 5vw;
+    }
+  }
+
+  [href^="http://maps.google.com/maps"] {
+    display: none !important
+  }
+
+  a[href^="https://maps.google.com/maps"] {
+    display: none !important
+  }
+
+  .gmnoprint a,
+  .gmnoprint span,
+  .gm-style-cc {
+    display: none;
+  }
+
+  .gmnoprint div {
+    background: none !important;
+  }
+
+  #start-position-marker {
+    background-image: url('http://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-PNG-Picture.png');
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  }
+
+  #end-position-marker {
+    background-image: url('https://png2.kisspng.com/20180403/ybq/kisspng-google-map-maker-google-maps-computer-icons-openst-map-marker-5ac3098700e9d3.6315947215227313990038.png');
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 48;
+  }
+
+  #confirm-buttons {
+    position: fixed;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 49;
+  }
+}

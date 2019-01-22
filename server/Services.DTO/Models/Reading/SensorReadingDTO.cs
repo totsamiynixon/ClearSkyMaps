@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.DTO.Reading
+namespace Services.DTO.Models.Reading
 {
     public class SensorReadingDTO
     {

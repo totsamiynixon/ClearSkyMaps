@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
+using Web.Core.Extensions;
 using Web.Core.Hubs;
 using WebUI.Middlewares;
 
@@ -33,32 +34,12 @@ namespace Web.Core
             {
                 return Configuration;
             });
-            BuildLibDependencies(services);
-            ConfigureCORS(services);
+            services.BuildLibDependencies();
+            services.ConfigureCORS();
+            services.ConfigureSWagger();
             services.AddMvc();
             services.AddSignalR();
-            services.AddSingleton<Emulator.Emulator, Emulator.Emulator>();
-        }
-
-        private void BuildLibDependencies(IServiceCollection services)
-        {
-            new Services.Infrastructure.DIModule().ConfigureServices(services);
-            new DAL.Infrastructure.DIModule().ConfigureServices(services);
-        }
-
-        private void ConfigureCORS(IServiceCollection services)
-        {
-            services.AddCors(o => o.AddPolicy("ClearSkyMapsPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyHeader()
-                       .AllowAnyHeader()
-                       .AllowCredentials();
-            }));
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("ClearSkyMapsPolicy"));
-            });
+            services.ConfigureDI();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,28 +48,24 @@ namespace Web.Core
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<DatabaseMigratorMiddleware>();
             app.UseStaticFiles();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", StartupExtensions.SwaggerDocName);
+                c.RoutePrefix = string.Empty;
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            if ((env.IsDevelopment()))
-            {
-                app.UseCors("ClearSkyMapsPolicy");
-            }
+            app.UseCors(StartupExtensions.CorsPolicyName);
+            app.UseSwagger();
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ReadingsHub>("/readingsHub");
             });
-            if (!env.IsDevelopment())
-            {
-                app.Run(async (context) =>
-                {
-                    context.Response.ContentType = "text/html";
-                    await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "spa", "index.html"));
-                });
-            }
         }
     }
 }
