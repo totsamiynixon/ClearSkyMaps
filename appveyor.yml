@@ -25,9 +25,16 @@ for:
     artifacts:
       - path: ./release
         name: WebAppProd
-        type: Zip
-    deploy_script:
-      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppProd.zip -domain %PRODUCTION_DOMAIN%
+        type: WebDeployPackage
+    deploy:
+      provider: WebDeploy
+      server: http://totsamiynixon.com//msdeploy.axd?site=$(PRODUCTION_SITE_NAME)
+      website: $(PRODUCTION_SITE_NAME)
+      username: $(WEB_DEPLOY_USERNAME)
+      password: $(WEB_DEPLOY_PASSWORD)
+      ntlm: false
+      remove_files: true
+      artifact: WebAppProd
   - branches:
       only:
         - staging
@@ -41,9 +48,16 @@ for:
     artifacts:
       - path: ./release
         name: WebAppStaging
-        type: Zip
-    deploy_script:
-      - cmd: powershell -file appveyor.deploy.ps1 -artifactName WebAppStaging.zip -domain %STAGING_DOMAIN%
+        type: WebDeployPackage
+    deploy:
+      provider: WebDeploy
+      server: http://totsamiynixon.com//msdeploy.axd?site=$(STAGING_SITE_NAME)
+      website: $(STAGING_SITE_NAME)
+      username: $(WEB_DEPLOY_USERNAME)
+      password: $(WEB_DEPLOY_PASSWORD)
+      ntlm: false
+      remove_files: true
+      artifact: WebAppStaging
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
