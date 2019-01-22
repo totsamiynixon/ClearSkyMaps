@@ -28,7 +28,7 @@ for:
         type: WebDeployPackage
     deploy:
       provider: WebDeploy
-      server: http://totsamiynixon.com//msdeploy.axd?site=$(PRODUCTION_SITE_NAME)
+      server: http://totsamiynixon.com:8172/msdeployagentservice
       website: $(PRODUCTION_SITE_NAME)
       username: $(WEB_DEPLOY_USERNAME)
       password: $(WEB_DEPLOY_PASSWORD)
@@ -51,7 +51,7 @@ for:
         type: WebDeployPackage
     deploy:
       provider: WebDeploy
-      server: http://totsamiynixon.com//msdeploy.axd?site=$(STAGING_SITE_NAME)
+      server: http://totsamiynixon.com:8172/msdeployagentservice
       website: $(STAGING_SITE_NAME)
       username: $(WEB_DEPLOY_USERNAME)
       password: $(WEB_DEPLOY_PASSWORD)
