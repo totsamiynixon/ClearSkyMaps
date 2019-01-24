@@ -27,7 +27,7 @@ for:
         name: WebAppProd
     deploy:
       provider: WebDeploy
-      server: http://$(MAIN_DOMAIN):8172/MsDeploy.axd
+      server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
       website: $(PRODUCTION_SITE_NAME)
       username: $(WEB_DEPLOY_USERNAME)
       password: $(WEB_DEPLOY_PASSWORD)
@@ -49,7 +49,7 @@ for:
         name: WebAppStaging
     deploy:
       provider: WebDeploy
-      server: http://$(MAIN_DOMAIN):8172/MsDeploy.axd
+      server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
       website: $(STAGING_SITE_NAME)
       username: $(WEB_DEPLOY_USERNAME)
       password: $(WEB_DEPLOY_PASSWORD)
