@@ -23,9 +23,12 @@ namespace Web.Core
            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
            .AddEnvironmentVariables();
             Configuration = builder.Build();
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -36,7 +39,7 @@ namespace Web.Core
             });
             services.BuildLibDependencies();
             services.ConfigureCORS();
-            services.ConfigureSWagger();
+            services.ConfigureSwagger(Environment.ApplicationName);
             services.AddMvc();
             services.AddSignalR();
             services.ConfigureDI();
@@ -44,7 +47,7 @@ namespace Web.Core
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
+        { 
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<DatabaseMigratorMiddleware>();
             app.UseStaticFiles();
@@ -61,7 +64,6 @@ namespace Web.Core
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
             app.UseCors(StartupExtensions.CorsPolicyName);
-            app.UseSwagger();
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ReadingsHub>("/readingsHub");

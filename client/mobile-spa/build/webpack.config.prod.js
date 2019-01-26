@@ -18,7 +18,7 @@ module.exports = {
   output: {
     path: resolvePath("www"),
     filename: "app.js",
-    publicPath: "/spa/"
+    publicPath: ""
   },
   resolve: {
     extensions: [".js", ".vue", ".json"],
