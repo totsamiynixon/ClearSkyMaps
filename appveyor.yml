@@ -17,7 +17,7 @@ for:
         - production
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      NOVE_ENV: production
+      NODE_ENV: production
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64
       - cmd: cd client/ionic-pwa && ionic build --prod --platform=browser
@@ -49,7 +49,7 @@ for:
         - staging
     environment:
       ASPNETCORE_ENVIRONMENT: Staging
-      NOVE_ENV: staging
+      NODE_ENV: staging
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64
       - cmd: cd client/ionic-pwa && ionic build --prod --platform=browser
