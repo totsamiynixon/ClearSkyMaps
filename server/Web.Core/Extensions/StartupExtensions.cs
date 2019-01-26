@@ -38,7 +38,7 @@ namespace Web.Core.Extensions
                 options.Filters.Add(new CorsAuthorizationFilterFactory(CorsPolicyName));
             });
         }
-        public static void ConfigureSWagger(this IServiceCollection services)
+        public static void ConfigureSwagger(this IServiceCollection services, string appName)
         {
             services.AddSwaggerGen(c =>
             {
@@ -50,7 +50,7 @@ namespace Web.Core.Extensions
                     Version = "v1",
                     Description = "Clear Sky Maps project's REST API documentation."
                 });
-                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "ClearSkyMaps.XML"));
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{appName}.xml"));
             });
         }
 

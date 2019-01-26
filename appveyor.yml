@@ -19,43 +19,63 @@ for:
       ASPNETCORE_ENVIRONMENT: Production
       NOVE_ENV: production
     build_script:
-      - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release -r win81-x64
+      - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64
       - cmd: npm run build-prod --prefix client/mobile-spa
-      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
+      - cmd: xcopy client\mobile-spa\www release\web-client /E /H /I
     artifacts:
-      - path: ./release
-        name: WebAppProd
+      - path: ./release/api
+        name: APIProduction
+      - path: ./release/web-client
+        name: WebClientProduction
     deploy:
-      provider: WebDeploy
-      server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
-      website: $(PRODUCTION_SITE_NAME)
-      username: $(WEB_DEPLOY_USERNAME)
-      password: $(WEB_DEPLOY_PASSWORD)
-      ntlm: false
-      remove_files: true
-      artifact: WebAppProd
+      - provider: WebDeploy
+        server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
+        website: $(PRODUCTION_API_SITE_NAME)
+        username: $(WEB_DEPLOY_USERNAME)
+        password: $(WEB_DEPLOY_PASSWORD)
+        ntlm: false
+        remove_files: true
+        artifact: APIProduction
+      - provider: WebDeploy
+        server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
+        website: $(PRODUCTION_SITE_NAME)
+        username: $(WEB_DEPLOY_USERNAME)
+        password: $(WEB_DEPLOY_PASSWORD)
+        ntlm: false
+        remove_files: true
+        artifact: WebClientProduction
   - branches:
       only:
-        - staging
+        - production
     environment:
       ASPNETCORE_ENVIRONMENT: Staging
       NOVE_ENV: staging
     build_script:
-      - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release -r win81-x64
+      - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64
       - cmd: npm run build-prod --prefix client/mobile-spa
-      - cmd: xcopy client\mobile-spa\www release\wwwroot\spa /E /H /I
+      - cmd: xcopy client\mobile-spa\www release\web-client /E /H /I
     artifacts:
-      - path: ./release
-        name: WebAppStaging
+      - path: ./release/api
+        name: APIStaging
+      - path: ./release/web-client
+        name: WebClientStaging
     deploy:
-      provider: WebDeploy
-      server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
-      website: $(STAGING_SITE_NAME)
-      username: $(WEB_DEPLOY_USERNAME)
-      password: $(WEB_DEPLOY_PASSWORD)
-      ntlm: false
-      remove_files: true
-      artifact: WebAppStaging
+      - provider: WebDeploy
+        server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
+        website: $(STAGING_API_SITE_NAME)
+        username: $(WEB_DEPLOY_USERNAME)
+        password: $(WEB_DEPLOY_PASSWORD)
+        ntlm: false
+        remove_files: true
+        artifact: APIStaging
+      - provider: WebDeploy
+        server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
+        website: $(STAGING_SITE_NAME)
+        username: $(WEB_DEPLOY_USERNAME)
+        password: $(WEB_DEPLOY_PASSWORD)
+        ntlm: false
+        remove_files: true
+        artifact: WebClientStaging
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true

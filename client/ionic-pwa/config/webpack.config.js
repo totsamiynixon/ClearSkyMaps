@@ -6,7 +6,7 @@ const webpack = require("webpack");
 const customConfig = {};
 const state = {
   APP_WEBSERVER_URL: JSON.stringify(
-    process.env["APP_WEBSERVER_URL_" + process.env.APP_STAGE] ||
+    process.env[process.env.APP_STAGE + "_API_URL"] ||
       "http://localhost:56875/"
   ),
   VERSION: JSON.stringify(require("../package.json").version),
