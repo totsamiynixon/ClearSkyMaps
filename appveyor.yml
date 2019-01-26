@@ -46,7 +46,7 @@ for:
         artifact: WebClientProduction
   - branches:
       only:
-        - production
+        - staging
     environment:
       ASPNETCORE_ENVIRONMENT: Staging
       NOVE_ENV: staging
