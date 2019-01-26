@@ -6,6 +6,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   <Target Name="ApplyXdtConfigTransform" BeforeTargets="_TransformWebConfig">
     <PropertyGroup>
