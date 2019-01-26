@@ -11,7 +11,7 @@ for:
         - master
     build_script:
       - cmd: dotnet build server/ClearSkyMaps.Server.sln
-      - cmd: npm run build-prod --prefix client/mobile-spa
+      - cmd: cd client/ionic-pwa && ionic build --prod --platform=browser
   - branches:
       only:
         - production
@@ -20,13 +20,13 @@ for:
       NOVE_ENV: production
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64
-      - cmd: npm run build-prod --prefix client/mobile-spa
-      - cmd: xcopy client\mobile-spa\www release\web-client /E /H /I
+      - cmd: cd client/ionic-pwa && ionic build --prod --platform=browser
+      - cmd: xcopy client\ionic-pwa\www release\pwa /E /H /I
     artifacts:
       - path: ./release/api
         name: APIProduction
-      - path: ./release/web-client
-        name: WebClientProduction
+      - path: ./release/pwa
+        name: PWAClientProduction
     deploy:
       - provider: WebDeploy
         server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
@@ -43,7 +43,7 @@ for:
         password: $(WEB_DEPLOY_PASSWORD)
         ntlm: false
         remove_files: true
-        artifact: WebClientProduction
+        artifact: PWAClientProduction
   - branches:
       only:
         - staging
@@ -52,13 +52,13 @@ for:
       NOVE_ENV: staging
     build_script:
       - cmd: dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64
-      - cmd: npm run build-prod --prefix client/mobile-spa
-      - cmd: xcopy client\mobile-spa\www release\web-client /E /H /I
+      - cmd: cd client/ionic-pwa && ionic build --prod --platform=browser
+      - cmd: xcopy client\ionic-pwa\www release\pwa /E /H /I
     artifacts:
       - path: ./release/api
         name: APIStaging
-      - path: ./release/web-client
-        name: WebClientStaging
+      - path: ./release/pwa
+        name: PWAClientStaging
     deploy:
       - provider: WebDeploy
         server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
@@ -75,13 +75,14 @@ for:
         password: $(WEB_DEPLOY_PASSWORD)
         ntlm: false
         remove_files: true
-        artifact: WebClientStaging
+        artifact: PWAClientStaging
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 install:
   - cmd: dotnet restore ./server/ClearSkyMaps.Server.sln
-  - cmd: cd ./client/mobile-spa && npm install
+  - cmd: npm install -g ionic
+  - cmd: cd ./client/ionic-pwa && npm install
 clone_depth: 1
 test:
   assemblies:
