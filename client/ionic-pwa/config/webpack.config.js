@@ -4,9 +4,10 @@ const { dev, prod } = require("@ionic/app-scripts/config/webpack.config");
 const webpackMerge = require("webpack-merge");
 const webpack = require("webpack");
 const customConfig = {};
+process.env.NODE_ENV = process.env.NODE_ENV || "dev";
 const state = {
   APP_WEBSERVER_URL: JSON.stringify(
-    process.env[process.env.APP_STAGE + "_API_URL"] ||
+    process.env[process.env.NODE_ENV.toUpperCase() + "_API_URL"] ||
       "http://localhost:56875/"
   ),
   VERSION: JSON.stringify(require("../package.json").version),
