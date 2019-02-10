@@ -56,11 +56,14 @@
 # #     dependencies:
 # #         - publish_for_staging
 
-image: Visual Studio 2017
+image: microsoft/dotnet:latest
 
 stages:
     - build
     - test
+
+services:
+    - node:latest
 
 before_script:
     - "dotnet restore ./server/ClearSkyMaps.Server.sln"
