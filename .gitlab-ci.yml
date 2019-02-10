@@ -59,16 +59,19 @@
 image: microsoft/dotnet:latest
 
 stages:
+    - install
     - build
     - test
 
-services:
-    - node:latest
-
-before_script:
-    - "dotnet restore ./server/ClearSkyMaps.Server.sln"
-    - "npm install -g ionic"
-    - "cd ./client/ionic-pwa && npm install"
+install:
+    stage: install
+    script:
+        - "sudo apt install nodejs"
+        - "dotnet restore ./server/ClearSkyMaps.Server.sln"
+        - "npm install -g ionic"
+        - "cd ./client/ionic-pwa && npm install"
+    cache:
+        untracked: true
 
 build:
     stage: build
