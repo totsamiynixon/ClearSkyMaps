@@ -3,10 +3,8 @@ import {
   SetFilterParameterAction,
   SetSensorsAction,
   UpdateSensorAction,
-  SET_SENSORS,
-  UPDATE_SENSOR
+  SET_SENSORS
 } from "./../../store/home.actions";
-import { Observable } from "rxjs/Observable";
 
 import {
   Component,
@@ -15,10 +13,7 @@ import {
   ChangeDetectorRef
 } from "@angular/core";
 import {
-  NavController,
-  NavParams,
   ModalController,
-  ToastController,
   ActionSheetController
 } from "ionic-angular";
 import { Store, select } from "@ngrx/store";
@@ -28,9 +23,7 @@ import {
   HubProvider,
   AlertsService
 } from "../../../../providers/inerfaces";
-import { MapItemModel } from "../../models/map-item.model";
 import { HubDispatchModel } from "../../../../models/providers/dispatch-reading.model";
-import { Sensor } from "../../../../models/sensor.model";
 import { Parameters } from "../../../../models/parameters.enum";
 import { DetailsModal } from "../details/details";
 import { getFilterByParameter } from "../../store/home.reducer";
@@ -55,8 +48,6 @@ export class HomePage {
   readyToGetHubValues: boolean = false;
 
   constructor(
-    private navCtrl: NavController,
-    private navParams: NavParams,
     private modalCtrl: ModalController,
     private mapBuilder: MapBuilder,
     private hubProvider: HubProvider,
@@ -71,12 +62,11 @@ export class HomePage {
       .subscribe((value: Parameters) => {
         this.filterByParameter = Parameters[value];
       });
-    let subscr = this.store$
+    this.store$
       .pipe(select("homeState"))
       .subscribe((state: IHomePageState) => {
         if (state.lastAction.type == SET_SENSORS) {
           this.readyToGetHubValues = true;
-          subscr.unsubscribe();
         }
       });
   }

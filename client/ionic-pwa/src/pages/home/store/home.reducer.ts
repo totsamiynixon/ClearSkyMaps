@@ -60,8 +60,5 @@ export const getFilterByParameter = createSelector(
 
 export const getSensorById = (sensorId: number) =>
   createSelector(getHomePageState, state => {
-    return {
-      sensor: state.sensors.find(f => f.id == sensorId),
-      filterByParameter: state.filterByParameter
-    };
+    return state.sensors.find(f => f.id == sensorId)
   });
