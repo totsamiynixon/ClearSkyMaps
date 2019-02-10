@@ -1,0 +1,58 @@
+image: Visual Studio 2017
+
+branches:
+  only:
+    - master
+    - staging
+    # - production
+
+stages:
+    - build
+    - test
+    - publish_for_staging
+    - publish_for_production
+    - deploy_to_staging
+    - deploy_to_production
+
+before_script:
+    - "dotnet restore ./server/ClearSkyMaps.Server.sln"
+    - "npm install -g ionic"
+    - "cd ./client/ionic-pwa && npm install"
+
+build:
+    stage: build
+    script:
+        - "dotnet build server/ClearSkyMaps.Server.sln"
+        - "cd client/ionic-pwa && ionic build --prod --platform=browser"
+
+test:
+    stage: test
+    script: 
+        - "dotnet test ./server/ClearSkyMaps.Server.sln"
+
+publish_for_staging:
+    stage: publish_for_staging
+    variables: 
+      ASPNETCORE_ENVIRONMENT: Staging
+      NODE_ENV: staging
+    only:
+        - staging
+    script: 
+        - "dotnet publish server/ClearSkyMaps.Server.sln -c Release -o ../../release/api -r win81-x64"
+        - "cd client/ionic-pwa && ionic build --prod --platform=browser"
+        - "xcopy client\ionic-pwa\www release\pwa /E /H /I"
+        - ps: "deploy-api.ps1"
+        - ps: "deploy-pwa.ps1"
+    # artifacts:
+    #     - name: "staging_api"
+    #       paths:
+    #         - release/api
+    #     - name: "staging_pwa"
+    #       paths:
+    #         - release/pwa
+
+# deploy_to_staging:
+#     stage: deploy_to_staging
+#     dependencies:
+#         - publish_for_staging
+
