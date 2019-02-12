@@ -56,7 +56,7 @@
 # #     dependencies:
 # #         - publish_for_staging
 
-image: totsamiynixon/aspnetcore-nodejs:latest
+image: totsamiynixon/dotnet-nodejs:latest
 
 stages:
     - install
