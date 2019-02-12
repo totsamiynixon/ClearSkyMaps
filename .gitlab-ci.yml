@@ -56,7 +56,7 @@
 # #     dependencies:
 # #         - publish_for_staging
 
-image: microsoft/dotnet:latest
+image: totsamiynixon/aspnetcore-nodejs:latest
 
 stages:
     - install
@@ -66,17 +66,20 @@ stages:
 install:
     stage: install
     script:
-        - "msiexec.exe /a https://nodejs.org/dist/v8.3.0/node-v8.3.0-x64.msi /quiet"
         - "dotnet restore ./server/ClearSkyMaps.Server.sln"
         - "npm install -g ionic"
         - "cd ./client/ionic-pwa && npm install"
     cache:
         untracked: true
 
-build:
+build_api:
     stage: build
     script:
         - "dotnet build server/ClearSkyMaps.Server.sln"
+
+build_pwa:
+    stage: build
+    script:
         - "cd client/ionic-pwa && ionic build --prod --platform=browser"
 
 test:
