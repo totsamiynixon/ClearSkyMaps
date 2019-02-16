@@ -59,17 +59,8 @@
 image: totsamiynixon/dotnet-nodejs:latest
 
 stages:
-    - install
     - build
     - test
-
-install:
-    stage: install
-    script:
-        - "dotnet restore ./server/ClearSkyMaps.Server.sln"
-        - "cd ./client/ionic-pwa && npm install"
-    cache:
-        untracked: true
 
 build_api:
     stage: build
@@ -79,6 +70,7 @@ build_api:
 build_pwa:
     stage: build
     script:
+        - "cd ./client/ionic-pwa && npm install"
         - "cd client/ionic-pwa && ionic build --prod --platform=browser"
 
 test:
