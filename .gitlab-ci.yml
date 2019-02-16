@@ -71,7 +71,7 @@ build_pwa:
     stage: build
     script:
         - "cd ./client/ionic-pwa && npm install"
-        - "cd ./client/ionic-pwa && ionic build --prod --platform=browser"
+        - "ionic build --prod --platform=browser"
 
 test:
     stage: test
