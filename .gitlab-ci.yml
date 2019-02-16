@@ -5,20 +5,17 @@ stages:
     - test
 
 build_api:
-    image: microsoft/dotnet:latest
     stage: build
     script:
         - "dotnet build server/ClearSkyMaps.Server.sln"
 
 build_pwa:
-    image: node:10.15-slim
     stage: build
     script:
         - "cd ./client/ionic-pwa && npm install"
         - "ionic build --prod --platform=browser"
 
 test:
-    image: microsoft/dotnet:latest
     stage: test
     script: 
         - "dotnet test ./server/ClearSkyMaps.Server.sln"
