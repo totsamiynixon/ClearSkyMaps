@@ -1,0 +1,28 @@
+version: "3.4"
+services:
+    api:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - DATABASE_DOMAIN=sql.data
+        - DATABASE_USER_PASSWORD=P4ss-W0rd!
+        - DATABASE_USER_ID=sa
+      container_name: csm-dev-api
+      ports:
+        - "80:80"
+        - "443:443"
+    sql.data:
+          environment:
+            SA_PASSWORD: "P4ss-W0rd!"
+            ACCEPT_EULA: Y
+          container_name: csm-dev-sql-data
+    pwa:
+      environment:
+        - NODE_ENV=development
+        - API_DOMAIN=http://localhost:80/
+      container_name: csm-dev-pwa
+      # volumes:
+      #   - './src/Clients/pwa/ionic-pwa:/app'
+      #   - './src/Clients/pwa/ionic-pwa/node_modules'
+      ports:
+        - "8100:8100"
+        - "53703:53703"

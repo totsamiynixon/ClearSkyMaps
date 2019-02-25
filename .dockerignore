@@ -1,0 +1,32 @@
+# In differen sections files can be duplicated
+
+# ASP NET CORE
+*.dockerignore
+**/*env
+**/*.git
+**/*.gitignore
+**/*.vs
+**/*.vscode
+docker-compose.yml
+docker-compose.*.yml
+**/bin/
+**/obj/
+
+
+# Node Js 
+**/node_modules/
+**/*.git/
+coverage/
+
+.dockerignore
+Dockerfile
+
+**/*.gitignore
+**/*.env
+**/*.eslintrc
+**/*.editorconfig
+**/*.gitlab-ci.yml
+
+# App Specific
+**/www/
+**/*.sourcemaps

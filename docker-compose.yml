@@ -1,0 +1,16 @@
+version: "3.4"
+services:
+    api:
+        build: 
+          context: .
+          dockerfile: ./src/Services/Readings/API/Dockerfile
+        depends_on:
+            - sql.data
+    sql.data:
+        image: "mcr.microsoft.com/mssql/server"
+    pwa:
+        build: 
+          context: .
+          dockerfile: ./src/Clients/pwa/Dockerfile
+        depends_on:
+            - api
