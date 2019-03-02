@@ -6,7 +6,6 @@ services:
         - DATABASE_DOMAIN=sql.data
         - DATABASE_USER_PASSWORD=P4ss-W0rd!
         - DATABASE_USER_ID=sa
-      container_name: csm-dev-api
       ports:
         - "80:80"
         - "443:443"
@@ -14,13 +13,11 @@ services:
           environment:
             SA_PASSWORD: "P4ss-W0rd!"
             ACCEPT_EULA: Y
-          container_name: csm-dev-sql-data
-    pwa:
+    default-pwa:
       environment:
         - NODE_ENV=development
         - API_DOMAIN=http://localhost:80/
         - CHOKIDAR_USEPOLLING=1
-      container_name: csm-dev-pwa
       volumes:
         - './src/Clients/pwa/ionic-pwa:/usr/src/app'
         - '/usr/src/app/node_modules'
@@ -28,3 +25,17 @@ services:
         - "8100:8100"
         - "53703:53703"
         - "35729:35729"
+    new.pwa:
+      context: ./src/Clients/pwa/new-pwa
+      dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - NODE_ENV=development
+        - API_DOMAIN=http://localhost:80/
+        - CHOKIDAR_USEPOLLING=1
+        - APP_MAP_API_KEY=AIzaSyAfj-ARjZc7VEGb0_grdk5VFu5wXphQyjo
+      ports:
+        - "7788:80"
+        - "4200:4200"
+      volumes:
+        - "/app/ClientApp/node_modules"

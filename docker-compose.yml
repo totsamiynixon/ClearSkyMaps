@@ -2,15 +2,21 @@ version: "3.4"
 services:
     api:
         build: 
-          context: .
+          context: ./
           dockerfile: ./src/Services/Readings/API/Dockerfile
         depends_on:
             - sql.data
     sql.data:
         image: "mcr.microsoft.com/mssql/server"
-    pwa:
+    default-pwa:
         build: 
-          context: .
-          dockerfile: ./src/Clients/pwa/Dockerfile
+          context: ./
+          dockerfile: ./src/Clients/pwa/ionic-pwa/Dockerfile
+        depends_on:
+            - api
+    new.pwa:
+        build: 
+          context: ./src/Clients/pwa/new-pwa
+          dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile.prod
         depends_on:
             - api

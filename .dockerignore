@@ -30,3 +30,4 @@ Dockerfile
 # App Specific
 **/www/
 **/*.sourcemaps
+**/ClientApp/node_modules/

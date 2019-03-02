@@ -3,13 +3,16 @@ WORKDIR /app
 EXPOSE 80
 
 FROM microsoft/dotnet:2-sdk AS build
-COPY ./src/Services/Readings ./app
+COPY . ./app
 WORKDIR ./app/API
 RUN dotnet restore
 RUN dotnet build --no-restore -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish --no-restore -c Release -o /app
+
+FROM build as unittest
+WORKDIR /app/Readings.UnitTests
 
 FROM base AS final
 WORKDIR /app
