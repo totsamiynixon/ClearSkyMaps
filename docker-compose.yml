@@ -3,7 +3,7 @@ services:
     api:
         build: 
           context: ./src/Services/Readings
-          dockerfile: ./src/Services/Readings/API/Dockerfile
+          dockerfile: ./API/Dockerfile
         depends_on:
             - sql.data
     sql.data:
