@@ -1,4 +1,6 @@
-image: docker/compose:1.23.2
+image:
+  name: docker/compose:1.23.2
+  entrypoint: [""]
 
 services:
   - docker:dind
