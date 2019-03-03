@@ -1,9 +1,6 @@
 image:
   name: docker/compose:1.23.2
-  entrypoint: [""]
-
-variables:
-  DOCKER_HOST: http://127.0.0.1:2375
+  entrypoint: [""]W
 
 services:
   - docker:dind
