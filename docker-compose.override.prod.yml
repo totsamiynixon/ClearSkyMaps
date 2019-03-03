@@ -21,8 +21,6 @@ services:
       ports:
         - 80
     new.pwa:
-      context: ./src/Clients/pwa/new-pwa
-      dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile.dev
       environment:
         - ASPNETCORE_ENVIRONMENT=Production
         - NODE_ENV=production

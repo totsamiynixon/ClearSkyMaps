@@ -17,6 +17,6 @@ services:
     new.pwa:
         build: 
           context: ./src/Clients/pwa/new-pwa
-          dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile
+          dockerfile: ./Dockerfile
         depends_on:
             - api
