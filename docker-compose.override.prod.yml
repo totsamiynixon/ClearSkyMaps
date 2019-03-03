@@ -9,8 +9,8 @@ services:
       ports:
         - 80
     sql.data:
-          volumes:
-            - mssql-server-linux-data:/var/opt/mssql/data
+          # volumes:
+          #   - mssql-server-linux-data:/var/opt/mssql/data
           environment:
             SA_PASSWORD: ${DATABASE_USER_PASSWORD}
             ACCEPT_EULA: Y
