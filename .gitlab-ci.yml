@@ -9,6 +9,10 @@ stages:
     - build
     - test
 
+
+before_script:
+  - docker info
+
 build_images:
     stage: build
     script:
