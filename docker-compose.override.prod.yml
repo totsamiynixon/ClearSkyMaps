@@ -30,12 +30,3 @@ services:
         - APP_MAP_API_KEY=${APP_MAP_API_KEY}
       ports:
         - 80
-
-#Задачи на завтра
-#Посмотреть по API GATEWAYS Oceot
-#посмотреть про запуск тестов
-#например, вот так
-#docker build --pull --target testrunner -t podcast:test .
-#docker run --rm -v D:\github\hanselminutes-core\TestResults:/app/hanselminutes.core.tests/TestResults podcast:test
-#возможно, настроить health check и webstatus
-#в течении недели допилить приложение
