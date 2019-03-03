@@ -2,7 +2,7 @@ version: "3.4"
 services:
     api:
         build: 
-          context: ./
+          context: ./src/Services/Readings
           dockerfile: ./src/Services/Readings/API/Dockerfile
         depends_on:
             - sql.data
@@ -17,6 +17,6 @@ services:
     new.pwa:
         build: 
           context: ./src/Clients/pwa/new-pwa
-          dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile.prod
+          dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile
         depends_on:
             - api

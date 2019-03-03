@@ -1,21 +1,20 @@
-image: totsamiynixon/dotnet-nodejs:latest
+image: docker:latest
+
+services:
+  - docker:dind
 
 stages:
     - build
     - test
 
-build_api:
+build_images:
     stage: build
     script:
-        - "dotnet build server/ClearSkyMaps.Server.sln"
-
-build_pwa:
-    stage: build
-    script:
-        - "cd ./client/ionic-pwa && npm install"
-        - "ionic build --prod --platform=browser"
+        - "docker-compose -f docker-compose.yml -f docker-compose.override.prod.yml build"
 
 test:
     stage: test
     script: 
-        - "dotnet test ./server/ClearSkyMaps.Server.sln"
+        - "docker-compose -f docker-compose-tests.yml api build"
+        - "docker run api:test dotnet test"
+

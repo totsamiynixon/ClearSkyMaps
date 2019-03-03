@@ -26,8 +26,9 @@ services:
         - "53703:53703"
         - "35729:35729"
     new.pwa:
-      context: ./src/Clients/pwa/new-pwa
-      dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile
+      build:
+        context: ./src/Clients/pwa/new-pwa
+        dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile.dev
       environment:
         - ASPNETCORE_ENVIRONMENT=Development
         - NODE_ENV=development
