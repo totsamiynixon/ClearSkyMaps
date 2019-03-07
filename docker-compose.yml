@@ -8,7 +8,7 @@ services:
             - sql.data
     sql.data:
         image: "mcr.microsoft.com/mssql/server"
-    default-pwa:
+    default.pwa:
         build: 
           context: ./
           dockerfile: ./src/Clients/pwa/ionic-pwa/Dockerfile

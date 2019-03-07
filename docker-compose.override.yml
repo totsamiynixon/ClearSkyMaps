@@ -13,7 +13,7 @@ services:
           environment:
             SA_PASSWORD: "P4ss-W0rd!"
             ACCEPT_EULA: Y
-    default-pwa:
+    default.pwa:
       environment:
         - NODE_ENV=development
         - API_DOMAIN=http://localhost:80/
@@ -28,7 +28,8 @@ services:
     new.pwa:
       build:
         context: ./src/Clients/pwa/new-pwa
-        dockerfile: ./src/Clients/pwa/new-pwa/Dockerfile.dev
+        dockerfile: ./Dockerfile
+        target: node-build
       environment:
         - ASPNETCORE_ENVIRONMENT=Development
         - NODE_ENV=development

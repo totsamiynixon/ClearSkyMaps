@@ -14,7 +14,7 @@ services:
           environment:
             SA_PASSWORD: ${DATABASE_USER_PASSWORD}
             ACCEPT_EULA: Y
-    default-pwa:
+    default.pwa:
       environment:
         - NODE_ENV=production
         - API_DOMAIN=${API_DOMAIN}

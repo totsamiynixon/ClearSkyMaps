@@ -4,10 +4,13 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { DetailsModalModule } from './details/details.module';
+
 import { HomePage } from './home.page';
 
 @NgModule({
   imports: [
+    DetailsModalModule,
     CommonModule,
     FormsModule,
     IonicModule,

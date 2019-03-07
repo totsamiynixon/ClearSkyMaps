@@ -1,8 +1,8 @@
-// import { NgModule } from "@angular/core";
-// import { DetailsModal } from "./details";
+ import { NgModule } from "@angular/core";
+ import { DetailsModal } from "./details";
 
 
-// @NgModule({
-//   declarations: [DetailsModal],
-// })
-// export class DetailsModalModule {}
+ @NgModule({
+   declarations: [DetailsModal],
+ })
+ export class DetailsModalModule {}
