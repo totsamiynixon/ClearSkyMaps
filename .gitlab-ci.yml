@@ -22,5 +22,5 @@ test:
     stage: test
     script: 
         - "docker-compose -f docker-compose-tests.yml build api"
-        - "docker run api:test dotnet test"
+        - "docker run csm_api:test dotnet test"
 
