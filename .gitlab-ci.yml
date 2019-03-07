@@ -21,6 +21,6 @@ build_images:
 test:
     stage: test
     script: 
-        - "docker-compose -f docker-compose-tests.yml api build"
+        - "docker-compose -f docker-compose-tests.yml build api"
         - "docker run api:test dotnet test"
 
