@@ -1,0 +1,9 @@
+version: "3.4"
+services:
+    api:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Staging
+    pwa:
+      environment:
+        - NODE_ENV=staging
+        - API_DOMAIN=${API_DOMAIN_STAGING}

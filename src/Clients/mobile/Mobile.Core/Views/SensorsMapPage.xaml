@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="Карта сенсоров"
+             xmlns:maps="clr-namespace:Xamarin.Forms.GoogleMaps;assembly=Xamarin.Forms.GoogleMaps"
+             x:Class="Mobile.Core.Views.SensorsMapPage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Details" Command="{Binding ShowDetailsCommand}" CommandParameter="SensorDetailsPage" ></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <maps:Map x:Name="Map" VerticalOptions="FillAndExpand"/>
+</ContentPage>

@@ -1,0 +1,43 @@
+version: "3.4"
+services:
+    api:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - DATABASE_DOMAIN=sql.data
+        - DATABASE_USER_PASSWORD=P4ss-W0rd!
+        - DATABASE_USER_ID=sa
+      ports:
+        - "80:80"
+        - "443:443"
+    sql.data:
+          environment:
+            SA_PASSWORD: "P4ss-W0rd!"
+            ACCEPT_EULA: Y
+    default.pwa:
+      environment:
+        - NODE_ENV=development
+        - API_DOMAIN=http://localhost:80/
+        - CHOKIDAR_USEPOLLING=1
+      volumes:
+        - './src/Clients/pwa/ionic-pwa:/usr/src/app'
+        - '/usr/src/app/node_modules'
+      ports:
+        - "8100:8100"
+        - "53703:53703"
+        - "35729:35729"
+    new.pwa:
+      build:
+        context: ./src/Clients/pwa/new-pwa
+        dockerfile: ./Dockerfile
+        target: node-build
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - NODE_ENV=development
+        - API_DOMAIN=http://localhost:80/
+        - CHOKIDAR_USEPOLLING=1
+        - APP_MAP_API_KEY=AIzaSyAfj-ARjZc7VEGb0_grdk5VFu5wXphQyjo
+      ports:
+        - "7788:80"
+        - "4200:4200"
+      volumes:
+        - "/app/ClientApp/node_modules"

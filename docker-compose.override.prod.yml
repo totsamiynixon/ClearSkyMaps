@@ -1,0 +1,30 @@
+version: "3.4"
+services:
+    api:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Production
+        - DATABASE_DOMAIN=sql.data
+        - DATABASE_USER_PASSWORD=${DATABASE_USER_PASSWORD}
+        - DATABASE_USER_ID=${DATABASE_USER_ID}
+      ports:
+        - 80
+    sql.data:
+          # volumes:
+          #   - mssql-server-linux-data:/var/opt/mssql/data
+          environment:
+            SA_PASSWORD: ${DATABASE_USER_PASSWORD}
+            ACCEPT_EULA: Y
+    default.pwa:
+      environment:
+        - NODE_ENV=production
+        - API_DOMAIN=${API_DOMAIN}
+      ports:
+        - 80
+    new.pwa:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Production
+        - NODE_ENV=production
+        - API_DOMAIN=${API_DOMAIN}
+        - APP_MAP_API_KEY=${APP_MAP_API_KEY}
+      ports:
+        - 80

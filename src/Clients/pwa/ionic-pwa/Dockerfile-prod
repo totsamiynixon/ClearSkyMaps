@@ -1,0 +1,13 @@
+# base image
+FROM node:10.15.0 AS build
+# install and cache app dependencies
+COPY ./src/Clients/pwa/ionic-pwa ./app
+WORKDIR ./app
+RUN npm install -g ionic
+RUN npm install --silent
+RUN ionic build --prod --platform=browser
+
+# server website using ngnix
+FROM nginx AS nginx
+COPY  --from=build /app/www /usr/share/nginx/html
+RUN cd /usr/share/nginx/html && ls

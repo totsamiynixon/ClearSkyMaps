@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DAL.Intarfaces\Readings.DAL.Intarfaces.csproj" />
+    <ProjectReference Include="..\Domain\Readings.Domain.csproj" />
+    <ProjectReference Include="..\Services.Interfaces\Readings.Services.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

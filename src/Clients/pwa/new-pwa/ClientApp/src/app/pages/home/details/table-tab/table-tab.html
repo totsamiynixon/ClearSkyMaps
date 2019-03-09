@@ -1,0 +1,43 @@
+<!-- Generated template for ion-cole TableTabComponent component -->
+
+<!--<ion-content>
+  <ion-toolbar>
+    <ion-title>Таблица</ion-title>
+    <ion-buttons end>
+      <button ion-button
+              icon-only
+              (click)="changeExpand()">
+        <ion-icon [name]="(!expanded?'expand':'redo')"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+  <table class="expandable-table"
+         [ngClass]="{'collapsed':!expanded}">
+    <thead>
+      <tr>
+        <th>Снято</th>
+        <th>CO2</th>
+        <th>LPG</th>
+        <th>CO</th>
+        <th>CH4</th>
+        <th>Пыль</th>
+        <th>Т-ра</th>
+        <th>Hum</th>
+        <th>Давление</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of tabModel.sensor.readings">
+        <td>{{item.created | date:'shortTime'}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('cO2')}">{{item.cO2}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('lpg')}">{{item.lpg}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('co')}">{{item.co}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('cH4')}">{{item.cH4}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('dust')}">{{item.dust}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('temp')}">{{item.temp}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('hum')}">{{item.hum}}</td>
+        <td [ngClass]="{'hightLight': checkHighlight('preassure')}">{{item.preassure}}</td>
+      </tr>
+    </tbody>
+  </table>
+</ion-content>-->

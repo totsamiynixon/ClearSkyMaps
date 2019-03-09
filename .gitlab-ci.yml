@@ -1,21 +1,26 @@
-image: totsamiynixon/dotnet-nodejs:latest
+image:
+  name: docker/compose:1.23.2
+  entrypoint: [""]
+
+services:
+  - docker:dind
 
 stages:
     - build
     - test
 
-build_api:
-    stage: build
-    script:
-        - "dotnet build server/ClearSkyMaps.Server.sln"
 
-build_pwa:
+before_script:
+  - docker info
+
+build_images:
     stage: build
     script:
-        - "cd ./client/ionic-pwa && npm install"
-        - "ionic build --prod --platform=browser"
+        - "docker-compose -f docker-compose.yml -f docker-compose.override.prod.yml build"
 
 test:
     stage: test
     script: 
-        - "dotnet test ./server/ClearSkyMaps.Server.sln"
+        - "docker-compose -f docker-compose-tests.yml build api"
+        - "docker run csm_api:test dotnet test"
+
