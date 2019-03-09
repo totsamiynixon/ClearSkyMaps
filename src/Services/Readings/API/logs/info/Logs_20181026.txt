@@ -1,2 +1,0 @@
-2018-10-26 01:14:14,327|INFO |ArduinoServer.Controllers.Api.EmulationSensorsController|5| Emulation is stopped! 
-2018-10-26 01:14:19,000|INFO |ArduinoServer.Controllers.Api.EmulationSensorsController|5| Emulation is stopped! 
