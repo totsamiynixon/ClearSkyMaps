@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Threading.Tasks;
 using System.Web.Http;
 using Web.Emulation;
 
@@ -9,13 +10,13 @@ namespace Web.Controllers
     {
         [HttpGet]
         [Route("start")]
-        public IHttpActionResult StartEmulation()
+        public async Task<IHttpActionResult> StartEmulationAsync()
         {
             if (!bool.Parse(ConfigurationManager.AppSettings["emulation:enabled"].ToString()))
             {
                 return BadRequest();
             }
-            Emulator.RunEmulation();
+            await Emulator.RunEmulationAsync();
             return Ok("Emulation was enabled!");
         }
 

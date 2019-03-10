@@ -32,5 +32,23 @@ namespace Web.Data
         public virtual DbSet<Reading> Readings { get; set; }
 
         public virtual DbSet<Sensor> Sensors { get; set; }
+
+        public virtual DbSet<Notification> Notifications { get; set; }
+
+        public virtual DbSet<Subscriber> Subscribers { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Subscriber>()
+                .HasMany(f => f.UnreadNotifications)
+                .WithMany()
+                .Map(s => s.ToTable("SubscribersUnreadNotifications").MapLeftKey("SubscriberId").MapRightKey("NotificationId"));
+
+            modelBuilder.Entity<Subscriber>()
+                .HasMany(f => f.Sensors)
+                .WithMany()
+                .Map(s => s.ToTable("SubscribersSensors").MapLeftKey("SubscriberId").MapRightKey("SensorId"));
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

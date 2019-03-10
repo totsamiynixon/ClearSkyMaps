@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
-
+    //importScripts('foo.js');
     // Update 'version' if you need to refresh the cache
-    var version = 'v2.0::CacheFirstSafe';
+    var version = '1.0';
     var offlineUrl = "Offline"; // <-- Offline/Index.cshtml
     var urlsToCache = ['/']; // <-- Add more URLs you would like to cache.
 

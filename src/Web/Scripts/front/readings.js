@@ -76,7 +76,9 @@
             }
             sensor.readings.unshift(readingModel.reading);
             sensor.pollutionLevel = readingModel.pollutionLevel;
-            sensor.readings.pop();
+            if (sensor.readings.length == 11) {
+                sensor.readings.pop();
+            }
             that.updateMarker(sensor);
         };
         $.connection.hub.start().done(function () {

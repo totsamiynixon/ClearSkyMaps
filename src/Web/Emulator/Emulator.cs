@@ -6,24 +6,25 @@ using System.Threading.Tasks;
 using System.Web;
 using Web.Data;
 using Web.Data.Models;
+using Web.Helpers;
 using Web.Models.Api.Readings;
 using Web.Models.Api.Sensor;
+using Z.EntityFramework.Plus;
 
 namespace Web.Emulation
 {
     public static class Emulator
     {
-        private static List<string> _trackingKeys;
         private static bool IsEmulationEnabled = false;
         private static Random _emulatorRandom = new Random();
 
 
-        public static void RunEmulation()
+        public static async Task RunEmulationAsync()
         {
             if (!IsEmulationEnabled)
             {
                 IsEmulationEnabled = true;
-                SeedSensors();
+                await SeedSensorsAsync();
                 StartTask();
             }
         }
@@ -39,33 +40,39 @@ namespace Web.Emulation
             {
                 while (IsEmulationEnabled)
                 {
-                    DispatchFakeData();
+                    await DispatchFakeDataAsync();
                     await Task.Delay(10000);
                 }
             });
         }
 
-        private async static void SeedSensors()
+        private static async Task SeedSensorsAsync()
         {
-            var _context = new DataContext();
-            _trackingKeys = new List<string>();
+            var currentSensors = await DatabaseHelper.GetSensorsAsync();
+            if (currentSensors.Any())
+            {
+                return;
+            }
             var iterations = _emulatorRandom.Next(0, 20);
             for (int i = 0; i < iterations; i++)
             {
                 var fakeSensor = GetFakeSensor();
-                _context.Sensors.Add(fakeSensor);
-                _trackingKeys.Add(fakeSensor.TrackingKey);
+                await DatabaseHelper.AddSensorAsync(fakeSensor.Latitude, fakeSensor.Longitude);
+                foreach (var reading in fakeSensor.Readings)
+                {
+                    await DatabaseHelper.AddReadingAsync(reading);
+                }
             }
-            await _context.SaveChangesAsync();
 
         }
 
-        private static void DispatchFakeData()
+        private static async Task DispatchFakeDataAsync()
         {
-            Parallel.ForEach(_trackingKeys, async (key) =>
+            var sensors = await DatabaseHelper.GetSensorsAsync();
+            Parallel.ForEach(sensors, async (sensor) =>
             {
                 var controller = new ReadingsController();
-                var fakeReading = GetFakeReading(key);
+                var fakeReading = GetFakeReading(sensor.TrackingKey);
                 await controller.PostReading(fakeReading);
             });
         }

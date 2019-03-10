@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -6,6 +7,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Web.Data;
 using Web.Data.Models;
+using Web.Enum;
+using Web.Helpers;
 using Web.Models;
 using Web.Models.Api.Sensor;
 using Z.EntityFramework.Plus;
@@ -15,55 +18,33 @@ namespace ArduinoServer.Controllers.Api
     [RoutePrefix("api/sensors")]
     public class SensorsController : ApiController
     {
+        private static IMapper _mapper = new Mapper(new MapperConfiguration(x =>
+        {
+            x.CreateMap<Sensor, SensorModel>()
+            .ForMember(f => f.PollutionLevel, m => m.ResolveUsing(p => PollutionHelper.GetPollutionLevel(p.Id)));
+            x.CreateMap<Reading, SensorReadingModel>();
+        }));
+
         private readonly DataContext _context;
-        private static Random _random = new Random();
         public SensorsController()
         {
             _context = new DataContext();
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> Get()
+        public async Task<IHttpActionResult> GetAsync()
         {
-            var sensors = await _context.Sensors.Select(f => new
-            {
-                Id = f.Id,
-                Latitude = f.Latitude,
-                Longitude = f.Longitude,
-                Readings = f.Readings.OrderByDescending(z => z.Created).Take(10).Select(u => new
-                {
-                    CO2 = u.CO2,
-                    LPG = u.LPG,
-                    CO = u.CO,
-                    CH4 = u.CH4,
-                    Dust = u.Dust,
-                    Temp = u.Temp,
-                    Hum = u.Hum,
-                    Preassure = u.Preassure,
-                    Created = u.Created
-                })
-            }).ToListAsync();
-            return Ok(sensors);
+            return Ok(_mapper.Map<List<Sensor>, List<SensorModel>>(await DatabaseHelper.GetSensorsAsync()));
         }
 
-
-
-
         [HttpPost]
-        public async Task<IHttpActionResult> Register(RegisterSensorModel model)
+        public async Task<IHttpActionResult> RegisterAsync(RegisterSensorModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var sensor = new Sensor
-            {
-                Latitude = model.Latitude,
-                Longitude = model.Longitude,
-                TrackingKey = Guid.NewGuid().ToString()
-            };
-            _context.Sensors.Add(sensor);
-            await _context.SaveChangesAsync();
+            var sensor = await DatabaseHelper.AddSensorAsync(model.Latitude, model.Longitude);
             return Created("", sensor.TrackingKey);
         }
     }
