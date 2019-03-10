@@ -1,6 +1,13 @@
 ﻿(function () {
     'use strict';
-    //importScripts('foo.js');
+
+    importScripts('https://www.gstatic.com/firebasejs/5.8.6/firebase-app.js');
+    importScripts('https://www.gstatic.com/firebasejs/5.8.6/firebase-messaging.js');
+    firebase.initializeApp({
+        messagingSenderId: "198815969264"
+    });
+    const messaging = firebase.messaging();
+
     // Update 'version' if you need to refresh the cache
     var version = '1.0';
     var offlineUrl = "Offline"; // <-- Offline/Index.cshtml

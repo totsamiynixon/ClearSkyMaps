@@ -33,6 +33,70 @@
             setChartCurrentParameter: function (param) {
                 this.chart.currentParameter = param;
                 this.initDataset();
+            },
+            subscribeOnSensor: function () {
+                var that = this;
+                window.CSM.askForPermissioToReceiveNotifications().then(function (token) {
+                    var sensors = JSON.parse(localStorage.getItem("subscribedOnSensors")) || [];
+                    if (sensors.indexOf(that.currentSensor.id) == -1) {
+                        $.ajax({
+                            type: "POST",
+                            url: "api/notifications",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                sensorId: that.currentSensor.id,
+                                registrationToken: token
+                            }),
+                            success: function (responce) {
+                                sensors.push(that.currentSensor.id);
+                                localStorage.setItem("subscribedOnSensors", JSON.stringify(sensors));
+                                alert("Успешно подписан");
+                            },
+                            error: function (error) {
+                                alert("Ошибка");
+                            }
+                        });
+                    }
+                    else {
+                        alert("Уже подписан!");
+                    }
+                });
+            },
+            unsubscribeFromSensor: function () {
+                var that = this;
+                window.CSM.askForPermissioToReceiveNotifications().then(function (token) {
+                    var sensors = JSON.parse(localStorage.getItem("subscribedOnSensors")) || [];
+                    if (sensors.indexOf(that.currentSensor.id) == -1) {
+                        alert("Уже отписан");
+                    }
+                    $.ajax({
+                        type: "DELETE",
+                        url: "api/notifications",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            sensorId: that.currentSensor.id,
+                            registrationToken: token
+                        }),
+                        success: function (responce) {
+                            var index = sensors.indexOf(that.currentSensor.id);
+                            if (index != -1) {
+                                sensors.splice(index, 1);
+                            }
+                            localStorage.setItem("subscribedOnSensors", JSON.stringify(sensors));
+                            alert("Успешно отписан");
+                        },
+                        error: function (error) {
+                            alert("Ошибка");
+                        }
+                    });
+                })
+            }
+        },
+        computed: {
+            isSubscribed: function () {
+                var that = this;
+                var sensors = JSON.parse(localStorage.getItem("subscribedOnSensors")) || [];
+                return sensors.indexOf(that.currentSensor.id) != -1;
             }
         },
         watch: {

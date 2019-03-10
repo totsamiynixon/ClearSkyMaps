@@ -22,19 +22,35 @@
     <div class="body-content">
         @RenderBody()
     </div>
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/umd/popper.js"></script>
+    <script src="~/Scripts/bootstrap-material-design.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
+    <script src="~/Scripts/front/main.js"></script>
+    <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            //apiKey: "AIzaSyCXEhr-Tos_nXb5YeJlpA-K48jRYxtOW2M",
+            //authDomain: "csmdev-7d113.firebaseapp.com",
+            //databaseURL: "https://csmdev-7d113.firebaseio.com",
+            //projectId: "csmdev-7d113",
+            //storageBucket: "csmdev-7d113.appspot.com",
+            messagingSenderId: "198815969264"
+        };
+        firebase.initializeApp(config);
+    </script>
     <script>
         window.settings = {};
         window.settings.version = "0.1";
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
                 .register('@Url.Content("~/Scripts/front/serviceworker.js")')
-                .then(function () { console.log('Service Worker Registered'); });
+                .then(function (registration) {
+                    firebase.messaging().useServiceWorker(registration);
+                });
         }
     </script>
-    <script src="~/Scripts/jquery-3.3.1.js"></script>
-    <script src="~/Scripts/umd/popper.js"></script>
-    <script src="~/Scripts/bootstrap-material-design.js"></script>
-    <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
