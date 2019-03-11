@@ -1,18 +1,18 @@
 image: Visual Studio 2017
 branches:
   only:
-    - master
-    - staging
-    - production
+    - simple
+    - simple_staging
+    - simple_production
 for:
   - branches:
       only:
-        - master
+        - simple
     build_script:
       - cmd: msbuild "$(APPVEYOR_BUILD_FOLDER)\$(APPVEYOR_PROJECT_SLUG)\src\ClearSkyMaps.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - branches:
       only:
-        - production
+        - simple_production
     environment:
       APPLICATION_ENVIRONMENT: Production
       APPLICATION_VERSION: $(APPVEYOR_BUILD_VERSION)
@@ -36,7 +36,7 @@ for:
         artifact: CSMProduction
   - branches:
       only:
-        - staging
+        - simple_staging
     environment:
       APPLICATION_ENVIRONMENT: Staging
       APPLICATION_VERSION: $(APPVEYOR_BUILD_VERSION)
