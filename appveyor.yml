@@ -9,7 +9,7 @@ for:
       only:
         - simple
     build_script:
-      - cmd: msbuild "$(APPVEYOR_BUILD_FOLDER)\$(APPVEYOR_PROJECT_SLUG)\src\ClearSkyMaps.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: msbuild "$(APPVEYOR_BUILD_FOLDER)\src\ClearSkyMaps.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - branches:
       only:
         - simple_production
