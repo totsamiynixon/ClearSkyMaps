@@ -45,9 +45,9 @@ for:
       CONNECTION_STRING: $(STAGING___CONNECTION_STRING)
       EMULATION_ENABLED: true
     build_script:
-      - cmd: msbuild "C:\projects\clearskymaps\src\ClearSkyMaps.sln" /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clearskymaps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clearskymaps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: msbuild src/Web/Web.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
     artifacts:
-      - path: ./src/release
+      - path: ./src/Web/release
         name: CSMStaging
     deploy:
       - provider: WebDeploy
