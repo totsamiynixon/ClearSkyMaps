@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Web.Helpers;
+<!DOCTYPE html>
 <html>
 <head>
     <link rel="apple-touch-icon" sizes="180x180" href="~/Content/favicon/apple-touch-icon.png">
@@ -10,7 +11,7 @@
     <meta name="theme-color" content="#ffffff">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>CSM - @ViewBag.Title, v=@SettingsHelper.ApplicationVersion</title>
     <base href="@Url.Content("~/")" />
     @Styles.Render("~/Content/css")
     @RenderSection("styles", required: false)
@@ -31,21 +32,21 @@
     <script>
         // Initialize Firebase
         var config = {
-            //apiKey: "AIzaSyCXEhr-Tos_nXb5YeJlpA-K48jRYxtOW2M",
+            @*//apiKey: "AIzaSyCXEhr-Tos_nXb5YeJlpA-K48jRYxtOW2M",
             //authDomain: "csmdev-7d113.firebaseapp.com",
             //databaseURL: "https://csmdev-7d113.firebaseio.com",
             //projectId: "csmdev-7d113",
-            //storageBucket: "csmdev-7d113.appspot.com",
-            messagingSenderId: "198815969264"
+            //storageBucket: "csmdev-7d113.appspot.com",*@
+            messagingSenderId: "@SettingsHelper.FirebaseCloudMessagingMessagingSenderId"
         };
         firebase.initializeApp(config);
     </script>
     <script>
         window.settings = {};
-        window.settings.version = "0.1";
+        window.settings.version = "@SettingsHelper.ApplicationVersion";
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
-                .register('@Url.Content("~/Scripts/front/serviceworker.js")')
+                .register('@Url.Content("~/service-worker.js")')
                 .then(function (registration) {
                     firebase.messaging().useServiceWorker(registration);
                 });

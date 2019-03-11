@@ -1,15 +1,16 @@
 ﻿(function () {
     'use strict';
 
+    //Firebase notifications
     importScripts('https://www.gstatic.com/firebasejs/5.8.6/firebase-app.js');
     importScripts('https://www.gstatic.com/firebasejs/5.8.6/firebase-messaging.js');
     firebase.initializeApp({
-        messagingSenderId: "198815969264"
+        messagingSenderId: "%MessagingSenderId%"
     });
     const messaging = firebase.messaging();
 
     // Update 'version' if you need to refresh the cache
-    var version = '1.0';
+    var version = "%Version%";
     var offlineUrl = "Offline"; // <-- Offline/Index.cshtml
     var urlsToCache = ['/']; // <-- Add more URLs you would like to cache.
 
@@ -61,7 +62,9 @@
 
     self.addEventListener('fetch', function (event) {
         var request = event.request;
-
+        if (!(request.url.indexOf('http') === 0)) {
+            return;
+        }
         // Always fetch non-GET requests from the network
         if (request.method !== 'GET' || request.url.match(/\/browserLink/ig)) {
             event.respondWith(

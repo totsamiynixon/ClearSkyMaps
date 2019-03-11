@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Web.Helpers;
 using Web.Models.Api.Notifications;
 
 namespace Web.Controllers.Api
@@ -18,7 +19,7 @@ namespace Web.Controllers.Api
         private readonly string firebaseCloudMessagingServerKey;
         public NotificationsController()
         {
-            firebaseCloudMessagingServerKey = ConfigurationManager.AppSettings["firebaseCloudMessaging:serverKey"].ToString();
+            firebaseCloudMessagingServerKey = SettingsHelper.FirebaseCloudMessagingServerKey;
         }
 
         [HttpPost]

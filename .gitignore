@@ -296,3 +296,6 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 ./config.xml
+
+
+dev-config.json

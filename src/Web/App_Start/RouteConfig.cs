@@ -13,11 +13,20 @@ namespace Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //     name: "spa-fallback",
-            //     url: "{*url}",
-            //     defaults: new { controller = "Home", action = "Index" }
-            //);
+            routes.RouteExistingFiles = true;
+
+            routes.MapRoute(
+                name: "Manifest",
+                url: "manifest.json",
+                defaults: new { controller = "FileTransfer", action = "ManifestJsonAsync" }
+            );
+
+            routes.MapRoute(
+                name: "ServiceWorker",
+                url: "service-worker.js",
+                defaults: new { controller = "FileTransfer", action = "ServiceWorkerJsAsync" }
+            );
+
 
             routes.MapRoute(
                 name: "Default",

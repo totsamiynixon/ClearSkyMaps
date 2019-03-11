@@ -69,6 +69,12 @@
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Configuration.ConfigurationBuilders.Base, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Configuration.ConfigurationBuilders.Base.1.0.1\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Configuration.ConfigurationBuilders.UserSecrets, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.1.0.2\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -194,18 +200,17 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Config\MultiStageConfigBuilder.cs" />
     <Compile Include="Controllers\Api\NotificationsController.cs" />
     <Compile Include="Controllers\Api\ReadingsController.cs" />
     <Compile Include="Controllers\Api\SensorsController.cs" />
-    <Compile Include="Controllers\Api\SubscribersController.cs" />
     <Compile Include="Controllers\EmulationController.cs" />
+    <Compile Include="Controllers\FileTransferController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Data\Attributes\PDK.cs" />
     <Compile Include="Data\DataContext.cs" />
-    <Compile Include="Data\Models\Notification.cs" />
     <Compile Include="Data\Models\Reading.cs" />
     <Compile Include="Data\Models\Sensor.cs" />
-    <Compile Include="Data\Models\Subscriber.cs" />
     <Compile Include="Emulator\Emulator.cs" />
     <Compile Include="Enum\PollutionLevel.cs" />
     <Compile Include="Global.asax.cs">
@@ -214,15 +219,12 @@
     <Compile Include="Helpers\CacheHelper.cs" />
     <Compile Include="Helpers\PollutionHelper.cs" />
     <Compile Include="Helpers\DatabaseHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Hub\IReadingsClient.cs" />
     <Compile Include="Hub\ReadingsHub.cs" />
     <Compile Include="Migrations\201903091323460_init.cs" />
     <Compile Include="Migrations\201903091323460_init.Designer.cs">
       <DependentUpon>201903091323460_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903092325254_Subscribers.cs" />
-    <Compile Include="Migrations\201903092325254_Subscribers.Designer.cs">
-      <DependentUpon>201903092325254_Subscribers.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Api\Notifications\SubscribeOnSersorModel.cs" />
@@ -291,11 +293,8 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Scripts\bootstrap-material-design.js.map" />
     <None Include="manifest.json" />
-    <None Include="Properties\PublishProfiles\bsacarduino - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\bsacarduino - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\front\serviceworker.js" />
+    <Content Include="Scripts\front\service-worker.js" />
     <Content Include="Scripts\front\vue-filters.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -387,9 +386,6 @@
     <EmbeddedResource Include="Migrations\201903091323460_init.resx">
       <DependentUpon>201903091323460_init.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903092325254_Subscribers.resx">
-      <DependentUpon>201903092325254_Subscribers.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -427,7 +423,14 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
-  <Target Condition=" '$(DEPLOY_STAGE)' != ''" Name="BeforeBuild">
+  <Target Name="BeforeBuild">
+    <TransformXml Source="Web.config" Transform="Web.config" Destination="Web.config" />
+  </Target>
+  <Target Condition="'$(DEPLOY_STAGE)' != ''" Name="BeforeBuild">
     <TransformXml Source="Web.config" Transform="Web.$(DEPLOY_STAGE).config" Destination="Web.config" />
   </Target>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

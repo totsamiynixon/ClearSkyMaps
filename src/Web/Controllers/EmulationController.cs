@@ -1,7 +1,7 @@
-﻿using System.Configuration;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http;
 using Web.Emulation;
+using Web.Helpers;
 
 namespace Web.Controllers
 {
@@ -12,7 +12,7 @@ namespace Web.Controllers
         [Route("start")]
         public async Task<IHttpActionResult> StartEmulationAsync()
         {
-            if (!bool.Parse(ConfigurationManager.AppSettings["emulation:enabled"].ToString()))
+            if (SettingsHelper.EmulationEnabled)
             {
                 return BadRequest();
             }
@@ -24,7 +24,7 @@ namespace Web.Controllers
         [Route("stop")]
         public IHttpActionResult StopEmulation()
         {
-            if (!bool.Parse(ConfigurationManager.AppSettings["emulation:enabled"].ToString()))
+            if (SettingsHelper.EmulationEnabled)
             {
                 return BadRequest();
             }
