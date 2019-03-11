@@ -1,3 +1,4 @@
+varsion: "1.0.{build}"
 image: Visual Studio 2017
 branches:
   only:
@@ -9,7 +10,7 @@ for:
       only:
         - simple
     build_script:
-      - cmd: msbuild "C:\projects\clearskymaps\src\ClearSkyMaps.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: msbuild src/ClearSkyMaps.sln
   - branches:
       only:
         - simple_production
@@ -21,9 +22,9 @@ for:
       CONNECTION_STRING: $(PROD___CONNECTION_STRING)
       EMULATION_ENABLED: false
     build_script:
-      - cmd: msbuild "C:\projects\clearskymaps\src\ClearSkyMaps.sln" /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clearskymaps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clearskymaps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: msbuild src/Web/Web.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
     artifacts:
-      - path: ./src/release
+      - path: ./src/Web/release
         name: CSMProduction
     deploy:
       - provider: WebDeploy
