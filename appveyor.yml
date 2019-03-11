@@ -21,7 +21,7 @@ for:
       CONNECTION_STRING: $(PROD___CONNECTION_STRING)
       EMULATION_ENABLED: false
     build_script:
-      - cmd: msbuild /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clear-sky-maps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clear-sky-maps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: msbuild /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clearskymaps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clearskymaps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     artifacts:
       - path: ./src/release
         name: CSMProduction
@@ -45,7 +45,7 @@ for:
       CONNECTION_STRING: $(STAGING___CONNECTION_STRING)
       EMULATION_ENABLED: true
     build_script:
-      - cmd: msbuild /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clear-sky-maps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clear-sky-maps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: msbuild /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clearskymaps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clearskymaps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     artifacts:
       - path: ./src/release
         name: CSMStaging
