@@ -22,6 +22,8 @@ namespace Web.Config
             "FirebaseCloudMessaging:MessagingSenderId",
             "Application:Version",
             "Application:Environment",
+            "DefaultConnenction",
+            "Emulation:Enabled"
         };
 
         private static readonly Dictionary<string, string> stagingProdSettingsMap = new Dictionary<string, string>()
@@ -29,7 +31,9 @@ namespace Web.Config
             {"FIREBASE_CLOUD_MESSAGING__SERVER_KEY", "FirebaseCloudMessaging:ServerKey"},
             {"FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID", "FirebaseCloudMessaging:MessagingSenderId"},
             {"APPLICATION_ENVIRONMENT", "Application:Version" },
-            {"APPLICATION_VERSION", "Application:Environment" }
+            {"APPLICATION_VERSION", "Application:Environment" },
+            {"CONNECTION_STRING","DefaultConnenction"},
+            {"EMULATION_ENABLED","Emulation:Enabled"}
         };
 
         public MultiStageConfigBuilder()
@@ -54,12 +58,16 @@ namespace Web.Config
             }
             else if (appEnv == "STAGING" || appEnv == "PRODUCTION")
             {
-                var variables = (IEnumerable<string>)Environment.GetEnvironmentVariables();
+                var variables = (IDictionary<string, string>)Environment.GetEnvironmentVariables();
                 var mapKeysList = stagingProdSettingsMap.Keys.ToList();
-                var notprovidedKeys = mapKeysList.Except(mapKeysList.Intersect(variables));
+                var notprovidedKeys = mapKeysList.Except(mapKeysList.Intersect(variables.Keys));
                 if (notprovidedKeys.Any())
                 {
                     throw new KeyNotFoundException($"Not such keys:[{string.Join(", ", notprovidedKeys)}] provided in build environment!");
+                }
+                foreach (var setting in stagingProdSettingsMap)
+                {
+                    Settings.Add(setting.Value, variables[setting.Key]);
                 }
             }
         }

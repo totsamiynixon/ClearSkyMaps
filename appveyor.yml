@@ -1,0 +1,69 @@
+image: Visual Studio 2017
+branches:
+  only:
+    - master
+    - staging
+    - production
+for:
+  - branches:
+      only:
+        - master
+    build_script:
+      - cmd: msbuild "$(APPVEYOR_BUILD_FOLDER)\$(APPVEYOR_PROJECT_SLUG)\src\ClearSkyMaps.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - branches:
+      only:
+        - production
+    environment:
+      APPLICATION_ENVIRONMENT: Production
+      APPLICATION_VERSION: $(APPVEYOR_BUILD_VERSION)
+      FIREBASE_CLOUD_MESSAGING__SERVER_KEY: $(PROD___FIREBASE_CLOUD_MESSAGING__SERVER_KEY)
+      FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID: $(PROD___FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID)
+      CONNECTION_STRING: $(PROD___CONNECTION_STRING)
+      EMULATION_ENABLED: false
+    build_script:
+      - cmd: msbuild /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clear-sky-maps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clear-sky-maps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    artifacts:
+      - path: ./src/release
+        name: CSMProduction
+    deploy:
+      - provider: WebDeploy
+        server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
+        website: $(PRODUCTION_SITE_NAME)
+        username: $(WEB_DEPLOY_USERNAME)
+        password: $(WEB_DEPLOY_PASSWORD)
+        ntlm: false
+        remove_files: true
+        artifact: CSMProduction
+  - branches:
+      only:
+        - staging
+    environment:
+      APPLICATION_ENVIRONMENT: Staging
+      APPLICATION_VERSION: $(APPVEYOR_BUILD_VERSION)
+      FIREBASE_CLOUD_MESSAGING__SERVER_KEY: $(STAGING___FIREBASE_CLOUD_MESSAGING__SERVER_KEY)
+      FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID: $(STAGING___FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID)
+      CONNECTION_STRING: $(STAGING___CONNECTION_STRING)
+      EMULATION_ENABLED: true
+    build_script:
+      - cmd: msbuild /t:Build /p:Configuration=Release /p:SolutionDir="C:\projects\clear-sky-maps\src\ClearSkyMaps.sln" /p:PublishDir="C:\projects\clear-sky-maps\src\release" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    artifacts:
+      - path: ./src/release
+        name: CSMStaging
+    deploy:
+      - provider: WebDeploy
+        server: https://$(MAIN_DOMAIN):8172/MsDeploy.axd
+        website: $(STAGING_SITE_NAME)
+        username: $(WEB_DEPLOY_USERNAME)
+        password: $(WEB_DEPLOY_PASSWORD)
+        ntlm: false
+        remove_files: true
+        artifact: CSMStaging
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+install:
+  - cmd: nuget restore src/ClearSkyMaps.Server.sln
+clone_depth: 1
+test:
+  assemblies:
+    - '**\*.Tests.dll'
