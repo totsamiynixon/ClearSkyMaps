@@ -429,7 +429,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
-  <Target Name="BeforeBuild" Condition="'$(APPLICATION_ENVIRONMENT)' == 'Production' Or $(APPLICATION_ENVIRONMENT)' == 'Staging'">
+  <Target Name="BeforeBuild" Condition="'$(APPLICATION_ENVIRONMENT)' == 'Production' Or '$(APPLICATION_ENVIRONMENT)' == 'Staging'">
     <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="Web.config" />
   </Target>
   <PropertyGroup>
