@@ -7,7 +7,7 @@ try
         "ConnectionString" = $env:CONNECTION_STRING;
         "Emulation:Enabled" = $env:EMULATION_ENABLED;
         "Application:Environment" = $env:APPLICATION_ENVIRONMENT;
-        "Application:Verison" = $env:APPLICATION_VERSION;
+        "Application:Version" = $env:APPLICATION_VERSION;
    }
    $jsonRequest | ConvertTo-Json -depth 100 | Out-File $path;
 }
