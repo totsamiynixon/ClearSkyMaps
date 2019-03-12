@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using Web.Data.Models;
+using Web.Helpers;
 
 namespace Web.Data
 {
@@ -14,6 +15,7 @@ namespace Web.Data
             Database.CommandTimeout = 180;
             Configuration.LazyLoadingEnabled = false;
             Configuration.ProxyCreationEnabled = false;
+            Database.Connection.ConnectionString = SettingsHelper.ConnectionString;
 
             if (_databaseInitialized)
             {

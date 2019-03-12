@@ -12,7 +12,7 @@ namespace Web.Controllers
         [Route("start")]
         public async Task<IHttpActionResult> StartEmulationAsync()
         {
-            if (SettingsHelper.EmulationEnabled)
+            if (!SettingsHelper.EmulationEnabled)
             {
                 return BadRequest();
             }
@@ -24,7 +24,7 @@ namespace Web.Controllers
         [Route("stop")]
         public IHttpActionResult StopEmulation()
         {
-            if (SettingsHelper.EmulationEnabled)
+            if (!SettingsHelper.EmulationEnabled)
             {
                 return BadRequest();
             }

@@ -200,7 +200,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Config\MultiStageConfigBuilder.cs" />
     <Compile Include="Controllers\Api\NotificationsController.cs" />
     <Compile Include="Controllers\Api\ReadingsController.cs" />
     <Compile Include="Controllers\Api\SensorsController.cs" />
@@ -293,7 +292,9 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Scripts\bootstrap-material-design.js.map" />
     <None Include="manifest.json" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\front\service-worker.js" />
     <Content Include="Scripts\front\vue-filters.js" />
