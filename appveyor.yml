@@ -34,6 +34,7 @@ for:
         username: $(WEB_DEPLOY_USERNAME)
         password: $(WEB_DEPLOY_PASSWORD)
         ntlm: false
+        skip_dirs: \\logs
         remove_files: true
         artifact: CSMProduction
   - branches:
@@ -59,6 +60,7 @@ for:
         username: $(WEB_DEPLOY_USERNAME)
         password: $(WEB_DEPLOY_PASSWORD)
         ntlm: false
+        skip_dirs: \\logs
         remove_files: true
         artifact: CSMStaging
 init:

@@ -20,13 +20,13 @@ namespace Web.Controllers
             {
                 var jsonString = await reader.ReadToEndAsync();
                 var manifest = JsonConvert.DeserializeObject<JObject>(jsonString);
-                if (SettingsHelper.ApplicationEnvironment != "Production")
+                if (!SettingsHelper.IsProduction)
                 {
                     manifest["name"] = manifest["name"] + " " + SettingsHelper.ApplicationEnvironment;
                     manifest["short_name"] = manifest["short_name"] + " " + SettingsHelper.ApplicationEnvironment;
                 }
                 manifest["gsm_sender_id"] = SettingsHelper.FirebaseCloudMessagingMessagingSenderId;
-                if (SettingsHelper.ApplicationEnvironment == "Development")
+                if (SettingsHelper.IsDevelopment)
                 {
                     Response.Cache.SetNoStore();
                     Response.Cache.SetNoServerCaching();
