@@ -23,7 +23,8 @@ namespace Web.Helpers
             "Application:Version",
             "Application:Environment",
             "ConnectionString",
-            "Emulation:Enabled"
+            "Emulation:Enabled",
+            "Google:MapsJavaScriptAPIKey"
         };
 
         static SettingsHelper()
@@ -62,5 +63,7 @@ namespace Web.Helpers
         public static string ApplicationEnvironment => Settings["Application:Environment"].ToString();
 
         public static string ConnectionString => Settings["ConnectionString"].ToString();
+
+        public static string GoogleMapsJavaScriptAPIKey => Settings["Google:MapsJavaScriptAPIKey"].ToString();
     }
 }

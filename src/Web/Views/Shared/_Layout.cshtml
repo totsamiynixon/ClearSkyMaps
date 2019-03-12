@@ -13,33 +13,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSM - @ViewBag.Title, v=@SettingsHelper.ApplicationVersion</title>
     <base href="@Url.Content("~/")" />
-    @Styles.Render("~/Content/css")
-    @RenderSection("styles", required: false)
-    @Scripts.Render("~/bundles/modernizr")
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="~/Content/bootstrap-material-design.css" rel="stylesheet" />
+    @Styles.Render("~/bundles/css")
+    @RenderSection("styles", required: false)
 </head>
 <body>
     <div class="body-content">
         @RenderBody()
     </div>
-    <script src="~/Scripts/jquery-3.3.1.js"></script>
-    <script src="~/Scripts/umd/popper.js"></script>
-    <script src="~/Scripts/bootstrap-material-design.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
-    <script src="~/Scripts/front/main.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@(SettingsHelper.GoogleMapsJavaScriptAPIKey)&callback"></script>
+    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/js")
+    <script src="~/signalr/hubs"></script>
     <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>
     <script>
-        // Initialize Firebase
-        var config = {
-            @*//apiKey: "AIzaSyCXEhr-Tos_nXb5YeJlpA-K48jRYxtOW2M",
-            //authDomain: "csmdev-7d113.firebaseapp.com",
-            //databaseURL: "https://csmdev-7d113.firebaseio.com",
-            //projectId: "csmdev-7d113",
-            //storageBucket: "csmdev-7d113.appspot.com",*@
+        firebase.initializeApp({
             messagingSenderId: "@SettingsHelper.FirebaseCloudMessagingMessagingSenderId"
-        };
-        firebase.initializeApp(config);
+        });
     </script>
     <script>
         window.settings = {};
@@ -52,6 +43,5 @@
                 });
         }
     </script>
-    @RenderSection("scripts", required: false)
 </body>
 </html>
