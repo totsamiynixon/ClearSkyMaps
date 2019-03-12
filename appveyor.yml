@@ -23,6 +23,7 @@ for:
       EMULATION_ENABLED: false
     build_script:
       - cmd: msbuild src/Web/Web.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      - ps:  .\deploy\generate-config.ps1 -path  .\src\Web\config.json
     artifacts:
       - path: ./src/Web/release
         name: CSMProduction
@@ -47,6 +48,7 @@ for:
       EMULATION_ENABLED: true
     build_script:
       - cmd: msbuild src/Web/Web.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      - ps:  .\deploy\generate-config.ps1 -path  .\src\Web\config.json
     artifacts:
       - path: ./src/Web/release
         name: CSMStaging
