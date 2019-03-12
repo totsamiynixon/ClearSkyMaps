@@ -222,6 +222,7 @@
     <Compile Include="Helpers\LoggerHelper.cs" />
     <Compile Include="Helpers\PollutionHelper.cs" />
     <Compile Include="Helpers\DatabaseHelper.cs" />
+    <Compile Include="Helpers\PWAHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Hub\IReadingsClient.cs" />
     <Compile Include="Hub\ReadingsHub.cs" />
