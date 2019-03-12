@@ -43,7 +43,7 @@ namespace Web.Controllers
                 var jsString = await reader.ReadToEndAsync();
                 jsString = jsString.Replace("%MessagingSenderId%", SettingsHelper.FirebaseCloudMessagingMessagingSenderId);
                 jsString = jsString.Replace("%Version%", SettingsHelper.ApplicationVersion);
-                if (SettingsHelper.ApplicationEnvironment == "Development")
+                if (SettingsHelper.IsDevelopment)
                 {
                     Response.Cache.SetNoStore();
                     Response.Cache.SetNoServerCaching();
