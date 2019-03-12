@@ -14,7 +14,7 @@ namespace Web.Config
 {
     public class MultiStageConfigBuilder : ConfigurationBuilder
     {
-        private readonly IDictionary Settings;
+        private readonly IDictionary<string, string> Settings;
 
         private static readonly List<string> requiredDevSettings = new List<string>()
         {
@@ -22,7 +22,7 @@ namespace Web.Config
             "FirebaseCloudMessaging:MessagingSenderId",
             "Application:Version",
             "Application:Environment",
-            "DefaultConnenction",
+            "ConnectionString",
             "Emulation:Enabled"
         };
 
@@ -32,7 +32,7 @@ namespace Web.Config
             {"FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID", "FirebaseCloudMessaging:MessagingSenderId"},
             {"APPLICATION_ENVIRONMENT", "Application:Version" },
             {"APPLICATION_VERSION", "Application:Environment" },
-            {"CONNECTION_STRING","DefaultConnenction"},
+            {"CONNECTION_STRING","ConnectionString"},
             {"EMULATION_ENABLED","Emulation:Enabled"}
         };
 
@@ -50,13 +50,13 @@ namespace Web.Config
                 Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonConfig);
                 Settings.Add("Application:Version", $"{DateTime.UtcNow.Day}.{DateTime.UtcNow.Millisecond}");
                 Settings.Add("Application:Environment", $"Development");
-                var notprovidedKeys = requiredDevSettings.Except(requiredDevSettings.Intersect((IEnumerable<string>)Settings.Keys)).ToList();
+                var notprovidedKeys = requiredDevSettings.Except(requiredDevSettings.Intersect(Settings.Keys)).ToList();
                 if (notprovidedKeys.Any())
                 {
                     throw new KeyNotFoundException($"No such keys:[{string.Join(", ", notprovidedKeys)}] in dev-config.json");
                 }
             }
-            else if (appEnv == "STAGING" || appEnv == "PRODUCTION")
+            else if (appEnv == "Staging" || appEnv == "Production")
             {
                 var variables = (IDictionary<string, string>)Environment.GetEnvironmentVariables();
                 var mapKeysList = stagingProdSettingsMap.Keys.ToList();
@@ -87,7 +87,14 @@ namespace Web.Config
 
         public override XmlNode ProcessRawXml(XmlNode rawXml)
         {
-            foreach (DictionaryEntry setting in Settings)
+            if (rawXml.HasChildNodes && rawXml.SelectSingleNode("add[name=connectionString]") != null)
+            {
+                rawXml.SelectSingleNode("add[name=connectionString]")
+                       .Attributes["connectionString"].Value = Settings["ConnectionString"];
+                Settings.Remove("ConnectionString");
+            }
+
+            foreach (var setting in Settings)
             {
 
                 var pair = (Key: setting.Key.ToString(), Value: setting.Value.ToString());
