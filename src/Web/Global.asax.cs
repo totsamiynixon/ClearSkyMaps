@@ -22,6 +22,7 @@ namespace Web
         protected void Application_Start()
         {
             LoggerHelper.InitLogger();
+            SettingsHelper.InitConfig();
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RegisterSignalrSerializer();

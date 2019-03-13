@@ -17,7 +17,7 @@ textarea {
     font-size: 11px;
 }
 
-#app .map-holder {
+.readings-page .map-holder {
     position: relative;
     height: 100vh;
 }
@@ -29,7 +29,7 @@ textarea {
     overflow: hidden;
 }
 
-.richmarker-wrapper {
+.readings-page .richmarker-wrapper {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -39,7 +39,7 @@ textarea {
     position: relative;
 }
 
-    .richmarker-wrapper p {
+    .readings-page .richmarker-wrapper p {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -47,14 +47,13 @@ textarea {
         text-align: center
     }
 
-#sensor-details .modal-dialog {
-    max-width: 800px;
-}
-
-.charts .tab-content {
+.readings-page .charts .tab-content {
     margin-bottom: 100px;
 }
 
+#sensor-details .modal-dialog {
+    max-width: 800px;
+}
 
 @media(max-width:767px) {
     #sensor-details {
@@ -69,4 +68,19 @@ textarea {
             overflow-y: scroll;
             height: 25vw;
         }
+}
+
+
+/*VUE TRANSITIONS*/
+
+#app .fade-enter-active,
+#app .fade-leave-active {
+    transition-duration: 0.3s;
+    transition-property: opacity;
+    transition-timing-function: ease;
+}
+
+#app .fade-enter,
+#app .fade-leave-active {
+    opacity: 0
 }
