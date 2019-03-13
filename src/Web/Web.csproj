@@ -208,7 +208,7 @@
     <Compile Include="Controllers\Api\SensorsController.cs" />
     <Compile Include="Controllers\EmulationController.cs" />
     <Compile Include="Controllers\FileTransferController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PWAController.cs" />
     <Compile Include="Data\Attributes\PDK.cs" />
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Data\Models\Reading.cs" />
@@ -275,9 +275,9 @@
     </Content>
     <Content Include="Scripts\bootstrap-material-design.js" />
     <Content Include="Scripts\Chart.bundle.min.js" />
-    <Content Include="Scripts\front\analytics.js" />
-    <Content Include="Scripts\front\chart.js" />
+    <Content Include="Scripts\front\app.js" />
     <Content Include="Scripts\front\main.js" />
+    <Content Include="Scripts\front\offline.js" />
     <Content Include="Scripts\front\readings.js" />
     <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
@@ -296,16 +296,18 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\richmarker.js" />
+    <Content Include="Scripts\vue-router.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\Home\Readings.cshtml" />
+    <Content Include="Views\PWA\Readings\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\PWA\Index.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Home\_Partials\DetailsModal.cshtml" />
+    <Content Include="Views\PWA\Readings\_Partials\DetailsModal.cshtml" />
+    <Content Include="Views\PWA\Offline\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

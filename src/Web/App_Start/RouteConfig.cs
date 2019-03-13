@@ -27,11 +27,16 @@ namespace Web
                 defaults: new { controller = "FileTransfer", action = "ServiceWorkerJsAsync" }
             );
 
+            routes.MapRoute(
+               name: "spa-fallback",
+               url: "{*url}",
+               defaults: new { controller = "PWA", action = "Index" }
+           );
 
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Readings", id = UrlParameter.Optional }
+                defaults: new { controller = "PWA", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

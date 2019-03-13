@@ -27,7 +27,7 @@ namespace Web.Helpers
             "Google:MapsJavaScriptAPIKey"
         };
 
-        static SettingsHelper()
+        public static void InitConfig()
         {
             using (StreamReader streamReader = new StreamReader(HostingEnvironment.MapPath(@"~/config.json"), Encoding.UTF8))
             {

@@ -9,9 +9,9 @@ using Web.Results;
 
 namespace Web.Controllers
 {
-    public class HomeController : Controller
+    public class PWAController : Controller
     {
-        public ActionResult Readings()
+        public ActionResult Index()
         {
             return View();
         }

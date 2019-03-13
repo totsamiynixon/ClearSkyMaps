@@ -12,14 +12,17 @@ namespace Web
                      "~/Scripts/jquery-3.3.1.min.js",
                      "~/Scripts/popper.js",
                      "~/Scripts/bootstrap-material-design.js",
-                     "~/Scripts/front/main.js",
                      "~/Scripts/Chart.bundle.min.js",
                      "~/Scripts/moment.js",
                      "~/Scripts/vue.js",
+                     "~/Scripts/vue-router.js",
+                     "~/Scripts/front/vue-filters.js",
                      "~/Scripts/jquery.signalR-2.2.2.min.js",
                      "~/Scripts/richmarker.js",
-                     "~/Scripts/front/vue-filters.js",
-                     "~/Scripts/front/readings.js"
+                     "~/Scripts/front/main.js",
+                     "~/Scripts/front/readings.js",
+                     "~/Scripts/front/offline.js",
+                     "~/Scripts/front/app.js"
                      ));
 
             bundles.Add(new StyleBundle("~/bundles/css").Include(

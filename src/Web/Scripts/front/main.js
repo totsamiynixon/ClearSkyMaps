@@ -1,4 +1,4 @@
-﻿(function () {
+﻿jQuery(function ($) {
     window.CSM = {
         askForPermissioToReceiveNotifications: function () {
             return new Promise(function (resolve, reject) {
@@ -15,4 +15,5 @@
             })
         }
     }
-})();
+});
+

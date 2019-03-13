@@ -11,8 +11,8 @@
 
     // Update 'version' if you need to refresh the cache
     var version = "%Version%";
-    var offlineUrl = "Offline"; // <-- Offline/Index.cshtml
-    var urlsToCache = ['/']; // <-- Add more URLs you would like to cache.
+    var offlineUrl = "/offline"; // <-- Offline/Index.cshtml
+    var urlsToCache = ['/', offlineUrl]; // <-- Add more URLs you would like to cache.
 
     // Store core files in a cache (including a page to display when offline)
     function updateStaticCache() {

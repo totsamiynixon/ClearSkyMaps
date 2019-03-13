@@ -1,4 +1,7 @@
 ﻿@using Web.Helpers;
+@{ 
+    Layout = null;
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,19 +14,22 @@
     <meta name="theme-color" content="#ffffff">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSM - @ViewBag.Title, v=@SettingsHelper.ApplicationVersion</title>
+    <title>CSM, v=@SettingsHelper.ApplicationVersion</title>
     <base href="@Url.Content("~/")" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     @Styles.Render("~/bundles/css")
-    @RenderSection("styles", required: false)
 </head>
 <body>
-    <div class="body-content">
-        @RenderBody()
+    <div class="body-content" id="app">
+        <transition name="fade"
+                    mode="out-in">
+            <router-view />
+        </transition>
     </div>
+    @Html.Partial("Readings/Index")
+    @Html.Partial("Offline/Index")
     <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=@(SettingsHelper.GoogleMapsJavaScriptAPIKey)&callback"></script>
-    @RenderSection("scripts", required: false)
     @Scripts.Render("~/bundles/js")
     <script src="~/signalr/hubs"></script>
     <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>

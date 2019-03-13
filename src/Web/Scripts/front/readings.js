@@ -1,21 +1,38 @@
 ﻿jQuery(function ($) {
-    var data = {
-        sensors: [],
-        currentSensor: {
-            readings: []
-        },
-        table: {
-            collapsed: true
-        },
-        chart: {
-            currentParameter: "cO2",
-        },
-        markers: []
-    }
     var map = null;
-    var app = new Vue({
-        el: '#app',
-        data: data,
+    window.CSM.readingsPage =  {
+        template: '#readingsPageTemplate',
+        data: function () {
+            return {
+                sensors: [],
+                currentSensor: {
+                    readings: []
+                },
+                table: {
+                    collapsed: true
+                },
+                chart: {
+                    currentParameter: "cO2",
+                },
+                markers: []
+            }
+        },
+        mounted: function () {
+            var app = this;
+            $.ajax({
+                type: "GET",
+                url: "api/sensors",
+                dataType: "JSON",
+                success: function (responce) {
+                    app.sensors = app.sensors.concat(responce);
+                    app.initHub();
+                    app.initMap();
+                    app.initMarkers();
+                    app.initChart();
+                    app.initDataset();
+                }
+            });
+        },
         methods: {
             initHub: initHub,
             initMap: initMap,
@@ -108,21 +125,8 @@
                 deep: true
             }
         }
-    });
+    };
 
-    $.ajax({
-        type: "GET",
-        url: "api/sensors",
-        dataType: "JSON",
-        success: function (responce) {
-            app.sensors = app.sensors.concat(responce);
-            app.initHub();
-            app.initMap();
-            app.initMarkers();
-            app.initChart();
-            app.initDataset();
-        }
-    });
 
 
     //HUB
@@ -363,46 +367,47 @@
     }
 
     //CHARTS
-    var config = {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: []
-        },
-        options: {
-            responsive: true,
-            title: {
-                display: false
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-            },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Cнято'
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Значение'
-                    }
-                }]
-            }
-        }
-    };
+   
     var chart = null;
     var dataset = null;
     function initChart() {
+        var config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Cнято'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Значение'
+                        }
+                    }]
+                }
+            }
+        };
         var ctx = document.getElementById('chart').getContext('2d');
         chart = new Chart(ctx, config);
     }
