@@ -18,7 +18,6 @@ namespace Web
                      "~/Scripts/vue-router.js",
                      "~/Scripts/front/vue-filters.js",
                      "~/Scripts/jquery.signalR-2.2.2.min.js",
-                     "~/Scripts/richmarker.js",
                      "~/Scripts/front/main.js",
                      "~/Scripts/front/readings.js",
                      "~/Scripts/front/offline.js",

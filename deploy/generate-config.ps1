@@ -8,7 +8,7 @@ try
         "Emulation:Enabled" = $env:EMULATION_ENABLED;
         "Application:Environment" = $env:APPLICATION_ENVIRONMENT;
         "Application:Version" = $env:APPLICATION_VERSION;
-        "Google:MapsJavaScriptAPIKey" = $env:GOOGLE__MAPS_JAVASCRIPT_API_KEY
+        "Yandex:MapsJavaScriptAPIKey" = $env:YANDEX__MAPS_JAVASCRIPT_API_KEY
    }
    $jsonRequest | ConvertTo-Json -depth 100 | Out-File $path;
 }

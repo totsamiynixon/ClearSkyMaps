@@ -24,7 +24,7 @@ namespace Web.Helpers
             "Application:Environment",
             "ConnectionString",
             "Emulation:Enabled",
-            "Google:MapsJavaScriptAPIKey"
+            "Yandex:MapsJavaScriptAPIKey"
         };
 
         public static void InitConfig()
@@ -64,6 +64,6 @@ namespace Web.Helpers
 
         public static string ConnectionString => Settings["ConnectionString"].ToString();
 
-        public static string GoogleMapsJavaScriptAPIKey => Settings["Google:MapsJavaScriptAPIKey"].ToString();
+        public static string YandexMapsJavaScriptAPIKey => Settings["Yandex:MapsJavaScriptAPIKey"].ToString();
     }
 }

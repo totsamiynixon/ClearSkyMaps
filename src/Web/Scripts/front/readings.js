@@ -1,6 +1,5 @@
 ﻿jQuery(function ($) {
-    var map = null;
-    window.CSM.readingsPage =  {
+    window.CSM.readingsPage = {
         template: '#readingsPageTemplate',
         data: function () {
             return {
@@ -13,8 +12,11 @@
                 },
                 chart: {
                     currentParameter: "cO2",
+                    instance: null,
+                    dataset: []
                 },
-                markers: []
+                markers: [],
+                map: null,
             }
         },
         mounted: function () {
@@ -26,8 +28,10 @@
                 success: function (responce) {
                     app.sensors = app.sensors.concat(responce);
                     app.initHub();
-                    app.initMap();
-                    app.initMarkers();
+                    ymaps.ready(function () {
+                        app.initMap();
+                        app.initMarkers();
+                    });
                     app.initChart();
                     app.initDataset();
                 }
@@ -156,162 +160,15 @@
 
     //MAP
     function initMap() {
-        // Styles a map in night mode.
-        map = new google.maps.Map(document.getElementById('map'),
+        this.map = new ymaps.Map("map", {
+            center: [53.904502, 27.561261],
+            zoom: 12,
+            controls: ["fullscreenControl", "zoomControl"]
+        },
             {
-                center: {
-                    lat: 53.904502,
-                    lng: 27.561261
-                }
-                ,
-                zoom: 12,
-                scrollwheel: false,
-                mapTypeControl: false,
-                styles: [
-                    {
-                        "featureType": "administrative",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": "-100"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "administrative.province",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "landscape",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": -100
-                            }
-                            ,
-                            {
-                                "lightness": 65
-                            }
-                            ,
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "poi",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": -100
-                            }
-                            ,
-                            {
-                                "lightness": "50"
-                            }
-                            ,
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "road",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": "-100"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "road.highway",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "road.arterial",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "lightness": "30"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "road.local",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "lightness": "40"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "transit",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": -100
-                            }
-                            ,
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry",
-                        "stylers": [
-                            {
-                                "hue": "#ffff00"
-                            }
-                            ,
-                            {
-                                "lightness": -25
-                            }
-                            ,
-                            {
-                                "saturation": -97
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        "featureType": "water",
-                        "elementType": "labels",
-                        "stylers": [
-                            {
-                                "lightness": -25
-                            }
-                            ,
-                            {
-                                "saturation": -100
-                            }
-                        ]
-                    }
-                ]
-            }
-        );
+                searchControlProvider: 'yandex#search',
+                restrictMapArea: true
+            });
     }
 
     function initMarkers() {
@@ -325,25 +182,30 @@
                 sensorId: sensor.id,
                 value: createMarker(sensor)
             };
-            marker.value.addListener('click', function () {
+            marker.value.events.add('click', function () {
                 that.currentSensor = sensor;
                 $('#sensor-details').modal('show')
             });
             that.markers.push(marker);
+            that.map.geoObjects.add(marker.value);
         })
     }
 
     function createMarker(sensor) {
         var that = this;
-        var marker = new RichMarker({
-            position: new google.maps.LatLng(sensor.latitude, sensor.longitude),
-            map: map,
-            content: generateContent(sensor.pollutionLevel),
-            shadow: 'none',
-        });
-        marker.setOptions({
-            'opacity': 0.8
-        });
+        var marker = new ymaps.Circle([
+            [sensor.latitude, sensor.longitude],
+            1000
+        ], {
+                hintContent: "Уровень загрязнения " + sensor.pollutionLevel
+            }, {
+                draggable: false,
+                fillColor: getFillColor(sensor.pollutionLevel),
+                strokeColor: getStrokeColor(sensor.pollutionLevel),
+                strokeOpacity: 0.8,
+                fillOpacity: 0.6,
+                strokeWidth: 3
+            });
         return marker;
     }
     function updateMarker(sensor) {
@@ -354,22 +216,15 @@
         if (marker == null) {
             return;
         }
-        marker.value.setMap(null);
+        marker.value.setParent(null);
         marker.value = createMarker(sensor);
-        marker.value.addListener('click', function () {
+        marker.value.events.add('click', function () {
             that.currentSensor = sensor;
             $('#sensor-details').modal('show')
         });
+        that.map.geoObjects.add(marker.value);
     }
 
-    function generateContent(content) {
-        return '<div class="richmarker-wrapper"><p>' + content + '</p></div>';
-    }
-
-    //CHARTS
-   
-    var chart = null;
-    var dataset = null;
     function initChart() {
         var config = {
             type: 'line',
@@ -409,19 +264,19 @@
             }
         };
         var ctx = document.getElementById('chart').getContext('2d');
-        chart = new Chart(ctx, config);
+        this.chart.instance = new Chart(ctx, config);
     }
 
     function initDataset() {
-        if (chart == null) {
+        var that = this;
+        if (that.chart.instance == null) {
             return;
         }
-        chart.data.datasets = [];
-        var that = this;
-        chart.data.labels = this.currentSensor.readings.map(function (reading) {
+        that.chart.instance.data.datasets = [];
+        that.chart.instance.data.labels = this.currentSensor.readings.map(function (reading) {
             return moment(reading.created).format('h:mm:ss');
         });
-        dataset = {
+        that.chart.dataset = {
             label: this.chart.currentParameter.toUpperCase(),
             backgroundColor: "#fff",
             borderColor: "#c2c2c2c2",
@@ -430,19 +285,45 @@
             }),
             fill: false,
         }
-        chart.data.datasets.push(dataset);
-        chart.update();
+        that.chart.instance.data.datasets.push(that.chart.dataset);
+        that.chart.instance.chart.update();
     }
 
     function updateDataset() {
-        var reading = this.currentSensor.readings[0];
+        var that = this;
+        var reading = that.currentSensor.readings[0];
         if (typeof (reading) === "undefined") {
             return;
         }
-        chart.data.labels.push(moment(reading.created).format('h:mm:ss'));
-        chart.data.labels.shift();
-        dataset.data.push(reading[this.chart.currentParameter]);
-        dataset.data.shift();
-        chart.update();
+        that.chart.instance.data.labels.push(moment(reading.created).format('h:mm:ss'));
+        that.chart.instance.data.labels.shift();
+        that.chart.dataset.data.push(reading[this.chart.currentParameter]);
+        that.chart.dataset.data.shift();
+        that.chart.instance.update();
+    }
+
+
+    function getFillColor(pollutionLevel) {
+        switch (pollutionLevel) {
+            case 0:
+                return "#1adb2d";
+            case 1:
+                return "#db971a";
+            case 2:
+                return "#e20000"
+        } 
+        return null;
+    }
+
+    function getStrokeColor(pollutionLevel) {
+        switch (pollutionLevel) {
+            case 0:
+                return "#106319";
+            case 1:
+                return "#8c5e09";
+            case 2:
+                return "#770707"
+        }
+        return null;
     }
 });
