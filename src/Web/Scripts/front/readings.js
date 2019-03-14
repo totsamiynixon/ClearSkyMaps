@@ -162,8 +162,8 @@
     function initMap() {
         this.map = new ymaps.Map("map", {
             center: [53.904502, 27.561261],
-            zoom: 12,
-            controls: ["fullscreenControl", "zoomControl"]
+            zoom: 11,
+            controls: ["zoomControl"]
         },
             {
                 searchControlProvider: 'yandex#search',
