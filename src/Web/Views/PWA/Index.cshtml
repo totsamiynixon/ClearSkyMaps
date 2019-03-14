@@ -29,7 +29,7 @@
     @Html.Partial("Readings/Index")
     @Html.Partial("Offline/Index")
     <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=@(SettingsHelper.GoogleMapsJavaScriptAPIKey)&callback"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=@(SettingsHelper.YandexMapsJavaScriptAPIKey)" type="text/javascript"></script>
     @Scripts.Render("~/bundles/js")
     <script src="~/signalr/hubs"></script>
     <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>
