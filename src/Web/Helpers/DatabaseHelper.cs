@@ -48,6 +48,15 @@ namespace Web.Helpers
             return (await GetOrAddSensorsToCacheAsync()).Select(f => f.Sensor).ToList();
         }
 
+        public static async Task RemoveAllSensorsAsync()
+        {
+            CacheHelper.Remove(SensorsCacheKey);
+            using (var _context = new DataContext())
+            {
+                await _context.Sensors.Where(f => true).DeleteAsync();
+            }
+        }
+
         public static async Task<Reading> AddReadingAsync(Reading reading)
         {
             if (reading.SensorId <= 0)
@@ -91,12 +100,11 @@ namespace Web.Helpers
         {
             var sensorsCacheItems = await GetOrAddSensorsToCacheAsync();
             var sensorInCache = sensorsCacheItems.FirstOrDefault(f => f.Sensor.Id == sensor.Id);
-            if (sensorInCache != null)
+            if (sensorInCache == null)
             {
-                throw new ArgumentException("Sensor is already in cache!", nameof(sensor));
+                sensorsCacheItems.Add(new SensorCacheItemModel(sensor, PollutionHelper.CalculatePollutionLevel(sensor.Readings)));
+                CacheHelper.AddOrUpdate(SensorsCacheKey, sensorsCacheItems, DateTime.UtcNow.Add(SensorsCacheLifetime));
             }
-            sensorsCacheItems.Add(new SensorCacheItemModel(sensor, PollutionHelper.CalculatePollutionLevel(sensor.Readings)));
-            CacheHelper.AddOrUpdate(SensorsCacheKey, sensorsCacheItems, DateTime.UtcNow.Add(SensorsCacheLifetime));
         }
 
 

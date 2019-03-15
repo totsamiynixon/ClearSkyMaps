@@ -17,6 +17,10 @@
                 },
                 markers: [],
                 map: null,
+                hub: {
+                    instance: null,
+                    isActive: false
+                }
             }
         },
         mounted: function () {
@@ -128,6 +132,11 @@
                 },
                 deep: true
             }
+        },
+        beforeRouteLeave: function (to, from, next) {
+            var that = this;
+            //that.hub.isActive = false;
+            next();
         }
     };
 
@@ -136,8 +145,8 @@
     //HUB
     function initHub() {
         var that = this;
-        var chat = $.connection.readingsHub;
-        chat.client.dispatchReading = function (readingModel) {
+        that.hub.instance = $.connection.readingsHub;
+        that.hub.instance.client.dispatchReading = function (readingModel) {
             var sensor = that.sensors.find(function (e, i, a) {
                 if (e.id == readingModel.sensorId) {
                     return e;
@@ -154,10 +163,17 @@
             that.updateMarker(sensor);
         };
         $.connection.hub.start().done(function () {
-
+            that.hub.isActive = true;
+            $.connection.hub.disconnected(function () {
+                if (!that.hub.isActive) {
+                    return;
+                }
+                setTimeout(function () {
+                    $.connection.hub.start();
+                }, 5000);
+            });
         });
     }
-
     //MAP
     function initMap() {
         this.map = new ymaps.Map("map", {
@@ -216,13 +232,8 @@
         if (marker == null) {
             return;
         }
-        marker.value.setParent(null);
-        marker.value = createMarker(sensor);
-        marker.value.events.add('click', function () {
-            that.currentSensor = sensor;
-            $('#sensor-details').modal('show')
-        });
-        that.map.geoObjects.add(marker.value);
+        marker.value.properties.set({ hintContent: "Уровень загрязнения " + sensor.pollutionLevel });
+        marker.value.options.set({ fillColor: getFillColor(sensor.pollutionLevel), strokeColor: getStrokeColor(sensor.pollutionLevel) });
     }
 
     function initChart() {
@@ -311,7 +322,7 @@
                 return "#db971a";
             case 2:
                 return "#e20000"
-        } 
+        }
         return null;
     }
 

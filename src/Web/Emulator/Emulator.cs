@@ -48,20 +48,13 @@ namespace Web.Emulation
 
         private static async Task SeedSensorsAsync()
         {
-            var currentSensors = await DatabaseHelper.GetSensorsAsync();
-            if (currentSensors.Any())
-            {
-                return;
-            }
+
+            await DatabaseHelper.RemoveAllSensorsAsync();
             var iterations = _emulatorRandom.Next(0, 20);
             for (int i = 0; i < iterations; i++)
             {
                 var fakeSensor = GetFakeSensor();
                 await DatabaseHelper.AddSensorAsync(fakeSensor.Latitude, fakeSensor.Longitude);
-                foreach (var reading in fakeSensor.Readings)
-                {
-                    await DatabaseHelper.AddReadingAsync(reading);
-                }
             }
 
         }
