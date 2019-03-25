@@ -1,10 +1,12 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
+using Web.Data.Identity;
 using Web.Data.Models;
 using Web.Helpers;
 
 namespace Web.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<ApplicationUser>
     {
         private static readonly object Lock = new object();
         private static bool _databaseInitialized;
