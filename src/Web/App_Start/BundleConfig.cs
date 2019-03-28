@@ -38,8 +38,10 @@ namespace Web
                      "~/Areas/Admin/Theme/js/plugins/perfect-scrollbar.jquery.min.js",
                      "~/Areas/Admin/Theme/js/plugins/chartjs.min.js",
                      "~/Areas/Admin/Theme/js/plugins/bootstrap-notify.js",
-                     "~/Areas/Admin/Theme/js/paper-dashboard.min.js?v=2.0.0",
-                     "~/Areas/Admin/Scripts/libs/vue.js"
+                     "~/Areas/Admin/Theme/js/paper-dashboard.min.js",
+                     "~/Areas/Admin/Scripts/libs/jquery.signalR-2.2.2.min.js",
+                     "~/Areas/Admin/Scripts/front/main.js",
+                     "~/Areas/Admin/Scripts/front/pages/sensors.js"
                      ));
 
             bundles.Add(new StyleBundle("~/bundles/admin/css").Include(

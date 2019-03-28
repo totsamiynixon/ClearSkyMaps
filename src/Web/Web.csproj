@@ -228,8 +228,20 @@
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Enums\AlertTypes.cs" />
     <Compile Include="Areas\Admin\Filters\AdminAreaHandleExceptionAttribute.cs" />
+    <Compile Include="Areas\Admin\Filters\RestoreModelStateFromTempDataAttribute.cs" />
+    <Compile Include="Areas\Admin\Filters\SetTempDataModelStateAttribute .cs" />
     <Compile Include="Areas\Admin\Models\Account\LoginViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Alert.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\ChangeVisibilitySensorModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\ActivateSensorModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\ChangeVisibilitySensorViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\ActivateSensorViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\CreateSensorModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\CreateSensorViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\DeleteSensorModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\DeleteSensorViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\SensorDetailsViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\SensorListItemViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\ActivateUserModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\ActivateUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\CreateUserViewModel.cs" />
@@ -243,7 +255,6 @@
     <Compile Include="Controllers\Api\SensorsController.cs" />
     <Compile Include="Controllers\Api\EmulationController.cs" />
     <Compile Include="Areas\PWA\Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ClientRedirectsController.cs" />
     <Compile Include="Data\Attributes\PDK.cs" />
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Data\Identity\ApplicationUser.cs" />
@@ -251,6 +262,8 @@
     <Compile Include="Data\Models\Sensor.cs" />
     <Compile Include="Emulator\Emulator.cs" />
     <Compile Include="Enum\PollutionLevel.cs" />
+    <Compile Include="Enum\SensorType.cs" />
+    <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -273,6 +286,10 @@
     <Compile Include="Migrations\201903241253551_AddedActivationFlagToApplicationUser.cs" />
     <Compile Include="Migrations\201903241253551_AddedActivationFlagToApplicationUser.Designer.cs">
       <DependentUpon>201903241253551_AddedActivationFlagToApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903252315170_SensorDetails.cs" />
+    <Compile Include="Migrations\201903252315170_SensorDetails.Designer.cs">
+      <DependentUpon>201903252315170_SensorDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Api\Notifications\SubscribeOnSersorModel.cs" />
@@ -303,7 +320,9 @@
     <Content Include="Areas\Admin\Content\img\favicon\favicon.ico" />
     <Content Include="Areas\Admin\Content\img\favicon\mstile-150x150.png" />
     <Content Include="Areas\Admin\Content\img\favicon\safari-pinned-tab.svg" />
-    <Content Include="Areas\Admin\Scripts\libs\vue.js" />
+    <Content Include="Areas\Admin\Scripts\front\main.js" />
+    <Content Include="Areas\Admin\Scripts\front\pages\sensors.js" />
+    <Content Include="Areas\Admin\Scripts\libs\jquery.signalR-2.2.2.min.js" />
     <Content Include="Areas\Admin\Theme\css\bootstrap.min.css" />
     <Content Include="Areas\Admin\Theme\css\paper-dashboard.css" />
     <Content Include="Areas\Admin\Theme\css\paper-dashboard.min.css" />
@@ -371,7 +390,6 @@
     <Content Include="Areas\PWA\Content\favicon\mstile-150x150.png" />
     <Content Include="Areas\PWA\Content\favicon\safari-pinned-tab.svg" />
     <Content Include="Areas\PWA\Content\Site.css" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -405,6 +423,11 @@
     <Content Include="Areas\Admin\Views\Error\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Users\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Sensors\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Sensors\ChangeActivation.cshtml" />
+    <Content Include="Areas\Admin\Views\Sensors\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Sensors\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\Sensors\_Partials\SensorDetails.cshtml" />
+    <Content Include="Areas\Admin\Views\Sensors\ChangeVisibility.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml">
       <SubType>Designer</SubType>
     </None>
@@ -431,15 +454,6 @@
     <Folder Include="Views\ClientRedirects\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -454,6 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903241253551_AddedActivationFlagToApplicationUser.resx">
       <DependentUpon>201903241253551_AddedActivationFlagToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903252315170_SensorDetails.resx">
+      <DependentUpon>201903252315170_SensorDetails.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

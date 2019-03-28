@@ -37,3 +37,35 @@
             position: absolute;
             z-index: -1;
         }
+
+#map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+
+.page-sensors .map-holder {
+    position: relative;
+    height: 0;
+    padding-bottom: 50%;
+}
+
+.page-sensors #mapDropdownTemplate {
+    display: none;
+    width: 300px;
+}
+
+@media(max-width:767px) {
+
+    .page-sensors .map-holder {
+        position: relative;
+        height: 0;
+        padding-bottom: 125%;
+    }
+
+    .page-sensors #mapDropdownTemplate {
+        width: 30vw;
+    }
+}
