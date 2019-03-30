@@ -27,5 +27,7 @@ namespace Web.Data.Models
         public SensorType Type { get; set; }
 
         public string IPAddress { get; set; }
+
+        public bool IsPaired { get; set; }
     }
 }

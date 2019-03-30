@@ -60,6 +60,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Fleck, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fleck.1.1.0\lib\net45\Fleck.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -186,6 +189,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="Z.EntityFramework.Plus.EF6, Version=1.7.15.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
       <HintPath>..\packages\Z.EntityFramework.Plus.EF6.1.7.15\lib\net45\Z.EntityFramework.Plus.EF6.dll</HintPath>
     </Reference>
@@ -214,6 +220,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\Admin\Models\Sensors\PairUnpairSensorModel.cs" />
+    <Compile Include="SensorActions\Input\SendReadingsAction.cs" />
+    <Compile Include="SensorActions\Input\SendReadingsActionPayload.cs" />
+    <Compile Include="SensorActions\OutputSensorAction.cs" />
+    <Compile Include="SensorActions\Output\SendStateAction.cs" />
+    <Compile Include="SensorActions\Output\SendStateActionPayload.cs" />
+    <Compile Include="SensorActions\SensorAction.cs" />
+    <Compile Include="SensorActions\InputSensorAction.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -223,9 +237,14 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AccountController.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseController.cs" />
+    <Compile Include="Areas\Admin\Controllers\EmulatorController.cs" />
     <Compile Include="Areas\Admin\Controllers\ErrorController.cs" />
     <Compile Include="Areas\Admin\Controllers\SensorsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
+    <Compile Include="Areas\Admin\Emulator\SensorEmulator.cs" />
+    <Compile Include="Areas\Admin\Emulator\SensorState.cs" />
+    <Compile Include="Areas\Admin\Emulator\SetSensorStateModel.cs" />
+    <Compile Include="Areas\Admin\Emulator\WebServer.cs" />
     <Compile Include="Areas\Admin\Enums\AlertTypes.cs" />
     <Compile Include="Areas\Admin\Filters\AdminAreaHandleExceptionAttribute.cs" />
     <Compile Include="Areas\Admin\Filters\RestoreModelStateFromTempDataAttribute.cs" />
@@ -261,7 +280,9 @@
     <Compile Include="Data\Models\Reading.cs" />
     <Compile Include="Data\Models\Sensor.cs" />
     <Compile Include="Emulator\Emulator.cs" />
+    <Compile Include="Enum\OuputSensorActionType.cs" />
     <Compile Include="Enum\PollutionLevel.cs" />
+    <Compile Include="Enum\InputSensorActionType.cs" />
     <Compile Include="Enum\SensorType.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Global.asax.cs">
@@ -450,6 +471,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Views\Base\" />
+    <Folder Include="Areas\Admin\Views\Emulator\" />
     <Folder Include="Areas\PWA\Models\" />
     <Folder Include="Views\ClientRedirects\" />
   </ItemGroup>

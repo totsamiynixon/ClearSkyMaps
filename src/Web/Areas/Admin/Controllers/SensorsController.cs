@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -6,6 +7,8 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -30,6 +33,7 @@ namespace Web.Areas.Admin.Controllers
             x.CreateMap<Sensor, ChangeVisibilitySensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
             x.CreateMap<Sensor, DeleteSensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
             x.CreateMap<CreateSensorModel, Sensor>();
+            x.CreateMap<Sensor, PairModel>();
         }));
 
         public SensorsController()
@@ -214,5 +218,83 @@ namespace Web.Areas.Admin.Controllers
             ShowAlert(Enums.AlertTypes.Success, $"{(sensor.IsActive ? "Отображение" : "Скрытие")} датчика прошло успешно!");
             return RedirectToAction("Index");
         }
+
+
+        [HttpPost]
+        [Authorize(Roles = "Supervisor")]
+        public async Task<ActionResult> Pair(PairUnpairSensorModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Ошибка при попытке спарить датчик!");
+                return RedirectToAction("Index");
+            }
+            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.SensorId);
+            if (sensor == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
+            }
+            if (sensor.IsPaired)
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Датчик уже спарен!");
+                return RedirectToAction("Index");
+            }
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.PostAsync($"http://{sensor.IPAddress}/pair", new StringContent(JsonConvert.SerializeObject(_mapper.Map<Sensor, PairModel>(sensor)), Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    sensor.IsPaired = true;
+                    _context.Entry(sensor).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    ShowAlert(Enums.AlertTypes.Success, "Датчик успешно спарен!");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ShowAlert(Enums.AlertTypes.Error, "Провалилась попытка спарить датчик!!");
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Supervisor")]
+        public async Task<ActionResult> Unpair(int? sensorId)
+        {
+            if (!sensorId.HasValue)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "Необходим id датчика!");
+            }
+            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == sensorId.Value);
+            if (sensor == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
+            }
+            if (!sensor.IsPaired)
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Датчик еще не спарен!");
+                return RedirectToAction("Index");
+            }
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.PostAsync($"http://{sensor.IPAddress}/unpair", new StringContent("", Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    sensor.IsPaired = false;
+                    _context.Entry(sensor).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    ShowAlert(Enums.AlertTypes.Success, "Датчик успешно отстыкован!");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ShowAlert(Enums.AlertTypes.Error, "Провалилась попытка отстыковать датчик!!");
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+
+
     }
 }
