@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Web.Data;
 using Web.Data.Models;
+using Web.Helpers;
 using Z.EntityFramework.Plus;
 
 namespace Web.Areas.Admin.Emulation
@@ -42,28 +43,47 @@ namespace Web.Areas.Admin.Emulation
         {
             _guids = new List<string>();
             Devices = new List<SensorEmulator>();
-            using (var context = new DataContext())
+            await DatabaseHelper.RemoveAllSensorsFromDatabaseAsync();
+            var iterationsForStatic = _emulatorRandom.Next(0, 20);
+            for (int i = 0; i < iterationsForStatic; i++)
             {
-                await context.Sensors.Where(f => f.Id > 0).DeleteAsync();
-                var iterations = _emulatorRandom.Next(0, 20);
-                for (int i = 0; i < iterations; i++)
-                {
-                    var guid = Guid.NewGuid().ToString();
-                    _guids.Add(guid);
-                    var fakeSensor = GetFakeSensor(guid);
-                    context.Sensors.Add(fakeSensor.sensor);
-                    Devices.Add(fakeSensor.emulator);
-                }
-                await context.SaveChangesAsync();
+                var guid = Guid.NewGuid().ToString();
+                _guids.Add(guid);
+                var fakeSensor = GetStaticFakeSensor(guid);
+                await DatabaseHelper.AddStaticSensorAsync(fakeSensor.sensor.IPAddress, fakeSensor.sensor.Latitude, fakeSensor.sensor.Longitude);
+                Devices.Add(fakeSensor.emulator);
+            }
+            var iterationsForPortable = _emulatorRandom.Next(0, 20);
+            for (int i = 0; i < iterationsForStatic; i++)
+            {
+                var guid = Guid.NewGuid().ToString();
+                _guids.Add(guid);
+                var fakeSensor = GetPortableFakeSensor(guid);
+                await DatabaseHelper.AddPortableSensor(fakeSensor.sensor.IPAddress);
+                Devices.Add(fakeSensor.emulator);
             }
         }
 
-        private static (SensorEmulator emulator, Sensor sensor) GetFakeSensor(string guid)
+        private static (SensorEmulator emulator, StaticSensor sensor) GetStaticFakeSensor(string guid)
         {
             var sensorEmulator = new SensorEmulator(GetLocalIPAddress(), GetAvailableLocalPort().ToString(), guid);
-            var sensor = new Sensor
+            var coordinates = sensorEmulator.GetCoordinates();
+            var sensor = new StaticSensor
             {
                 IPAddress = $"{sensorEmulator.GetIp()}:{sensorEmulator.GetPort()}",
+                Latitude = coordinates.latitude,
+                Longitude = coordinates.longitude
+            };
+            return (sensorEmulator, sensor);
+        }
+
+
+        private static (SensorEmulator emulator, PortableSensor sensor) GetPortableFakeSensor(string guid)
+        {
+            var sensorEmulator = new SensorEmulator(GetLocalIPAddress(), GetAvailableLocalPort().ToString(), guid);
+            var sensor = new PortableSensor
+            {
+                IPAddress = $"{sensorEmulator.GetIp()}:{sensorEmulator.GetPort()}"
             };
             return (sensorEmulator, sensor);
         }

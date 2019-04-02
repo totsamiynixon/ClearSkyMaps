@@ -17,13 +17,10 @@
                         <thead class=" text-primary">
                             <tr>
                                 <th>
-                                    Активен
-                                </th>
-                                <th>
                                     Локация
                                 </th>
                                 <th>
-                                    Статус
+                                    IP Адрес
                                 </th>
                                 <th>
                                     Состояние
@@ -38,15 +35,12 @@
                             {
                                 <tr>
                                     <td>
-                                        @sensor.IsActive
-                                    </td>
-                                    <td>
                                         Lat: @sensor.Latitude,
                                         <br />
                                         Long: @sensor.Longitude
                                     </td>
                                     <td>
-                                        @sensor.IsActive
+                                        @sensor.IPAddress
                                     </td>
                                     <td>
                                         @(sensor.IsOn ? "Включен" : "Отключен")
@@ -63,7 +57,7 @@
                                             {
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                                 @Html.Hidden(nameof(sensor.Guid), sensor.Guid)
-                                                <button class="dropdown-item">@(sensor.IsOn ? "Включить" : "Выключить")</button>
+                                                <button class="dropdown-item">@(sensor.IsOn ? "Выключить" : "Включить")</button>
                                             }
                                         </div>
                                     </td>

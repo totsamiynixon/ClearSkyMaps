@@ -6,7 +6,7 @@ using Web.Enum;
 
 namespace Web.Models.Api.Sensor
 {
-    public class SensorModel
+    public class StaticSensorModel
     {
         public int Id { get; set; }
 
@@ -14,8 +14,8 @@ namespace Web.Models.Api.Sensor
 
         public double Longitude { get; set; }
 
-        public PollutionLevel? PollutionLevel { get; set; }
+        public PollutionLevel PollutionLevel { get; set; }
 
-        public List<SensorReadingModel> Readings { get; set; } 
+        public List<StaticSensorReadingModel> Readings { get; set; } 
     }
 }

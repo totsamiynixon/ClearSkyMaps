@@ -6,14 +6,12 @@ using Web.Enum;
 
 namespace Web.Areas.Admin.Models.Sensors
 {
-    public class SensorListItemViewModel
+    public class CreateStaticSensorModel
     {
-        public int Id { get; set; }
-
         public string IPAddress { get; set; }
 
-        public bool IsActive { get; set; }
+        public double Latitude { get; set; }
 
-        public bool IsConnected { get; set; }
+        public double Longitude { get; set; }
     }
 }

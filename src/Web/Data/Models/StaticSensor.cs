@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Web.Models.Api.Sensor
+namespace Web.Data.Models
 {
-    public class RegisterSensorModel
+    public class StaticSensor : Sensor
     {
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }
+
+        public virtual List<Reading> Readings { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }

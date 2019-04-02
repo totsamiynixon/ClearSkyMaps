@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Web.Models.Api.Sensor
 {
-    public class SensorReadingModel
+    public class StaticSensorReadingModel
     {
         public int Id { get; set; }
         public float CO2 { get; set; }

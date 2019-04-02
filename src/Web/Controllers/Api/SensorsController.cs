@@ -20,21 +20,15 @@ namespace ArduinoServer.Controllers.Api
     {
         private static IMapper _mapper = new Mapper(new MapperConfiguration(x =>
         {
-            x.CreateMap<Sensor, SensorModel>()
+            x.CreateMap<StaticSensor, StaticSensorModel>()
             .ForMember(f => f.PollutionLevel, m => m.ResolveUsing(p => PollutionHelper.GetPollutionLevel(p.Id)));
-            x.CreateMap<Reading, SensorReadingModel>();
+            x.CreateMap<Reading, StaticSensorReadingModel>();
         }));
-
-        private readonly DataContext _context;
-        public SensorsController()
-        {
-            _context = new DataContext();
-        }
 
         [HttpGet]
         public async Task<IHttpActionResult> GetAsync()
         {
-            return Ok(_mapper.Map<List<Sensor>, List<SensorModel>>(await DatabaseHelper.GetSensorsAsync(true)));
+            return Ok(_mapper.Map<List<StaticSensor>, List<StaticSensorModel>>(await DatabaseHelper.GetStaticSensorsAsync(true)));
         }
 
     }

@@ -12,10 +12,10 @@ namespace Web.Areas.Admin.Models.Emulator
 
         public double? Longitude { get; set; }
 
-        public bool? IsActive { get; set; }
-
         public bool IsOn { get; set; }
-        
+
+        public string IPAddress { get; set; }
+
         public string Guid { get; set; }
     }
 }

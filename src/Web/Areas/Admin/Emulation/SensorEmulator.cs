@@ -69,6 +69,15 @@ namespace Web.Areas.Admin.Emulation
             return _port;
         }
 
+        public (double latitude, double longitude) GetCoordinates()
+        {
+            if (!_location.HasValue)
+            {
+                _location = GetLocation();
+            }
+            return _location.Value;
+        }
+
         #region Private
 
 

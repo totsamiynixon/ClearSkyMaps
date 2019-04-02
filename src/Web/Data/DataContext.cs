@@ -36,5 +36,9 @@ namespace Web.Data
         public virtual DbSet<Reading> Readings { get; set; }
 
         public virtual DbSet<Sensor> Sensors { get; set; }
+
+        public virtual DbSet<StaticSensor> StaticSensors { get; set; }
+
+        public virtual DbSet<PortableSensor> PortableSensors { get; set; }
     }
 }

@@ -10,12 +10,6 @@ namespace Web.Areas.Admin.Models.Sensors
     {
         public string IPAddress { get; set; }
 
-        public string TrackingKey { get; set; }
-
         public bool IsActive { get; set; }
-
-        public bool IsVisible { get; set; }
-
-        public SensorType Type { get; set; }
     }
 }

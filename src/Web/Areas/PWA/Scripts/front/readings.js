@@ -145,7 +145,7 @@
     //HUB
     function initHub() {
         var that = this;
-        that.hub.instance = $.connection.readingsHub;
+        that.hub.instance = $.connection.staticSensorHub;
         that.hub.instance.client.dispatchReading = function (readingModel) {
             var sensor = that.sensors.find(function (e, i, a) {
                 if (e.id == readingModel.sensorId) {

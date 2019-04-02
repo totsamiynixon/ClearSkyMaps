@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Web.Areas.Admin.Models.Sensors
 {
-    public class ChangeVisibilitySensorViewModel
+    public class ChangeVisibilityStaticSensorViewModel
     {
         public int Id { get; set; }
 

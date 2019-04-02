@@ -15,7 +15,7 @@
 
         //HUB
         function initHub() {
-            hub.instance = $.connection.readingsHub;
+            hub.instance = $.connection.staticSensorHub;
             hub.instance.client.dispatchReading = function (readingModel) {
                 var sensor = sensors.find(function (sensor) {
                     return sensor.id == readingModel.sensorId;

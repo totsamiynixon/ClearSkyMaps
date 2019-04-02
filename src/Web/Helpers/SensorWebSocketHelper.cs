@@ -32,7 +32,7 @@ namespace Web.Helpers
         {
             using (var _context = new DataContext())
             {
-                var sensors = await _context.Sensors.Where(f => !f.IsDeleted).ToListAsync();
+                var sensors = await _context.StaticSensors.Where(f => !f.IsDeleted).ToListAsync();
                 foreach (var sensor in sensors)
                 {
                     try
@@ -66,30 +66,38 @@ namespace Web.Helpers
             ws = new WebSocket($"ws://{sensor.IPAddress}");
             ws.OnMessage += async (sender, e) =>
            {
+               //TODO: check sensor state here
                dynamic json = JsonConvert.DeserializeObject(e.Data);
-               if (sensor.Type == SensorType.Static)
+               var sensorState = await DatabaseHelper.GetSensorByIdAsync(sensor.Id);
+               if (sensorState is StaticSensor)
                {
-                   if (json.type == InputSensorActionType.PushReadings)
+                   if (json["type"] == InputSensorActionType.PushReadings)
                    {
-                       var reading = _mapper.Map<PushReadingsActionPayload, Reading>((json as PushReadingsAction).Payload);
+                       var payload = JsonConvert.DeserializeObject<PushReadingsActionPayload>(JsonConvert.SerializeObject(json["payload"]));
+                       var reading = _mapper.Map<PushReadingsActionPayload, Reading>(payload);
                        reading.SensorId = sensor.Id;
                        await DatabaseHelper.AddReadingAsync(reading);
-                       var pollutionLevel = PollutionHelper.GetPollutionLevel(sensor.Id);
-                       DispatchHelper.DispatchReadingsForStaticSensor(sensor.Id, pollutionLevel, reading);
+                       //TODO: update pollution level
+                       //var pollutionLevel = PollutionHelper.GetPollutionLevel(sensor.Id);
+                       if ((sensorState as StaticSensor).IsVisible)
+                       {
+                           DispatchHelper.DispatchReadingsForStaticSensor(sensor.Id, PollutionLevel.Unknown, reading);
+                       }
                    }
                }
-               else if (sensor.Type == SensorType.Portable)
+               else if (sensorState is PortableSensor)
                {
                    if (json.type == InputSensorActionType.PushReadings)
                    {
-                       var reading = _mapper.Map<PushReadingsActionPayload, Reading>((json as PushReadingsAction).Payload);
+                       var payload = JsonConvert.DeserializeObject<PushReadingsActionPayload>(JsonConvert.SerializeObject(json["payload"]));
+                       var reading = _mapper.Map<PushReadingsActionPayload, Reading>(payload);
                        reading.SensorId = sensor.Id;
                        DispatchHelper.DispatchReadingsForPortableSensor(sensor.Id, reading);
                    }
                    if (json.type == InputSensorActionType.PushCoordinates)
                    {
-                       var coordinates = (json as PushCoordinatesAction).Payload;
-                       DispatchHelper.DispatchCoordinatesForPortableSensor(sensor.Id, coordinates.Latitude, coordinates.Longitude);
+                       var payload = JsonConvert.DeserializeObject<PushCoordinatesActionPayload>(JsonConvert.SerializeObject(json["payload"]));
+                       DispatchHelper.DispatchCoordinatesForPortableSensor(sensor.Id, payload.Latitude, payload.Longitude);
                    }
                }
            };
@@ -142,17 +150,16 @@ namespace Web.Helpers
             {
                 Timers[sensor.Id].Stop();
             }
+            Timers[sensor.Id] = new Timer();
             if (!sensor.IsActive || sensor.IsDeleted)
             {
-                Timers[sensor.Id] = null;
                 return;
             }
-            Timers[sensor.Id] = new Timer();
-            if (sensor.Type == SensorType.Portable)
+            if (sensor is PortableSensor)
             {
                 Timers[sensor.Id].Interval = 500;
             }
-            else if (sensor.Type == SensorType.Static)
+            else if (sensor is StaticSensor)
             {
                 Timers[sensor.Id].Interval = 10000;
             }
@@ -161,7 +168,7 @@ namespace Web.Helpers
                 if (Connections.ContainsKey(sensor.Id))
                 {
                     Connections[sensor.Id].Send(SerializeJson(new PullReadingsAction(new PullReadingsActionPayload())));
-                    if (sensor.Type == SensorType.Portable)
+                    if (sensor is PortableSensor)
                     {
                         Connections[sensor.Id].Send(SerializeJson(new PullCoordinatesAction(new PullCoordinatesActionPayload())));
                     }
