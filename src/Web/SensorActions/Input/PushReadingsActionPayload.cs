@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Web.SensorActions.Input
 {
-    public class SendReadingsActionPayload
+    public class PushReadingsActionPayload
     {
         public float CO2 { get; set; }
         public float LPG { get; set; }

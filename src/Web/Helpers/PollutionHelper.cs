@@ -11,7 +11,7 @@ namespace Web.Helpers
     public static class PollutionHelper
     {
         private static Random _random = new Random();
-        public static PollutionLevel? GetPollutionLevel(int sensorId)
+        public static PollutionLevel GetPollutionLevel(int sensorId)
         {
 
             var sensorsInCache = CacheHelper.Get<List<SensorCacheItemModel>>(DatabaseHelper.SensorsCacheKey);
@@ -28,11 +28,11 @@ namespace Web.Helpers
         }
 
 
-        public static PollutionLevel? CalculatePollutionLevel(List<Reading> readings)
+        public static PollutionLevel CalculatePollutionLevel(List<Reading> readings)
         {
             if (!readings.Any())
             {
-                return null;
+                return PollutionLevel.Unknown;
             }
             return (PollutionLevel)_random.Next(0, 2);
         }

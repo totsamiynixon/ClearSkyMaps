@@ -10,13 +10,11 @@ namespace Web.Data.Models
     {
         public int Id { get; set; }
 
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
 
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         public virtual List<Reading> Readings { get; set; }
-
-        public string TrackingKey { get; set; }
 
         public bool IsActive { get; set; }
 
@@ -27,7 +25,5 @@ namespace Web.Data.Models
         public SensorType Type { get; set; }
 
         public string IPAddress { get; set; }
-
-        public bool IsPaired { get; set; }
     }
 }

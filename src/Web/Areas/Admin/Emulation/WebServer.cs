@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Web;
 
-namespace Web.Areas.Admin.Emulator
+namespace Web.Areas.Admin.Emulation
 {
     public class WebServer
     {

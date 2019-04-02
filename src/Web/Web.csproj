@@ -220,12 +220,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Areas\Admin\Models\Sensors\PairUnpairSensorModel.cs" />
-    <Compile Include="SensorActions\Input\SendReadingsAction.cs" />
-    <Compile Include="SensorActions\Input\SendReadingsActionPayload.cs" />
+    <Compile Include="Areas\Admin\Hub\PortableSensorClient.cs" />
+    <Compile Include="Areas\Admin\Hub\PortableSensorHub.cs" />
+    <Compile Include="Areas\Admin\Models\Emulator\SensorEmulatorListItemViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Hub\PortableSensorCoordinatesDispatchModel.cs" />
+    <Compile Include="Areas\Admin\Models\Hub\PortableSensorReadingsDispatchModel.cs" />
+    <Compile Include="Areas\Admin\Models\Sensors\SensorConnectDisconnectModel.cs" />
+    <Compile Include="Handlers\SensorsWebSocketHandler.cs" />
+    <Compile Include="Helpers\DispatchHelper.cs" />
+    <Compile Include="Helpers\SensorWebSocketHelper.cs" />
+    <Compile Include="Migrations\201903302258511_SensorsIsMated.cs" />
+    <Compile Include="Migrations\201903302258511_SensorsIsMated.Designer.cs">
+      <DependentUpon>201903302258511_SensorsIsMated.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SensorActions\Input\PushCoordinatesAction.cs" />
+    <Compile Include="SensorActions\Input\PushCoordinatesActionPayload.cs" />
+    <Compile Include="SensorActions\Input\PushReadingsAction.cs" />
+    <Compile Include="SensorActions\Input\PushReadingsActionPayload.cs" />
     <Compile Include="SensorActions\OutputSensorAction.cs" />
-    <Compile Include="SensorActions\Output\SendStateAction.cs" />
-    <Compile Include="SensorActions\Output\SendStateActionPayload.cs" />
+    <Compile Include="SensorActions\Output\PullCoordinatesAction.cs" />
+    <Compile Include="SensorActions\Output\PullReadingsAction.cs" />
+    <Compile Include="SensorActions\Output\PullCoordinatesActionPayload.cs" />
+    <Compile Include="SensorActions\Output\PullReadingsActionPayload.cs" />
+    <Compile Include="SensorActions\Output\PushStateAction.cs" />
+    <Compile Include="SensorActions\Output\PushStateActionPayload.cs" />
     <Compile Include="SensorActions\SensorAction.cs" />
     <Compile Include="SensorActions\InputSensorAction.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -241,10 +259,10 @@
     <Compile Include="Areas\Admin\Controllers\ErrorController.cs" />
     <Compile Include="Areas\Admin\Controllers\SensorsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
-    <Compile Include="Areas\Admin\Emulator\SensorEmulator.cs" />
-    <Compile Include="Areas\Admin\Emulator\SensorState.cs" />
-    <Compile Include="Areas\Admin\Emulator\SetSensorStateModel.cs" />
-    <Compile Include="Areas\Admin\Emulator\WebServer.cs" />
+    <Compile Include="Areas\Admin\Emulation\SensorEmulator.cs" />
+    <Compile Include="Areas\Admin\Emulation\SensorState.cs" />
+    <Compile Include="Areas\Admin\Emulation\SetSensorStateModel.cs" />
+    <Compile Include="Areas\Admin\Emulation\WebServer.cs" />
     <Compile Include="Areas\Admin\Enums\AlertTypes.cs" />
     <Compile Include="Areas\Admin\Filters\AdminAreaHandleExceptionAttribute.cs" />
     <Compile Include="Areas\Admin\Filters\RestoreModelStateFromTempDataAttribute.cs" />
@@ -272,14 +290,13 @@
     <Compile Include="Controllers\Api\NotificationsController.cs" />
     <Compile Include="Controllers\Api\ReadingsController.cs" />
     <Compile Include="Controllers\Api\SensorsController.cs" />
-    <Compile Include="Controllers\Api\EmulationController.cs" />
     <Compile Include="Areas\PWA\Controllers\HomeController.cs" />
     <Compile Include="Data\Attributes\PDK.cs" />
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Data\Identity\ApplicationUser.cs" />
     <Compile Include="Data\Models\Reading.cs" />
     <Compile Include="Data\Models\Sensor.cs" />
-    <Compile Include="Emulator\Emulator.cs" />
+    <Compile Include="Areas\Admin\Emulation\Emulator.cs" />
     <Compile Include="Enum\OuputSensorActionType.cs" />
     <Compile Include="Enum\PollutionLevel.cs" />
     <Compile Include="Enum\InputSensorActionType.cs" />
@@ -294,8 +311,8 @@
     <Compile Include="Helpers\DatabaseHelper.cs" />
     <Compile Include="Helpers\PWAHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
-    <Compile Include="Hub\IReadingsClient.cs" />
-    <Compile Include="Hub\ReadingsHub.cs" />
+    <Compile Include="Hub\IStaticSensorClient.cs" />
+    <Compile Include="Hub\StaticSensorHub.cs" />
     <Compile Include="Migrations\201903091323460_init.cs" />
     <Compile Include="Migrations\201903091323460_init.Designer.cs">
       <DependentUpon>201903091323460_init.cs</DependentUpon>
@@ -321,7 +338,7 @@
     <Compile Include="Models\Api\Subscribers\CreateSubscriptionModel.cs" />
     <Compile Include="Models\Api\Subscribers\UpdateSubscriptionModel.cs" />
     <Compile Include="Models\Cache\SensorCacheItemModel.cs" />
-    <Compile Include="Models\Hub\SensorReadingDispatchModel.cs" />
+    <Compile Include="Models\Hub\StaticSensorReadingDispatchModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resolvers\SignalrContractResolvers.cs" />
     <Compile Include="Startup.cs" />
@@ -449,6 +466,7 @@
     <Content Include="Areas\Admin\Views\Sensors\Delete.cshtml" />
     <Content Include="Areas\Admin\Views\Sensors\_Partials\SensorDetails.cshtml" />
     <Content Include="Areas\Admin\Views\Sensors\ChangeVisibility.cshtml" />
+    <Content Include="Areas\Admin\Views\Emulator\Index.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml">
       <SubType>Designer</SubType>
     </None>
@@ -471,8 +489,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Views\Base\" />
-    <Folder Include="Areas\Admin\Views\Emulator\" />
     <Folder Include="Areas\PWA\Models\" />
+    <Folder Include="Emulation\" />
     <Folder Include="Views\ClientRedirects\" />
   </ItemGroup>
   <ItemGroup>
@@ -493,6 +511,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903252315170_SensorDetails.resx">
       <DependentUpon>201903252315170_SensorDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903302258511_SensorsIsMated.resx">
+      <DependentUpon>201903302258511_SensorsIsMated.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

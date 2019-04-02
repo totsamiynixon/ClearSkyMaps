@@ -1,4 +1,5 @@
-﻿@if (User.Identity.IsAuthenticated)
+﻿@using Web.Helpers;
+@if (User.Identity.IsAuthenticated)
 {
     <div class="sidebar" data-color="white" data-active-color="danger">
         <div class="logo">
@@ -28,18 +29,15 @@
                         <p>Датчики</p>
                     </a>
                 </li>
-                <li>
-                    <a href="ipaddresses">
-                        <i class="nc-icon nc-bank"></i>
-                        <p>IP Адреса</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="map">
-                        <i class="nc-icon nc-pin-3"></i>
-                        <p>Карта</p>
-                    </a>
-                </li>
+                @if (SettingsHelper.EmulationEnabled)
+                {
+                    <li>
+                        <a href="emulator">
+                            <i class="nc-icon nc-bank"></i>
+                            <p>Эмуляция</p>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
     </div>

@@ -34,18 +34,8 @@ namespace ArduinoServer.Controllers.Api
         [HttpGet]
         public async Task<IHttpActionResult> GetAsync()
         {
-            return Ok(_mapper.Map<List<Sensor>, List<SensorModel>>(await DatabaseHelper.GetSensorsAsync()));
+            return Ok(_mapper.Map<List<Sensor>, List<SensorModel>>(await DatabaseHelper.GetSensorsAsync(true)));
         }
 
-        [HttpPost]
-        public async Task<IHttpActionResult> RegisterAsync(RegisterSensorModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            var sensor = await DatabaseHelper.AddSensorAsync(model.Latitude, model.Longitude);
-            return Created("", sensor.TrackingKey);
-        }
     }
 }

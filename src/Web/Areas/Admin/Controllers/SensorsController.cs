@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -7,17 +6,16 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using Web.Areas.Admin.Filters;
 using Web.Areas.Admin.Models.Sensors;
 using Web.Data;
 using Web.Data.Models;
-using Web.Enum;
 using Web.Helpers;
+using Web.SensorActions.Output;
 using Z.EntityFramework.Plus;
 
 namespace Web.Areas.Admin.Controllers
@@ -27,13 +25,15 @@ namespace Web.Areas.Admin.Controllers
         private readonly DataContext _context;
         private static readonly IMapper _mapper = new Mapper(new MapperConfiguration(x =>
         {
-            x.CreateMap<Sensor, SensorListItemViewModel>().ForMember(f => f.PollutionLevel, m => m.ResolveUsing(f => PollutionHelper.CalculatePollutionLevel(f.Readings)));
+            x.CreateMap<Sensor, SensorListItemViewModel>()
+            .ForMember(f => f.PollutionLevel, m => m.ResolveUsing(f => PollutionHelper.CalculatePollutionLevel(f.Readings)))
+            .ForMember(f => f.IsConnected, m => m.ResolveUsing(f => SensorWebSocketHelper.IsConnected(f.Id)));
             x.CreateMap<Sensor, SensorDetailsViewModel>();
             x.CreateMap<Sensor, ActivateSensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
             x.CreateMap<Sensor, ChangeVisibilitySensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
             x.CreateMap<Sensor, DeleteSensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
             x.CreateMap<CreateSensorModel, Sensor>();
-            x.CreateMap<Sensor, PairModel>();
+            x.CreateMap<Sensor, PushStateActionPayload>();
         }));
 
         public SensorsController()
@@ -74,7 +74,6 @@ namespace Web.Areas.Admin.Controllers
             var sensor = _mapper.Map<CreateSensorModel, Sensor>(model);
             try
             {
-                sensor.TrackingKey = Guid.NewGuid().ToString();
                 _context.Sensors.Add(sensor);
                 await _context.SaveChangesAsync();
             }
@@ -138,6 +137,7 @@ namespace Web.Areas.Admin.Controllers
             sensor.IsDeleted = true;
             _context.Entry(sensor).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+                       SensorWebSocketHelper.TriggerChangeState(sensor);
             ShowAlert(Enums.AlertTypes.Success, "Удаление датчика прошло успешно!");
             return RedirectToAction("Index");
         }
@@ -177,6 +177,7 @@ namespace Web.Areas.Admin.Controllers
             sensor.IsActive = model.IsActive.Value;
             _context.Entry(sensor).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            SensorWebSocketHelper.TriggerChangeState(sensor);
             ShowAlert(Enums.AlertTypes.Success, $"{(sensor.IsActive ? "Активация" : "Деактивация")} датчика прошло успешно!");
             return RedirectToAction("Index");
         }
@@ -221,78 +222,57 @@ namespace Web.Areas.Admin.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Supervisor")]
-        public async Task<ActionResult> Pair(PairUnpairSensorModel model)
+        public async Task<ActionResult> Connect(SensorConnectDisconnectModel model)
         {
             if (!ModelState.IsValid)
             {
-                ShowAlert(Enums.AlertTypes.Warning, "Ошибка при попытке спарить датчик!");
+                ShowAlert(Enums.AlertTypes.Warning, "Ошибка при попытке подключиться к датчику!");
                 return RedirectToAction("Index");
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.SensorId);
+            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.Id);
             if (sensor == null)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
             }
-            if (sensor.IsPaired)
+            if (SensorWebSocketHelper.IsConnected(sensor.Id))
             {
-                ShowAlert(Enums.AlertTypes.Warning, "Датчик уже спарен!");
+                ShowAlert(Enums.AlertTypes.Warning, "Сервер уже подключен к этому датчику!");
                 return RedirectToAction("Index");
             }
-            using (var httpClient = new HttpClient())
+            try
             {
-                var response = await httpClient.PostAsync($"http://{sensor.IPAddress}/pair", new StringContent(JsonConvert.SerializeObject(_mapper.Map<Sensor, PairModel>(sensor)), Encoding.UTF8, "application/json"));
-                if (response.IsSuccessStatusCode)
-                {
-                    sensor.IsPaired = true;
-                    _context.Entry(sensor).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                    ShowAlert(Enums.AlertTypes.Success, "Датчик успешно спарен!");
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ShowAlert(Enums.AlertTypes.Error, "Провалилась попытка спарить датчик!!");
-                    return RedirectToAction("Index");
-                }
+                SensorWebSocketHelper.ConnectSensor(sensor);
             }
+            catch
+            {
+                ShowAlert(Enums.AlertTypes.Error, "Что-то пошло не так!");
+                return RedirectToAction("Index");
+            }
+            ShowAlert(Enums.AlertTypes.Success, "Подключено успешно!");
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        [Authorize(Roles = "Supervisor")]
-        public async Task<ActionResult> Unpair(int? sensorId)
+        public async Task<ActionResult> Disconnect(SensorConnectDisconnectModel model)
         {
-            if (!sensorId.HasValue)
+            if (!ModelState.IsValid)
             {
-                throw new HttpException((int)HttpStatusCode.BadRequest, "Необходим id датчика!");
+                ShowAlert(Enums.AlertTypes.Warning, "Ошибка при попытке отключиться от датчика!");
+                return RedirectToAction("Index");
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == sensorId.Value);
+            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.Id);
             if (sensor == null)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
             }
-            if (!sensor.IsPaired)
+            if (!SensorWebSocketHelper.IsConnected(sensor.Id))
             {
-                ShowAlert(Enums.AlertTypes.Warning, "Датчик еще не спарен!");
+                ShowAlert(Enums.AlertTypes.Warning, "Сервер еще не подключек к этому датчику!");
                 return RedirectToAction("Index");
             }
-            using (var httpClient = new HttpClient())
-            {
-                var response = await httpClient.PostAsync($"http://{sensor.IPAddress}/unpair", new StringContent("", Encoding.UTF8, "application/json"));
-                if (response.IsSuccessStatusCode)
-                {
-                    sensor.IsPaired = false;
-                    _context.Entry(sensor).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                    ShowAlert(Enums.AlertTypes.Success, "Датчик успешно отстыкован!");
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ShowAlert(Enums.AlertTypes.Error, "Провалилась попытка отстыковать датчик!!");
-                    return RedirectToAction("Index");
-                }
-            }
+            SensorWebSocketHelper.DisconnectSensor(sensor.Id);
+            ShowAlert(Enums.AlertTypes.Success, "Успешно отключен!");
+            return RedirectToAction("Index");
         }
 
 

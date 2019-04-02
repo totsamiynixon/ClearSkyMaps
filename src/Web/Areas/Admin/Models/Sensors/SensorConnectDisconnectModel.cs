@@ -5,8 +5,8 @@ using System.Web;
 
 namespace Web.Areas.Admin.Models.Sensors
 {
-    public class PairUnpairSensorModel
+    public class SensorConnectDisconnectModel
     {
-        public int SensorId { get; set; }
+        public int Id { get; set; }
     }
 }

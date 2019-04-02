@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using Web.Enum;
 
-namespace Web.Areas.Admin.Emulator
+namespace Web.Areas.Admin.Emulation
 {
     public class SetSensorStateModel
     {

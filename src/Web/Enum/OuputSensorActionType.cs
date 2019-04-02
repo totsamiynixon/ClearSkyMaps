@@ -7,6 +7,8 @@ namespace Web.Enum
 {
     public enum OuputSensorActionType
     {
-        SendState
+        PushState,
+        PullReadings,
+        PullCoordinates
     }
 }

@@ -85,6 +85,12 @@
                                                     <a class="dropdown-item" href="sensors/edit?sensorId=@(sensor.Id)">Редактировать</a>
                                                     <a class="dropdown-item" href="sensors/changeActivation?sensorId=@(sensor.Id)">Активировать/Деактивировать</a>
                                                     <a class="dropdown-item" href="sensors/changeVisibility?sensorId=@(sensor.Id)">Показать/скрыть</a>
+                                                    @using (Html.BeginForm($"{(!sensor.IsConnected ? "Connect" : "Disconnect")}", "Sensors", new { area = "Admin", ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                                    {
+                                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                                        @Html.Hidden(nameof(sensor.Id), sensor.Id)
+                                                        <button class="dropdown-item">@(!sensor.IsConnected ? "Подключить" : "Отключить")</button>
+                                                    }
                                                     <a class="dropdown-item" href="sensors/delete?sensorId=@(sensor.Id)">Удалить</a>
                                                 </div>
                                             </td>

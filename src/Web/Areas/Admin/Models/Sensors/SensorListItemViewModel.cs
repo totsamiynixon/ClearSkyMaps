@@ -23,5 +23,7 @@ namespace Web.Areas.Admin.Models.Sensors
         public double Longitude { get; set; }
 
         public PollutionLevel PollutionLevel { get; set; }
+
+        public bool IsConnected { get; set; }
     }
 }

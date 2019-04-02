@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Web.Enum
+namespace Web.SensorActions.Output
 {
-    public enum InputSensorActionType
+    public class PullReadingsActionPayload
     {
-       PushReadings,
-       PushCoordinates
     }
 }
