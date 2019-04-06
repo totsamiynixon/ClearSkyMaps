@@ -5,6 +5,7 @@ try
         "FirebaseCloudMessaging:ServerKey" = $env:FIREBASE_CLOUD_MESSAGING__SERVER_KEY;
         "FirebaseCloudMessaging:MessagingSenderId" = $env:FIREBASE_CLOUD_MESSAGING__MESSAGING_SENDER_ID;
         "ConnectionString" = $env:CONNECTION_STRING;
+        "Emulation:ConnectionString" = $env:EMULATION_CONNECTION_STRING;
         "Emulation:Enabled" = $env:EMULATION_ENABLED;
         "Application:Environment" = $env:APPLICATION_ENVIRONMENT;
         "Application:Version" = $env:APPLICATION_VERSION;

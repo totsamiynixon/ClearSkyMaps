@@ -49,6 +49,7 @@ for:
       YANDEX__MAPS_JAVASCRIPT_API_KEY: $(STAGING___YANDEX__MAPS_JAVASCRIPT_API_KEY)
       CONNECTION_STRING: $(STAGING___CONNECTION_STRING)
       EMULATION_ENABLED: true
+      EMULATION_CONNECTION_STRING: $(STAGING__EMULATION_CONNECTION_STRING)
     build_script:
       - cmd: msbuild src/Web/Web.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
       - ps:  .\deploy\generate-config.ps1 -path  .\src\Web\release\config.json
