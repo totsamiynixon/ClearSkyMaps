@@ -61,6 +61,11 @@
     });
 
     self.addEventListener('fetch', function (event) {
+
+        if (event.request.url.includes('admin')) {
+            return false;
+        }
+
         var request = event.request;
         if (!(request.url.indexOf('http') === 0)) {
             return;

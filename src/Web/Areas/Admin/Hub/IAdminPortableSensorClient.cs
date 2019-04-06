@@ -3,7 +3,7 @@ using Web.Models.Hub;
 
 namespace Web.Areas.Admin.Hub
 {
-    public interface IPortableSensorClient
+    public interface IAdminPortableSensorClient
     {
         void DispatchReading(PortableSensorReadingsDispatchModel reading);
         void DispatchCoordinates(PortableSensorCoordinatesDispatchModel coordinates);

@@ -220,8 +220,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Areas\Admin\Hub\PortableSensorClient.cs" />
-    <Compile Include="Areas\Admin\Hub\PortableSensorHub.cs" />
+    <Compile Include="Areas\Admin\Helpers\AdminDispatchHelper.cs" />
+    <Compile Include="Areas\Admin\Hub\IAdminStaticSensorClient.cs" />
+    <Compile Include="Areas\Admin\Hub\IAdminPortableSensorClient.cs" />
+    <Compile Include="Areas\Admin\Hub\AdminPortableSensorHub.cs" />
+    <Compile Include="Areas\Admin\Hub\AdminStaticSensorHub.cs" />
     <Compile Include="Areas\Admin\Models\Emulator\SensorEmulatorListItemViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Hub\PortableSensorCoordinatesDispatchModel.cs" />
     <Compile Include="Areas\Admin\Models\Hub\PortableSensorReadingsDispatchModel.cs" />
@@ -232,7 +235,8 @@
     <Compile Include="Areas\Admin\Models\Sensors\StaticSensorListItemViewModel.cs" />
     <Compile Include="Data\Models\PortableSensor.cs" />
     <Compile Include="Data\Models\StaticSensor.cs" />
-    <Compile Include="Helpers\DispatchHelper.cs" />
+    <Compile Include="Areas\PWA\Helpers\PWADispatchHelper.cs" />
+    <Compile Include="Helpers\SensorCacheHelper.cs" />
     <Compile Include="Helpers\SensorWebSocketHelper.cs" />
     <Compile Include="Migrations\201903302258511_SensorsIsMated.cs" />
     <Compile Include="Migrations\201903302258511_SensorsIsMated.Designer.cs">
@@ -295,8 +299,8 @@
     <Compile Include="Areas\Admin\Models\Users\UserListItemViewModel.cs" />
     <Compile Include="Areas\AreaConfig.cs" />
     <Compile Include="Areas\PWA\PWAAreaRegistration.cs" />
-    <Compile Include="Controllers\Api\NotificationsController.cs" />
-    <Compile Include="Controllers\Api\SensorsController.cs" />
+    <Compile Include="Areas\PWA\Controllers\Api\NotificationsController.cs" />
+    <Compile Include="Areas\PWA\Controllers\Api\SensorsController.cs" />
     <Compile Include="Areas\PWA\Controllers\HomeController.cs" />
     <Compile Include="Data\Attributes\PDK.cs" />
     <Compile Include="Data\DataContext.cs" />
@@ -316,10 +320,10 @@
     <Compile Include="Helpers\LoggerHelper.cs" />
     <Compile Include="Helpers\PollutionHelper.cs" />
     <Compile Include="Helpers\DatabaseHelper.cs" />
-    <Compile Include="Helpers\PWAHelper.cs" />
+    <Compile Include="Areas\PWA\Helpers\PWAHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
-    <Compile Include="Hub\IStaticSensorClient.cs" />
-    <Compile Include="Hub\StaticSensorHub.cs" />
+    <Compile Include="Areas\PWA\Hub\IPWAStaticSensorClient.cs" />
+    <Compile Include="Areas\PWA\Hub\PWAStaticSensorHub.cs" />
     <Compile Include="Migrations\201903091323460_init.cs" />
     <Compile Include="Migrations\201903091323460_init.Designer.cs">
       <DependentUpon>201903091323460_init.cs</DependentUpon>
@@ -364,8 +368,10 @@
     <Content Include="Areas\Admin\Content\img\favicon\mstile-150x150.png" />
     <Content Include="Areas\Admin\Content\img\favicon\safari-pinned-tab.svg" />
     <Content Include="Areas\Admin\Scripts\front\main.js" />
+    <Content Include="Areas\Admin\Scripts\front\pages\portableSensorDetails.js" />
     <Content Include="Areas\Admin\Scripts\front\pages\sensors.js" />
     <Content Include="Areas\Admin\Scripts\libs\jquery.signalR-2.2.2.min.js" />
+    <Content Include="Areas\Admin\Scripts\libs\vue.js" />
     <Content Include="Areas\Admin\Theme\css\bootstrap.min.css" />
     <Content Include="Areas\Admin\Theme\css\paper-dashboard.css" />
     <Content Include="Areas\Admin\Theme\css\paper-dashboard.min.css" />
@@ -473,6 +479,7 @@
     <Content Include="Areas\Admin\Views\Sensors\ChangeVisibilityStaticSensor.cshtml" />
     <Content Include="Areas\Admin\Views\Emulator\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Sensors\CreatePortableSensor.cshtml" />
+    <Content Include="Areas\Admin\Views\Sensors\PortableSensorDetails.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml">
       <SubType>Designer</SubType>
     </None>

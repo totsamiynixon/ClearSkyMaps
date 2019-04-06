@@ -11,7 +11,7 @@ using System.Web.Http;
 using Web.Helpers;
 using Web.Models.Api.Notifications;
 
-namespace Web.Controllers.Api
+namespace Web.Areas.PWA.Controllers.Api
 {
     [RoutePrefix("api/notifications")]
     public class NotificationsController : ApiController

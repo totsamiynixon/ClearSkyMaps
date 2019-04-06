@@ -2,7 +2,7 @@
 
 namespace Web.Hub
 {
-    public interface IStaticSensorClient
+    public interface IPWAStaticSensorClient
     {
         void DispatchReading(StaticSensorReadingDispatchModel reading);
     }

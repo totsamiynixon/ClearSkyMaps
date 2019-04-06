@@ -22,7 +22,7 @@ namespace Web.Areas.Admin.Controllers
             .ForMember(f => f.Longitude, m => m.ResolveUsing(s => s.State?.Longitude))
             .ForMember(f => f.Guid, m => m.ResolveUsing(s => s.GetGuid()))
             .ForMember(f => f.IsOn, m => m.ResolveUsing(s => s.IsPowerOn))
-            .ForMember(f => f.IPAddress, m => m.ResolveUsing(s => s.GetIp()));
+            .ForMember(f => f.IPAddress, m => m.ResolveUsing(s => $"{s.GetIp()}:{s.GetPort()}"));
 
         }));
 
@@ -56,13 +56,13 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> StopEmulation()
+        public ActionResult StopEmulation()
         {
             if (!SettingsHelper.EmulationEnabled)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "Емуляция недоступна в данной среде");
             }
-            await Emulator.RunEmulationAsync();
+            Emulator.StopEmulation();
             ShowAlert(Enums.AlertTypes.Success, "Эмуляция успешно остановлена!");
             return RedirectToAction("Index");
         }

@@ -11,24 +11,33 @@ using Web.Enum;
 using Web.Helpers;
 using Web.Models;
 using Web.Models.Api.Sensor;
+using Web.Models.Cache;
 using Z.EntityFramework.Plus;
 
-namespace ArduinoServer.Controllers.Api
+namespace Web.Areas.PWA.Controllers
 {
     [RoutePrefix("api/sensors")]
     public class SensorsController : ApiController
     {
         private static IMapper _mapper = new Mapper(new MapperConfiguration(x =>
         {
-            x.CreateMap<StaticSensor, StaticSensorModel>()
-            .ForMember(f => f.PollutionLevel, m => m.ResolveUsing(p => PollutionHelper.GetPollutionLevel(p.Id)));
+            x.CreateMap<StaticSensor, StaticSensorModel>();
             x.CreateMap<Reading, StaticSensorReadingModel>();
         }));
 
         [HttpGet]
         public async Task<IHttpActionResult> GetAsync()
         {
-            return Ok(_mapper.Map<List<StaticSensor>, List<StaticSensorModel>>(await DatabaseHelper.GetStaticSensorsAsync(true)));
+            var sensors = await SensorCacheHelper.GetStaticSensorsAsync();
+            var model = sensors.Select(f => new StaticSensorModel
+            {
+                Id = f.Sensor.Id,
+                Latitude = f.Sensor.Latitude,
+                Longitude = f.Sensor.Longitude,
+                PollutionLevel = f.PollutionLevel,
+                Readings = _mapper.Map<List<Reading>, List<StaticSensorReadingModel>>(f.Sensor.Readings)
+            });
+            return Ok(model.ToArray());
         }
 
     }

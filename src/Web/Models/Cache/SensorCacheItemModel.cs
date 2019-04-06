@@ -10,13 +10,13 @@ namespace Web.Models.Cache
     public class SensorCacheItemModel
     {
 
-        public SensorCacheItemModel(Sensor sensor, PollutionLevel pollutionLevel)
+        public SensorCacheItemModel(StaticSensor sensor, PollutionLevel pollutionLevel)
         {
             Sensor = sensor;
             PollutionLevel = pollutionLevel;
         }
 
-        public Sensor Sensor { get; set; }
+        public StaticSensor Sensor { get; set; }
 
         public PollutionLevel PollutionLevel { get; set; }
     }

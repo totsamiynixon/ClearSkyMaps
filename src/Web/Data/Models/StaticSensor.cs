@@ -14,5 +14,10 @@ namespace Web.Data.Models
         public virtual List<Reading> Readings { get; set; }
 
         public bool IsVisible { get; set; }
+
+        public bool IsAvailable()
+        {
+            return IsActive && IsVisible && !IsDeleted;
+        }
     }
 }

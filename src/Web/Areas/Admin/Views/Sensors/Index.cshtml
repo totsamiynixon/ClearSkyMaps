@@ -121,6 +121,9 @@
                                             IP адресс
                                         </th>
                                         <th>
+                                            Статус
+                                        </th>
+                                        <th>
                                             Подключение
                                         </th>
                                         <th>
@@ -139,6 +142,9 @@
                                                 @sensor.IPAddress
                                             </td>
                                             <td>
+                                                @(sensor.IsActive ? "Активен" : "Деактивирован")
+                                            </td>
+                                            <td>
                                                 @(sensor.IsConnected ? "Подключен" : "Отключен")
                                             </td>
                                             <td>
@@ -155,6 +161,7 @@
                                                         @Html.Hidden(nameof(sensor.Id), sensor.Id)
                                                         <button class="dropdown-item">@(!sensor.IsConnected ? "Подключить" : "Отключить")</button>
                                                     }
+                                                    <a class="dropdown-item" href="sensors/portableSensorDetails?sensorId=@(sensor.Id)">Детали</a>
                                                     <a class="dropdown-item" href="sensors/delete?sensorId=@(sensor.Id)">Удалить</a>
                                                 </div>
                                             </td>

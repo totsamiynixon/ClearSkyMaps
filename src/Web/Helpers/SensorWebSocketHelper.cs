@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using WebSocketSharp;
-using System.Web;
 using Web.SensorActions.Output;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -14,8 +13,8 @@ using Web.SensorActions.Input;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Timers;
-using Microsoft.AspNet.SignalR;
-using Web.Hub;
+using Web.Areas.Admin.Helpers;
+using Web.Areas.PWA.Helpers;
 
 namespace Web.Helpers
 {
@@ -71,18 +70,20 @@ namespace Web.Helpers
                var sensorState = await DatabaseHelper.GetSensorByIdAsync(sensor.Id);
                if (sensorState is StaticSensor)
                {
+                   var staticSensorState = (StaticSensor)sensorState;
                    if (json["type"] == InputSensorActionType.PushReadings)
                    {
                        var payload = JsonConvert.DeserializeObject<PushReadingsActionPayload>(JsonConvert.SerializeObject(json["payload"]));
                        var reading = _mapper.Map<PushReadingsActionPayload, Reading>(payload);
                        reading.SensorId = sensor.Id;
                        await DatabaseHelper.AddReadingAsync(reading);
-                       //TODO: update pollution level
-                       //var pollutionLevel = PollutionHelper.GetPollutionLevel(sensor.Id);
-                       if ((sensorState as StaticSensor).IsVisible)
+                       if (staticSensorState.IsAvailable())
                        {
-                           DispatchHelper.DispatchReadingsForStaticSensor(sensor.Id, PollutionLevel.Unknown, reading);
+                           await SensorCacheHelper.UpdateSensorCacheWithReadingAsync(reading);
+                           var pollutionLevel = await SensorCacheHelper.GetPollutionLevelAsync(sensor.Id);
+                           PWADispatchHelper.DispatchReadingsForStaticSensor(sensor.Id, pollutionLevel, reading);
                        }
+                       AdminDispatchHelper.DispatchReadingsForStaticSensor(sensor.Id, reading);
                    }
                }
                else if (sensorState is PortableSensor)
@@ -92,12 +93,12 @@ namespace Web.Helpers
                        var payload = JsonConvert.DeserializeObject<PushReadingsActionPayload>(JsonConvert.SerializeObject(json["payload"]));
                        var reading = _mapper.Map<PushReadingsActionPayload, Reading>(payload);
                        reading.SensorId = sensor.Id;
-                       DispatchHelper.DispatchReadingsForPortableSensor(sensor.Id, reading);
+                       AdminDispatchHelper.DispatchReadingsForPortableSensor(sensor.Id, reading);
                    }
                    if (json.type == InputSensorActionType.PushCoordinates)
                    {
                        var payload = JsonConvert.DeserializeObject<PushCoordinatesActionPayload>(JsonConvert.SerializeObject(json["payload"]));
-                       DispatchHelper.DispatchCoordinatesForPortableSensor(sensor.Id, payload.Latitude, payload.Longitude);
+                       AdminDispatchHelper.DispatchCoordinatesForPortableSensor(sensor.Id, payload.Latitude, payload.Longitude);
                    }
                }
            };

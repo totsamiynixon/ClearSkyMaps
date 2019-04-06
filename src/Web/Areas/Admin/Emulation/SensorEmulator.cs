@@ -25,6 +25,7 @@ namespace Web.Areas.Admin.Emulation
         private readonly string _ip;
         private readonly string _port;
         private (double latitude, double longitude)? _location;
+        private IWebSocketConnection _connection;
 
         private static readonly Random _emulatorRandom = new Random();
 
@@ -51,6 +52,10 @@ namespace Web.Areas.Admin.Emulation
         {
 
             State = null;
+            if (_connection != null)
+            {
+                _connection.Close();
+            }
             IsPowerOn = false;
         }
 
@@ -175,8 +180,8 @@ namespace Web.Areas.Admin.Emulation
         private static (double randomLongitude, double randomLatitude) GetLocation()
         {
 
-            double longitude = 27.560597;
-            double latittude = 53.904588;
+            double longitude = 53.904588;
+            double latittude = 27.560597;
             int radius = 8000;
             Random random = _emulatorRandom;
 

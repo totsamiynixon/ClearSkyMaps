@@ -90,19 +90,31 @@ namespace Web.Helpers
             using (var context = new DataContext())
             {
                 var query = context
-                      .Sensors.Where(f => !f.IsDeleted);
+                      .Sensors.AsNoTracking().Where(f => !f.IsDeleted);
                 var sensors = await query.ToListAsync();
                 return sensors;
             }
         }
 
 
+        public static async Task<List<StaticSensor>> GetStaticSensorsForCacheAsync()
+        {
+            using (var context = new DataContext())
+            {
+                var sensors = await context
+                      .StaticSensors.AsNoTracking().Where(f => f.IsActive && f.IsVisible && !f.IsDeleted).IncludeFilter(f => f.Readings
+                                            .OrderByDescending(s => s.Created)
+                                            .Take(10)).ToListAsync();
+                return sensors;
+            }
+        }
+
         public static async Task<List<StaticSensor>> GetStaticSensorsAsync(bool withReadings)
         {
             using (var context = new DataContext())
             {
                 var query = context
-                      .StaticSensors.Where(f => !f.IsDeleted);
+                      .StaticSensors.AsNoTracking().Where(f => !f.IsDeleted);
                 if (withReadings)
                 {
                     query = query.IncludeFilter(f => f.Readings
@@ -118,7 +130,23 @@ namespace Web.Helpers
         {
             using (var context = new DataContext())
             {
-                return await context.Sensors.FirstOrDefaultAsync(f => f.Id == id);
+                return await context.Sensors.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
+            }
+        }
+
+        public static async Task<StaticSensor> GetStaticSensorByIdAsync(int id, bool withReadings = false)
+        {
+            using (var context = new DataContext())
+            {
+                var query = context
+                     .StaticSensors.AsNoTracking().AsQueryable();
+                if (withReadings)
+                {
+                    query = query.IncludeFilter(f => f.Readings
+                                            .OrderByDescending(s => s.Created)
+                                            .Take(10));
+                }
+                return await query.FirstOrDefaultAsync(f => f.Id == id);
             }
         }
 
@@ -164,36 +192,13 @@ namespace Web.Helpers
             }
         }
 
-        //#region Cache
+        public static void ReinitializeDb()
+        {
 
-        //public static async Task<List<SensorCacheItemModel>> GetSensorsFromCache()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private static async Task AddSensorToCacheAsync(Sensor sensor)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
-        //public static async Task UpdateSensorCacheWithReadingAsync(Reading reading)
-        //{
-        //    if (reading.SensorId <= 0)
-        //    {
-        //        throw new ArgumentException("SensorId should be provided in reading!", nameof(reading.SensorId));
-        //    }
-        //    var sensorsCacheItems = await GetOrAddSensorsToCacheAsync();
-        //    var sensorInCache = sensorsCacheItems.FirstOrDefault(f => f.Sensor.Id == reading.SensorId);
-        //    if (sensorInCache == null)
-        //    {
-        //        throw new KeyNotFoundException();
-        //    }
-        //    sensorInCache.Sensor.Readings.Add(reading);
-        //    sensorInCache.Sensor.Readings = sensorInCache.Sensor.Readings.OrderByDescending(f => f.Created).Take(10).ToList();
-        //    sensorInCache.PollutionLevel = PollutionHelper.CalculatePollutionLevel(sensorInCache.Sensor.Readings);
-        //    CacheHelper.AddOrUpdate(SensorsCacheKey, sensorsCacheItems, DateTime.UtcNow.Add(SensorsCacheLifetime));
-        //}
-        //#endregion
+            using (var _context = new DataContext())
+            {
+                _context.InitializeDb();
+            }
+        }
     }
 }

@@ -43,8 +43,10 @@ namespace Web.Areas.Admin.Emulation
         {
             _guids = new List<string>();
             Devices = new List<SensorEmulator>();
+            DatabaseHelper.ReinitializeDb();
             await DatabaseHelper.RemoveAllSensorsFromDatabaseAsync();
-            var iterationsForStatic = _emulatorRandom.Next(0, 20);
+            SensorCacheHelper.RemoveAllSensorsFromCache();
+            var iterationsForStatic = _emulatorRandom.Next(5, 10);
             for (int i = 0; i < iterationsForStatic; i++)
             {
                 var guid = Guid.NewGuid().ToString();
@@ -53,8 +55,8 @@ namespace Web.Areas.Admin.Emulation
                 await DatabaseHelper.AddStaticSensorAsync(fakeSensor.sensor.IPAddress, fakeSensor.sensor.Latitude, fakeSensor.sensor.Longitude);
                 Devices.Add(fakeSensor.emulator);
             }
-            var iterationsForPortable = _emulatorRandom.Next(0, 20);
-            for (int i = 0; i < iterationsForStatic; i++)
+            var iterationsForPortable = _emulatorRandom.Next(5, 10);
+            for (int i = 0; i < iterationsForPortable; i++)
             {
                 var guid = Guid.NewGuid().ToString();
                 _guids.Add(guid);
