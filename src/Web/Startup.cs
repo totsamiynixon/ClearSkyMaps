@@ -3,14 +3,15 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(ArduinoServer.Startup))]
+[assembly: OwinStartup(typeof(Web.App_Start.Startup))]
 
-namespace ArduinoServer
+namespace Web.App_Start
 {
-    public class Startup
+    public partial class Startup
     {
         public void Configuration(IAppBuilder app)
         {
+            ConfigureAuth(app);
             app.MapSignalR();
         }
     }

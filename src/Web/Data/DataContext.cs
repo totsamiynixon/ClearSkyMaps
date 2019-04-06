@@ -1,10 +1,12 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
+using Web.Data.Identity;
 using Web.Data.Models;
 using Web.Helpers;
 
 namespace Web.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<ApplicationUser>
     {
         private static readonly object Lock = new object();
         private static bool _databaseInitialized;
@@ -25,14 +27,23 @@ namespace Web.Data
             {
                 if (!_databaseInitialized)
                 {
-                    Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Migrations.Configuration>());
+                    InitializeDb();
                     _databaseInitialized = true;
                 }
             }
         }
 
+        public void InitializeDb()
+        {
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Migrations.Configuration>());
+        }
+
         public virtual DbSet<Reading> Readings { get; set; }
 
         public virtual DbSet<Sensor> Sensors { get; set; }
+
+        public virtual DbSet<StaticSensor> StaticSensors { get; set; }
+
+        public virtual DbSet<PortableSensor> PortableSensors { get; set; }
     }
 }

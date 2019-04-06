@@ -286,7 +286,6 @@ node_modules/
 tmp/
 temp/
 platforms/
-plugins/
 plugins/android.json
 plugins/ios.json
 www/
@@ -298,4 +297,4 @@ UserInterfaceState.xcuserstate
 ./config.xml
 
 
-dev-config.json
+config.json

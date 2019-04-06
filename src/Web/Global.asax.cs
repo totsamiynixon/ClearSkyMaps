@@ -7,13 +7,15 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Web;
-using System.Web.Caching;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Web.Areas;
+using Web.Areas.Admin;
 using Web.Helpers;
 using Web.Resolvers;
+using Web.ViewEngines;
 
 namespace Web
 {
@@ -23,11 +25,13 @@ namespace Web
         {
             LoggerHelper.InitLogger();
             SettingsHelper.InitConfig();
-            AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RegisterSignalrSerializer();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            AreaConfig.RegisterAreas();
+            System.Web.Mvc.ViewEngines.Engines.Clear();
+            System.Web.Mvc.ViewEngines.Engines.Add(new AreaAwareViewEngine());
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
