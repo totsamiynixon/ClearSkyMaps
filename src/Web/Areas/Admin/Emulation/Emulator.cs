@@ -26,6 +26,9 @@ namespace Web.Areas.Admin.Emulation
             if (!IsEmulationEnabled)
             {
                 IsEmulationEnabled = true;
+                SensorWebSocketHelper.DisconnectAllSensors();
+                DatabaseHelper.ReinitializeDb();
+                SensorCacheHelper.RemoveAllSensorsFromCache();
             }
             if (_firstInit)
             {
@@ -36,14 +39,19 @@ namespace Web.Areas.Admin.Emulation
 
         public static void StopEmulation()
         {
-            IsEmulationEnabled = false;
+            if (IsEmulationEnabled)
+            {
+                IsEmulationEnabled = false;
+                SensorWebSocketHelper.DisconnectAllSensors();
+                DatabaseHelper.ReinitializeDb();
+                SensorCacheHelper.RemoveAllSensorsFromCache();
+            }
         }
 
         private static async Task SeedSensorsAsync()
         {
             _guids = new List<string>();
             Devices = new List<SensorEmulator>();
-            DatabaseHelper.ReinitializeDb();
             await DatabaseHelper.RemoveAllSensorsFromDatabaseAsync();
             SensorCacheHelper.RemoveAllSensorsFromCache();
             var iterationsForStatic = _emulatorRandom.Next(5, 10);

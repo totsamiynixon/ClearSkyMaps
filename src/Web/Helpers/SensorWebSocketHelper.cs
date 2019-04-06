@@ -31,7 +31,7 @@ namespace Web.Helpers
         {
             using (var _context = new DataContext())
             {
-                var sensors = await _context.StaticSensors.Where(f => !f.IsDeleted).ToListAsync();
+                var sensors = await DatabaseHelper.GetSensorsAsync();
                 foreach (var sensor in sensors)
                 {
                     try
@@ -124,6 +124,20 @@ namespace Web.Helpers
         {
             DisconnectWebSocket(id);
             StopTimer(id);
+        }
+
+        public static void DisconnectAllSensors()
+        {
+            var keysC = Connections.Select(f => f.Key).ToList();
+            foreach (var key in keysC)
+            {
+                DisconnectWebSocket(key);
+            }
+            var keysT = Timers.Select(f => f.Key).ToList();
+            foreach (var key in keysC)
+            {
+                StopTimer(key);
+            }
         }
 
         public static bool IsConnected(int id)

@@ -3,7 +3,7 @@
   "FirebaseCloudMessaging:MessagingSenderId": "198815969264",
   "Yandex:MapsJavaScriptAPIKey": "45882cea-9147-4b9b-8799-b60d181dec3b",
   "ConnectionString": "Data Source=(local);Initial Catalog=ClearSkyDev;User ID=sa;Password=Password666;Connection Timeout=180",
-  "EmulatorConnectionString": "Data Source=(local);Initial Catalog=ClearSkyDevEmulation;User ID=sa;Password=Password666;Connection Timeout=180",
+  "Emulation:ConnectionString": "Data Source=(local);Initial Catalog=ClearSkyDevEmulation;User ID=sa;Password=Password666;Connection Timeout=180",
   "Emulation:Enabled": true,
   "Application:Environment": "Development"
 }

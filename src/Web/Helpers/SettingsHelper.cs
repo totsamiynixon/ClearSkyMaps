@@ -24,7 +24,7 @@ namespace Web.Helpers
             "Application:Version",
             "Application:Environment",
             "ConnectionString",
-            "EmulatorConnectionString",
+            "Emulation:ConnectionString",
             "Emulation:Enabled",
             "Yandex:MapsJavaScriptAPIKey"
         };
@@ -65,7 +65,7 @@ namespace Web.Helpers
 
         public static string ApplicationEnvironment => Settings["Application:Environment"].ToString();
 
-        public static string ConnectionString => Emulator.IsEmulationEnabled ? Settings["EmulatorConnectionString"].ToString() : Settings["ConnectionString"].ToString();
+        public static string ConnectionString => Emulator.IsEmulationEnabled ? Settings["Emulation:ConnectionString"].ToString() : Settings["ConnectionString"].ToString();
 
         public static string YandexMapsJavaScriptAPIKey => Settings["Yandex:MapsJavaScriptAPIKey"].ToString();
     }
