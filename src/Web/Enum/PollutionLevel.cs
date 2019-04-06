@@ -9,6 +9,7 @@ namespace Web.Enum
     {
         Low = 0,
         Medium = 1,
-        High = 2
+        High = 2,
+        Unknown = 3
     }
 }

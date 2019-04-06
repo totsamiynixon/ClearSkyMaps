@@ -15,7 +15,7 @@
 
         //HUB
         function initHub() {
-            hub.instance = $.connection.readingsHub;
+            hub.instance = $.connection.adminStaticSensorHub;
             hub.instance.client.dispatchReading = function (readingModel) {
                 var sensor = sensors.find(function (sensor) {
                     return sensor.id == readingModel.sensorId;
@@ -101,7 +101,7 @@
                 return;
             }
             marker.value.properties.set({ hintContent: "Уровень загрязнения " + sensor.pollutionLevel });
-            marker.value.options.set({ fillColor: getFillColor(sensor.pollutionLevel), strokeColor: getStrokeColor(sensor.pollutionLevel) });
+            marker.value.options.set({ fillColor: getFillColor(sensor.pollutionLevel, sensor.isVisible), strokeColor: getStrokeColor(sensor.pollutionLevel, sensor.isVisible) });
         }
         function getFillColor(pollutionLevel, isVisible) {
             if (!isVisible) {

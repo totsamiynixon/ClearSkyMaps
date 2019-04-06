@@ -8,52 +8,54 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using Web.Areas.Admin.Filters;
 using Web.Areas.Admin.Models.Sensors;
 using Web.Data;
 using Web.Data.Models;
-using Web.Enum;
 using Web.Helpers;
+using Web.SensorActions.Output;
 using Z.EntityFramework.Plus;
 
 namespace Web.Areas.Admin.Controllers
 {
     public class SensorsController : BaseController
     {
-        private readonly DataContext _context;
         private static readonly IMapper _mapper = new Mapper(new MapperConfiguration(x =>
         {
-            x.CreateMap<Sensor, SensorListItemViewModel>().ForMember(f => f.PollutionLevel, m => m.ResolveUsing(f => PollutionHelper.CalculatePollutionLevel(f.Readings)));
+            x.CreateMap<Sensor, SensorListItemViewModel>()
+            .ForMember(f => f.IsConnected, m => m.ResolveUsing(f => SensorWebSocketHelper.IsConnected(f.Id)));
+            x.CreateMap<StaticSensor, StaticSensorListItemViewModel>()
+            //.ForMember(f => f.PollutionLevel, m => m.ResolveUsing(f => PollutionHelper.GetPollutionLevel(f.Id)))
+            .IncludeBase<Sensor, SensorListItemViewModel>();
             x.CreateMap<Sensor, SensorDetailsViewModel>();
+            x.CreateMap<StaticSensor, StaticSensorDetailsViewModel>()
+            .IncludeBase<Sensor, SensorDetailsViewModel>();
             x.CreateMap<Sensor, ActivateSensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
-            x.CreateMap<Sensor, ChangeVisibilitySensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
+            x.CreateMap<Sensor, ChangeVisibilityStaticSensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
             x.CreateMap<Sensor, DeleteSensorViewModel>().ForMember(f => f.Details, m => m.MapFrom(f => f));
-            x.CreateMap<CreateSensorModel, Sensor>();
+            x.CreateMap<CreateStaticSensorModel, Sensor>();
+            x.CreateMap<Sensor, PushStateActionPayload>();
         }));
 
-        public SensorsController()
-        {
-            _context = new DataContext();
-        }
         // GET: Admin/Sensors
         public async Task<ActionResult> Index()
         {
-            var sensors = await _context
-                          .Sensors
-                          .Where(s => !s.IsDeleted)
-                          .IncludeFilter(f => f.Readings
-                                               .OrderByDescending(s => s.Created)
-                                               .Take(10))
-                          .ToListAsync();
-            var model = _mapper.Map<List<Sensor>, List<SensorListItemViewModel>>(sensors);
+
+            var sensors = await DatabaseHelper.GetSensorsAsync();
+            var model = new SensorsIndexViewModel
+            {
+                PortableSensors = _mapper.Map<List<PortableSensor>, List<SensorListItemViewModel>>(sensors.OfType<PortableSensor>().ToList()),
+                StaticSensors = _mapper.Map<List<StaticSensor>, List<StaticSensorListItemViewModel>>(sensors.OfType<StaticSensor>().ToList()),
+            };
             return View(model);
         }
 
 
         [HttpGet]
         [RestoreModelStateFromTempData]
-        public ActionResult Create()
+        public ActionResult CreateStaticSensor()
         {
             return View();
         }
@@ -61,18 +63,15 @@ namespace Web.Areas.Admin.Controllers
 
         [HttpPost]
         [SetTempDataModelState]
-        public async Task<ActionResult> Create(CreateSensorModel model)
+        public async Task<ActionResult> CreateStaticSensor(CreateStaticSensorModel model)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Create");
             }
-            var sensor = _mapper.Map<CreateSensorModel, Sensor>(model);
             try
             {
-                sensor.TrackingKey = Guid.NewGuid().ToString();
-                _context.Sensors.Add(sensor);
-                await _context.SaveChangesAsync();
+                await DatabaseHelper.AddStaticSensorAsync(model.IPAddress, model.Latitude, model.Longitude);
             }
             catch (DbUpdateException e)
             {
@@ -96,7 +95,53 @@ namespace Web.Areas.Admin.Controllers
                     throw;
                 }
             }
-            ShowAlert(Enums.AlertTypes.Success, "Датчик был успешно зарегистрирован!");
+            ShowAlert(Enums.AlertTypes.Success, "Статический датчик был успешно зарегистрирован!");
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [RestoreModelStateFromTempData]
+        public ActionResult CreatPortableSensor()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [SetTempDataModelState]
+        public async Task<ActionResult> CreatePortableSensor(CreatePortableSensorModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Create");
+            }
+            try
+            {
+                await DatabaseHelper.AddPortableSensor(model.IPAddress);
+            }
+            catch (DbUpdateException e)
+            {
+                SqlException innerException = null;
+                Exception tmp = e;
+                while (innerException == null && tmp != null)
+                {
+                    if (tmp != null)
+                    {
+                        innerException = tmp.InnerException as SqlException;
+                        tmp = tmp.InnerException;
+                    }
+
+                }
+                if (innerException != null && innerException.Number == 2601)
+                {
+                    ModelState.AddModelError("Insert", innerException.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            ShowAlert(Enums.AlertTypes.Success, "Портативный датчик был успешно зарегистрирован!");
             return RedirectToAction("Index");
         }
 
@@ -108,10 +153,15 @@ namespace Web.Areas.Admin.Controllers
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, "Необходим id датчика!");
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == sensorId);
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(sensorId.Value);
             if (sensor == null)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "Датик с таким id не найден");
+            }
+            if (sensor.IsActive)
+            {
+                ShowAlert(Enums.AlertTypes.Success, "Нельзя удалить активный датчик!");
+                return RedirectToAction("Index");
             }
             var mappedSensor = _mapper.Map<Sensor, DeleteSensorViewModel>(sensor);
             return View(mappedSensor);
@@ -126,14 +176,8 @@ namespace Web.Areas.Admin.Controllers
             {
                 return RedirectToAction("Delete", new { sensorId = model.Id });
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.Id);
-            if (sensor == null)
-            {
-                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
-            }
-            sensor.IsDeleted = true;
-            _context.Entry(sensor).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await DatabaseHelper.RemoveSensorAsync(model.Id.Value);
+            SensorWebSocketHelper.TriggerChangeState(await DatabaseHelper.GetSensorByIdAsync(model.Id.Value));
             ShowAlert(Enums.AlertTypes.Success, "Удаление датчика прошло успешно!");
             return RedirectToAction("Index");
         }
@@ -147,7 +191,7 @@ namespace Web.Areas.Admin.Controllers
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, "Необходим id датчика!");
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == sensorId.Value);
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(sensorId.Value);
             if (sensor == null)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
@@ -165,54 +209,118 @@ namespace Web.Areas.Admin.Controllers
             {
                 return RedirectToAction("ChangeActivation", new { sensorId = model.Id }); ;
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.Id);
-            if (sensor == null)
+            var sensor = await DatabaseHelper.ChangeSensorActivationAsync(model.Id.Value, model.IsActive.Value);
+            if (sensor is StaticSensor)
             {
-                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
+                await SensorCacheHelper.UpdateStaticSensorCache(sensor as StaticSensor);
             }
-            sensor.IsActive = model.IsActive.Value;
-            _context.Entry(sensor).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            SensorWebSocketHelper.TriggerChangeState(sensor);
             ShowAlert(Enums.AlertTypes.Success, $"{(sensor.IsActive ? "Активация" : "Деактивация")} датчика прошло успешно!");
             return RedirectToAction("Index");
         }
 
         [HttpGet]
         [RestoreModelStateFromTempData]
-        public async Task<ActionResult> ChangeVisibility(int? sensorId)
+        public async Task<ActionResult> ChangeVisibilityStaticSensor(int? sensorId)
         {
             if (!sensorId.HasValue)
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, "Необходим id датчика!");
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == sensorId.Value);
-            if (sensor == null)
-            {
-                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
-            }
-            var mappedSensor = _mapper.Map<Sensor, ChangeVisibilitySensorViewModel>(sensor);
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(sensorId.Value);
+            var mappedSensor = _mapper.Map<Sensor, ChangeVisibilityStaticSensorViewModel>(sensor);
             return View(mappedSensor);
         }
 
 
         [HttpPost]
         [SetTempDataModelState]
-        public async Task<ActionResult> ChangeVisibility(ChangeVisibilitySensorModel model)
+        public async Task<ActionResult> ChangeVisibilityStaticSensor(ChangeVisibilityStaticSensorModel model)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("ChangeVisibility", new { sensorId = model.Id }); ;
             }
-            var sensor = await _context.Sensors.FirstOrDefaultAsync(f => f.Id == model.Id);
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(model.Id.Value);
             if (sensor == null)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
             }
-            sensor.IsActive = model.IsVisible.Value;
-            _context.Entry(sensor).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            sensor = await DatabaseHelper.UpdateStaticSensorVisibility(model.Id.Value, model.IsVisible.Value);
+            await SensorCacheHelper.UpdateStaticSensorCache(sensor as StaticSensor);
             ShowAlert(Enums.AlertTypes.Success, $"{(sensor.IsActive ? "Отображение" : "Скрытие")} датчика прошло успешно!");
             return RedirectToAction("Index");
         }
+
+
+        [HttpPost]
+        public async Task<ActionResult> Connect(SensorConnectDisconnectModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Ошибка при попытке подключиться к датчику!");
+                return RedirectToAction("Index");
+            }
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(model.Id);
+            if (sensor == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
+            }
+            if (SensorWebSocketHelper.IsConnected(sensor.Id))
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Сервер уже подключен к этому датчику!");
+                return RedirectToAction("Index");
+            }
+            try
+            {
+                SensorWebSocketHelper.ConnectSensor(sensor);
+            }
+            catch
+            {
+                ShowAlert(Enums.AlertTypes.Error, "Что-то пошло не так!");
+                return RedirectToAction("Index");
+            }
+            ShowAlert(Enums.AlertTypes.Success, "Подключено успешно!");
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Disconnect(SensorConnectDisconnectModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Ошибка при попытке отключиться от датчика!");
+                return RedirectToAction("Index");
+            }
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(model.Id);
+            if (sensor == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Датчик с таким id не найден");
+            }
+            if (!SensorWebSocketHelper.IsConnected(sensor.Id))
+            {
+                ShowAlert(Enums.AlertTypes.Warning, "Сервер еще не подключек к этому датчику!");
+                return RedirectToAction("Index");
+            }
+            SensorWebSocketHelper.DisconnectSensor(sensor.Id);
+            ShowAlert(Enums.AlertTypes.Success, "Успешно отключен!");
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> PortableSensorDetails(int? sensorId)
+        {
+            if (!sensorId.HasValue)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "Необходим id датчика!");
+            }
+            var sensor = await DatabaseHelper.GetSensorByIdAsync(sensorId.Value);
+            if (sensor == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Датик с таким id не найден");
+            }
+            return View(sensorId.Value);
+        }
+
+
     }
 }

@@ -145,7 +145,7 @@
     //HUB
     function initHub() {
         var that = this;
-        that.hub.instance = $.connection.readingsHub;
+        that.hub.instance = $.connection.pWAStaticSensorHub;
         that.hub.instance.client.dispatchReading = function (readingModel) {
             var sensor = that.sensors.find(function (e, i, a) {
                 if (e.id == readingModel.sensorId) {
@@ -183,7 +183,7 @@
         },
             {
                 searchControlProvider: 'yandex#search',
-                restrictMapArea: true
+                //restrictMapArea: true
             });
     }
 
@@ -321,7 +321,9 @@
             case 1:
                 return "#db971a";
             case 2:
-                return "#e20000"
+                return "#e20000";
+            case 3:
+                return "#04e9f9";
         }
         return null;
     }
@@ -333,7 +335,9 @@
             case 1:
                 return "#8c5e09";
             case 2:
-                return "#770707"
+                return "#770707";
+            case 3:
+                return "#036af9";
         }
         return null;
     }

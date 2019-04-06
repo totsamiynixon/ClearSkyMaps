@@ -27,14 +27,23 @@ namespace Web.Data
             {
                 if (!_databaseInitialized)
                 {
-                    Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Migrations.Configuration>());
+                    InitializeDb();
                     _databaseInitialized = true;
                 }
             }
         }
 
+        public void InitializeDb()
+        {
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Migrations.Configuration>());
+        }
+
         public virtual DbSet<Reading> Readings { get; set; }
 
         public virtual DbSet<Sensor> Sensors { get; set; }
+
+        public virtual DbSet<StaticSensor> StaticSensors { get; set; }
+
+        public virtual DbSet<PortableSensor> PortableSensors { get; set; }
     }
 }
