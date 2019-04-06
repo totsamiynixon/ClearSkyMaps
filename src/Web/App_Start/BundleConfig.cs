@@ -1,5 +1,5 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
+using Web.Transformers;
 
 namespace Web
 {
@@ -25,9 +25,9 @@ namespace Web
                      "~/Areas/PWA/Scripts/front/app.js"
                      ));
 
-            bundles.Add(new StyleBundle("~/bundles/pwa/css").Include(
-                      "~/Areas/PWA/Content/bootstrap-material-design.css",
-                      "~/Areas/PWA/Content/site.css"));
+            bundles.Add(new StyleBundle("~/bundles/pwa/css")
+                .Include("~/Areas/PWA/Content/bootstrap-material-design.css", new CssRewriteUrlTransformFixed())
+                .Include("~/Areas/PWA/Content/site.css", new CssRewriteUrlTransformFixed()));
 
 
             //Admin
@@ -44,10 +44,10 @@ namespace Web
                      "~/Areas/Admin/Scripts/front/pages/sensors.js"
                      ));
 
-            bundles.Add(new StyleBundle("~/bundles/admin/css").Include(
-                      "~/Areas/Admin/Theme/css/bootstrap.min.css",
-                      "~/Areas/Admin/Theme/css/paper-dashboard.min.css",
-                      "~/Areas/Admin/Content/css/site.css"));
+            bundles.Add(new StyleBundle("~/bundles/admin/css")
+                .Include("~/Areas/Admin/Theme/css/bootstrap.min.css", new CssRewriteUrlTransformFixed())
+                .Include("~/Areas/Admin/Theme/css/paper-dashboard.min.css", new CssRewriteUrlTransformFixed())
+                .Include("~/Areas/Admin/Content/css/site.css", new CssRewriteUrlTransformFixed()));
         }
     }
 }
