@@ -25,9 +25,9 @@ namespace Web.Areas.Admin.Controllers
         private static readonly IMapper _mapper = new Mapper(new MapperConfiguration(x =>
         {
             x.CreateMap<Sensor, SensorListItemViewModel>()
-            .ForMember(f => f.IsConnected, m => m.ResolveUsing(f => SensorWebSocketHelper.IsConnected(f.Id)));
+            .ForMember(f => f.IsConnected, m => m.MapFrom(f => SensorWebSocketHelper.IsConnected(f.Id)));
             x.CreateMap<StaticSensor, StaticSensorListItemViewModel>()
-            //.ForMember(f => f.PollutionLevel, m => m.ResolveUsing(f => PollutionHelper.GetPollutionLevel(f.Id)))
+            //.ForMember(f => f.PollutionLevel, m => m.MapFrom(f => PollutionHelper.GetPollutionLevel(f.Id)))
             .IncludeBase<Sensor, SensorListItemViewModel>();
             x.CreateMap<Sensor, SensorDetailsViewModel>();
             x.CreateMap<StaticSensor, StaticSensorDetailsViewModel>()

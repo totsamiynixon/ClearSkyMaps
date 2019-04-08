@@ -18,11 +18,11 @@ namespace Web.Areas.Admin.Controllers
         private static readonly IMapper _mapper = new Mapper(new MapperConfiguration(x =>
         {
             x.CreateMap<SensorEmulator, SensorEmulatorListItemViewModel>()
-            .ForMember(f => f.Latitude, m => m.ResolveUsing(s => s.State?.Latitude))
-            .ForMember(f => f.Longitude, m => m.ResolveUsing(s => s.State?.Longitude))
-            .ForMember(f => f.Guid, m => m.ResolveUsing(s => s.GetGuid()))
-            .ForMember(f => f.IsOn, m => m.ResolveUsing(s => s.IsPowerOn))
-            .ForMember(f => f.IPAddress, m => m.ResolveUsing(s => $"{s.GetIp()}:{s.GetPort()}"));
+            .ForMember(f => f.Latitude, m => m.MapFrom((s,d) => s.State?.Latitude))
+            .ForMember(f => f.Longitude, m => m.MapFrom((s, d) => s.State?.Longitude))
+            .ForMember(f => f.Guid, m => m.MapFrom(s => s.GetGuid()))
+            .ForMember(f => f.IsOn, m => m.MapFrom(s => s.IsPowerOn))
+            .ForMember(f => f.IPAddress, m => m.MapFrom(s => $"{s.GetIp()}:{s.GetPort()}"));
 
         }));
 
