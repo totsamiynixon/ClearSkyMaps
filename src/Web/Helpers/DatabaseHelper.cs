@@ -194,11 +194,7 @@ namespace Web.Helpers
 
         public static void ReinitializeDb()
         {
-
-            using (var _context = new DataContext())
-            {
-                _context.InitializeDb();
-            }
+            DataContext.InitializeDb();
         }
     }
 }
