@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Web;
@@ -12,7 +8,6 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Web.Areas;
-using Web.Areas.Admin;
 using Web.Helpers;
 using Web.Resolvers;
 using Web.ViewEngines;
@@ -33,6 +28,7 @@ namespace Web
             System.Web.Mvc.ViewEngines.Engines.Clear();
             System.Web.Mvc.ViewEngines.Engines.Add(new AreaAwareViewEngine());
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            DatabaseHelper.ReinitializeDb();
         }
 
         protected void Application_Error()

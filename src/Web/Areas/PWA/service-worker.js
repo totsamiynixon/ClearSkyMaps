@@ -62,7 +62,7 @@
 
     self.addEventListener('fetch', function (event) {
 
-        if (event.request.url.includes('admin')) {
+        if (event.request.url.toLower().includes('admin')) {
             return false;
         }
 
